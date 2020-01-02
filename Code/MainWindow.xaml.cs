@@ -1,8 +1,9 @@
 ﻿using ESBasic;
 using Oraycn.MCapture;
 using Oraycn.MFile;
-using RecordWin.Properties;
+using RecordWin.Code;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -19,26 +20,38 @@ namespace RecordWin
     public partial class MainWindow : Window
     {
         #region 变量
-        private ISoundcardCapturer soundcardCapturer;
-        private IMicrophoneCapturer microphoneCapturer;
-        private IDesktopCapturer desktopCapturer;
-        private ICameraCapturer cameraCapturer;
-        private IAudioMixter audioMixter;
-        private VideoFileMaker videoFileMaker;
-        private SilenceVideoFileMaker silenceVideoFileMaker;
-        private AudioFileMaker audioFileMaker;
-        private int frameRate = 10; // 采集视频的帧频
-        private bool sizeRevised = false;// 是否需要将图像帧的长宽裁剪为4的整数倍
-        private volatile bool isRecording = false;
-        private volatile bool isParsing = false;
-        private bool justRecordVideo = false;
+        
         #endregion
 
         public MainWindow()
         {
             InitializeComponent();
-            cbHidden.IsChecked = Settings.Default.自动隐藏;
+            cbHidden.IsChecked = SettingHelp.Settings.自动隐藏;
             IsHiddenTitle();
+            switch (SettingHelp.Settings.录制类型)
+            {
+                case 0: rbZM.IsChecked = true; break;
+                case 1: rbSXT.IsChecked = true; break;
+                case 2: rbSY.IsChecked = true; break;
+            }
+            cbSK.IsChecked = SettingHelp.Settings.声卡;
+            cbMK.IsChecked = SettingHelp.Settings.麦克风;
+            if (true)//不允许多开，如果已经有一个录屏进程存在则干死它……
+            {
+                Process current = Process.GetCurrentProcess();
+                //防止程序被改名，按文件的名称去查找
+                Process[] pro = Process.GetProcessesByName(current.ProcessName);
+                try
+                {
+                    foreach (Process temp in pro)
+                    {
+                        if (temp.Id != current.Id)
+                            temp.Kill();
+                    }
+                }
+                catch { }
+            }
+            ChangePlace();
         }
 
         #region 私有方法
@@ -56,24 +69,82 @@ namespace RecordWin
             Topmost = true;
             Canvas.SetLeft(Title, (ActualWidth - Title.Width) / 2);
         }
-
+        /// <summary>
+        /// 根据时间生成保存文件名称，文件位于tmp文件夹中
+        /// </summary>
+        /// <param name="Type">文件后缀.mp3或者.mp4，需要带点</param>
         private string MakeFilePath(string Type)
         {
             string path = $"{DateTime.Now.ToString("yyMMdd_HHmmss")}{Type}";
-            path = System.IO.Path.Combine("tmp", path);
-            if (!Directory.Exists(System.IO.Path.GetDirectoryName(path)))
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+            path = Path.Combine("tmp", path);
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
         }
-
+        /// <summary>
+        /// 统一消息提醒
+        /// </summary>
         private void Message(string msg)
         {
             System.Windows.MessageBox.Show(msg);
         }
+        /// <summary>
+        /// 工具栏显隐状态
+        /// </summary>
+        private void IsHiddenTitle() => Title.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
+        #endregion
 
-        private void IsHiddenTitle() => Title.Height = cbHidden.IsChecked.Value ? 3 : 40;//通过修改高度使动画效果出现与否来实现
+        #region 事件
+        private void Window_Loaded(object sender, RoutedEventArgs e) => ChangePlace();
+        /// <summary>
+        /// 关闭程序
+        /// </summary>
+        private void btClose_Click(object sender, RoutedEventArgs e)
+        {
+            if (btBegin.Content.ToString() == "停止")
+                btBegin_Click(null, null);
+            Close();
+        }
+        /// <summary>
+        /// 拖动到其他屏幕，录制其他屏幕
+        /// </summary>
+        private void Title_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+                ChangePlace();
+            }
+        }
+        /// <summary>
+        /// 是否隐藏
+        /// </summary>
+        private void cbHidden_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelp.Settings.自动隐藏 = cbHidden.IsChecked.Value;
+            IsHiddenTitle();
+        }
+        /// <summary>
+        /// 防止UC跑丢，我就死活一个状态
+        /// </summary>
+        private void Window_StateChanged(object sender, EventArgs e) => WindowState = WindowState.Normal;
+        #endregion
 
-        void ImageCaptured(Bitmap bm)
+        #region 录制
+        private ISoundcardCapturer soundcardCapturer;
+        private IMicrophoneCapturer microphoneCapturer;
+        private IDesktopCapturer desktopCapturer;
+        private ICameraCapturer cameraCapturer;
+        private IAudioMixter audioMixter;
+        private VideoFileMaker videoFileMaker;
+        private SilenceVideoFileMaker silenceVideoFileMaker;
+        private AudioFileMaker audioFileMaker;
+        private int frameRate = 10; // 采集视频的帧频
+        private bool sizeRevised = false;// 是否需要将图像帧的长宽裁剪为4的整数倍
+        private volatile bool isRecording = false;
+        private volatile bool isParsing = false;
+        private bool justRecordVideo = false;
+        private void ImageCaptured(Bitmap bm)
         {
             if (this.isRecording && !this.isParsing)
             {
@@ -96,16 +167,16 @@ namespace RecordWin
             }
         }
 
-        void capturer_CaptureError(Exception ex)
+        private void capturer_CaptureError(Exception ex)
         {
 
         }
 
-        void audioMixter_AudioMixed(byte[] audioData)
+        private void audioMixter_AudioMixed(byte[] audioData)
         {
             if (this.isRecording && !this.isParsing)
             {
-                if (Settings.Default.录制类型 == 2)
+                if (SettingHelp.Settings.录制类型 == 2)
                 {
                     this.audioFileMaker.AddAudioFrame(audioData);
                 }
@@ -124,30 +195,32 @@ namespace RecordWin
             int audioSampleRate = 16000;
             int channelCount = 1;
 
-            System.Drawing.Size videoSize = Screen.PrimaryScreen.Bounds.Size;
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            Screen S = Screen.FromHandle(handle);//程序当前所处屏幕
+            System.Drawing.Size videoSize = S.Bounds.Size;
 
             #region 设置采集器
-            if (Settings.Default.录制类型 == 0)//桌面采集器
+            if (SettingHelp.Settings.录制类型 == 0)//桌面采集器
             {
                 //如果需要录制鼠标的操作，第二个参数请设置为true
-                this.desktopCapturer = CapturerFactory.CreateDesktopCapturer(frameRate, true);
+                this.desktopCapturer = CapturerFactory.CreateDesktopCapturer(frameRate, true, S.Bounds);
                 this.desktopCapturer.ImageCaptured += ImageCaptured;
-                videoSize = this.desktopCapturer.VideoSize;
+                //videoSize = this.desktopCapturer.VideoSize;
             }
-            else if (Settings.Default.录制类型 == 1)//摄像头采集器
+            else if (SettingHelp.Settings.录制类型 == 1)//摄像头采集器
             {
                 //videoSize = new System.Drawing.Size(videoSize.Width, videoSize.Height);默认给摄像头使用桌面的分辨率，虽然没什么关系，但是我就这样了
                 this.cameraCapturer = CapturerFactory.CreateCameraCapturer(0, videoSize, frameRate);
                 this.cameraCapturer.ImageCaptured += new CbGeneric<Bitmap>(ImageCaptured);
             }
 
-            if (Settings.Default.麦克风)//麦克风采集器
+            if (SettingHelp.Settings.麦克风)//麦克风采集器
             {
                 this.microphoneCapturer = CapturerFactory.CreateMicrophoneCapturer(0);
                 this.microphoneCapturer.CaptureError += capturer_CaptureError;
             }
 
-            if (Settings.Default.声卡)//声卡采集器 【目前声卡采集仅支持vista以及以上系统】
+            if (SettingHelp.Settings.声卡)//声卡采集器 【目前声卡采集仅支持vista以及以上系统】
             {
                 this.soundcardCapturer = CapturerFactory.CreateSoundcardCapturer();
                 this.soundcardCapturer.CaptureError += capturer_CaptureError;
@@ -155,25 +228,25 @@ namespace RecordWin
                 channelCount = this.soundcardCapturer.ChannelCount;
             }
 
-            if (Settings.Default.麦克风 && Settings.Default.声卡)//混音器
+            if (SettingHelp.Settings.麦克风 && SettingHelp.Settings.声卡)//混音器
             {
                 this.audioMixter = CapturerFactory.CreateAudioMixter(this.microphoneCapturer, this.soundcardCapturer, SoundcardMode4Mix.DoubleChannel, true);
                 this.audioMixter.AudioMixed += audioMixter_AudioMixed; //如果是混音,则不再需要预订microphoneCapturer和soundcardCapturer的AudioCaptured事件
                 audioSampleRate = this.audioMixter.SampleRate;
                 channelCount = this.audioMixter.ChannelCount;
             }
-            else if (Settings.Default.麦克风)
+            else if (SettingHelp.Settings.麦克风)
             {
                 this.microphoneCapturer.AudioCaptured += audioMixter_AudioMixed;
             }
-            else if (Settings.Default.声卡)
+            else if (SettingHelp.Settings.声卡)
             {
                 this.soundcardCapturer.AudioCaptured += audioMixter_AudioMixed;
             }
             #endregion
 
             #region 开始采集
-            if (Settings.Default.麦克风)
+            if (SettingHelp.Settings.麦克风)
             {
                 try
                 {
@@ -181,12 +254,12 @@ namespace RecordWin
                 }
                 catch { Message("开启麦克风失败，请确认有麦克风并且驱动正常"); return; }
             }
-            if (Settings.Default.声卡)
+            if (SettingHelp.Settings.声卡)
             {
                 this.soundcardCapturer.Start();
             }
 
-            if (Settings.Default.录制类型 == 1)
+            if (SettingHelp.Settings.录制类型 == 1)
             {
                 try
                 {
@@ -194,14 +267,14 @@ namespace RecordWin
                 }
                 catch { Message("开启摄像头失败，请确认有摄像头并且驱动正常"); return; }
             }
-            else if (Settings.Default.录制类型 == 0)
+            else if (SettingHelp.Settings.录制类型 == 0)
             {
                 this.desktopCapturer.Start();
             }
             #endregion
 
             #region 录制组件
-            if (Settings.Default.录制类型 == 2) //仅仅录制声音
+            if (SettingHelp.Settings.录制类型 == 2) //仅仅录制声音
             {
                 this.audioFileMaker = new AudioFileMaker();
                 this.audioFileMaker.Initialize(MakeFilePath("mp3"), audioSampleRate, channelCount);
@@ -215,7 +288,7 @@ namespace RecordWin
                     videoSize = new System.Drawing.Size(videoSize.Width / 4 * 4, videoSize.Height / 4 * 4);
                 }
 
-                if (Settings.Default.麦克风 == false && Settings.Default.声卡 == false) //仅仅录制图像
+                if (SettingHelp.Settings.麦克风 == false && SettingHelp.Settings.声卡 == false) //仅仅录制图像
                 {
                     this.justRecordVideo = true;
                     this.silenceVideoFileMaker = new SilenceVideoFileMaker();
@@ -240,23 +313,23 @@ namespace RecordWin
 
         private void StopRecord()
         {
-            if (Settings.Default.麦克风) // 麦克风
+            if (SettingHelp.Settings.麦克风) // 麦克风
             {
                 this.microphoneCapturer.Stop();
             }
-            if (Settings.Default.声卡) //声卡
+            if (SettingHelp.Settings.声卡) //声卡
             {
                 this.soundcardCapturer.Stop();
             }
-            if (Settings.Default.录制类型 == 1)
+            if (SettingHelp.Settings.录制类型 == 1)
             {
                 this.cameraCapturer.Stop();
             }
-            if (Settings.Default.录制类型 == 0)
+            if (SettingHelp.Settings.录制类型 == 0)
             {
                 this.desktopCapturer.Stop();
             }
-            if (Settings.Default.录制类型 == 2)
+            if (SettingHelp.Settings.录制类型 == 2)
             {
                 this.audioFileMaker.Close(true);
             }
@@ -272,44 +345,10 @@ namespace RecordWin
                 }
             }
             this.isRecording = false;
-            cbHidden.IsChecked = Settings.Default.自动隐藏;
+            cbHidden.IsChecked = SettingHelp.Settings.自动隐藏;
             IsHiddenTitle();
             btBegin.Content = "开始";
             btSet.IsEnabled = true;
-        }
-        #endregion
-
-        #region 事件
-        private void Window_Loaded(object sender, RoutedEventArgs e) => ChangePlace();
-
-        private void btPen_Click(object sender, RoutedEventArgs e)
-        {
-            Title.Height = 40;//为了不让动画将工具栏收回这里手动修改高度
-            ColorPop.IsOpen = true;
-        }
-
-        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ColorPop.IsOpen = false;
-            Title.Height = 3;//选择颜色后再将工具栏高度改回去
-        }
-
-        private void btClose_Click(object sender, RoutedEventArgs e)
-        {
-            if (btBegin.Content.ToString() == "停止")
-                btBegin_Click(null, null);
-            Close();
-        }
-        /// <summary>
-        /// 拖动到其他屏幕，录制其他屏幕
-        /// </summary>
-        private void Title_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.DragMove();
-                ChangePlace();
-            }
         }
         /// <summary>
         /// 录制与停止录制
@@ -332,19 +371,46 @@ namespace RecordWin
                 Message(ex.Message);
             }
         }
+        #endregion
+
+        #region 设置
         /// <summary>
         /// 打开设置窗口
         /// </summary>
         private void btSet_Click(object sender, RoutedEventArgs e)
         {
-            SettingWindow setting = new SettingWindow();
-            setting.Owner = this;
-            setting.ShowDialog();
+            Title.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
+            SettingPop.IsOpen = !SettingPop.IsOpen;
         }
-        private void cbHidden_Click(object sender, RoutedEventArgs e)
+
+        private void rbSet_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Default.自动隐藏 = cbHidden.IsChecked.Value;
-            IsHiddenTitle();
+            if (rbSY.IsChecked.Value && !cbSK.IsChecked.Value && !cbMK.IsChecked.Value)
+            {
+                cbMK.IsChecked = true;
+                SettingHelp.Settings.麦克风 = cbMK.IsChecked.Value;
+            }
+
+            if (rbZM.IsChecked.Value)
+                SettingHelp.Settings.录制类型 = 0;
+            else if (rbSXT.IsChecked.Value)
+                SettingHelp.Settings.录制类型 = 1;
+            else if (rbSY.IsChecked.Value)
+                SettingHelp.Settings.录制类型 = 2;
+        }
+
+        private void cbSK_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.声卡 = cbSK.IsChecked.Value;
+
+        private void cbMK_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.麦克风 = cbMK.IsChecked.Value;
+        #endregion
+
+        #region 画笔
+        private void btPen_Click(object sender, RoutedEventArgs e)
+        {
+            Code.ScreenDraw.DrawerWindow win = new Code.ScreenDraw.DrawerWindow();
+            btPen.IsEnabled = false;
+            win.Owner = this;
+            win.Show();
         }
         #endregion
     }
