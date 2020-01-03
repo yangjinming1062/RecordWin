@@ -32,52 +32,45 @@ namespace RecordWin
         private static readonly Duration Duration7 = (Duration)Application.Current.Resources["Duration7"];
         private static readonly Duration Duration10 = (Duration)Application.Current.Resources["Duration10"];
 
-        private static Mutex mutex = new Mutex(true, "ScreenDrawer");
-        private bool _saved;
         #endregion
 
         public DrawerWindow()
         {
-            if (mutex.WaitOne(TimeSpan.Zero, true))
-            {
-                _history = new Stack<StrokesHistoryNode>();
-                _redoHistory = new Stack<StrokesHistoryNode>();
+            _history = new Stack<StrokesHistoryNode>();
+            _redoHistory = new Stack<StrokesHistoryNode>();
 
-                if (!Directory.Exists("Save"))
-                    Directory.CreateDirectory("Save");
+            InitializeComponent();
+            SetColor(DefaultColorPicker);
+            SetEnable(false, _mode);
+            SetTopMost(true);
+            SetBrushSize(_brushSizes[_brushIndex]);
 
-                InitializeComponent();
-                SetColor(DefaultColorPicker);
-                SetEnable(false, _mode);
-                SetTopMost(true);
-                SetBrushSize(_brushSizes[_brushIndex]);
+            ExtraToolPanel.Opacity = 0;
+            FontReduceButton.Opacity = 0;
+            FontIncreaseButton.Opacity = 0;
 
-                ExtraToolPanel.Opacity = 0;
-                FontReduceButton.Opacity = 0;
-                FontIncreaseButton.Opacity = 0;
+            MainInkCanvas.Strokes.StrokesChanged += StrokesChanged;
 
-                MainInkCanvas.Strokes.StrokesChanged += StrokesChanged;
+            MainInkCanvas.MouseLeftButtonDown += MainInkCanvas_MouseLeftButtonDown;
+            MainInkCanvas.MouseLeftButtonUp += MainInkCanvas_MouseLeftButtonUp;
+            MainInkCanvas.MouseMove += MainInkCanvas_MouseMove;
 
-                MainInkCanvas.MouseLeftButtonDown += MainInkCanvas_MouseLeftButtonDown;
-                MainInkCanvas.MouseLeftButtonUp += MainInkCanvas_MouseLeftButtonUp;
-                MainInkCanvas.MouseMove += MainInkCanvas_MouseMove;
-
-                _drawerTextBox.FontSize = 24.0;
-                _drawerTextBox.Background = Application.Current.Resources["TrueTransparent"] as Brush;
-                _drawerTextBox.AcceptsReturn = true;
-                _drawerTextBox.TextWrapping = TextWrapping.Wrap;
-                _drawerTextBox.LostFocus += _drawerTextBox_LostFocus;
-            }
-            else
-            {
-                Close();
-            }
+            _drawerTextBox.FontSize = 24.0;
+            _drawerTextBox.Background = Application.Current.Resources["TrueTransparent"] as Brush;
+            _drawerTextBox.AcceptsReturn = true;
+            _drawerTextBox.TextWrapping = TextWrapping.Wrap;
+            _drawerTextBox.LostFocus += _drawerTextBox_LostFocus;
         }
 
         private void Exit(object sender, EventArgs e)
         {
             if (this.Owner is MainWindow)
-                (this.Owner as MainWindow).btPen.IsActived = false;
+            {
+                var main = this.Owner as MainWindow;
+                main.btPen.IsActived = false;
+                main.TitleDragMove(true);
+            }
+
             Close();
         }
 
@@ -112,12 +105,14 @@ namespace RecordWin
 
         private static Stream SaveDialog(string initFileName, string fileExt = ".png", string filter = "Portable Network Graphics (*png)|*png")
         {
+            if (!Directory.Exists("ScreenShot"))
+                Directory.CreateDirectory("ScreenShot");
             var dialog = new Microsoft.Win32.SaveFileDialog()
             {
                 DefaultExt = fileExt,
                 Filter = filter,
                 FileName = initFileName,
-                InitialDirectory = Directory.GetCurrentDirectory() + "Save"
+                InitialDirectory = Directory.GetCurrentDirectory() + "ScreenShot"
             };
             return dialog.ShowDialog() == true ? dialog.OpenFile() : Stream.Null;
         }
@@ -551,7 +546,6 @@ namespace RecordWin
         private void StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             if (_ignoreStrokesChange) return;
-            _saved = false;
             if (e.Added.Count != 0)
                 Push(_history, new StrokesHistoryNode(e.Added, StrokesHistoryNodeType.Added));
             if (e.Removed.Count != 0)

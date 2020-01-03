@@ -46,6 +46,9 @@ namespace RecordWin
                 }
                 catch { }
             }
+            this.timer = new Timer();
+            this.timer.Interval = 1000;
+            this.timer.Tick += timer_Tick;
         }
 
         #region 私有方法
@@ -91,17 +94,34 @@ namespace RecordWin
                 cbHidden.IsChecked = Hidden;
             TitleGrid.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
         }
+
+        public void TitleDragMove(bool move)
+        {
+            if (move && !SettingPop.IsOpen && !btPen.IsActived)
+            {
+                TitleGrid.MouseDown += Title_MouseDown;
+                TitleGrid.Cursor = System.Windows.Input.Cursors.SizeAll;
+            }
+            else
+            {
+                TitleGrid.MouseDown -= Title_MouseDown;
+                TitleGrid.Cursor = System.Windows.Input.Cursors.Arrow;
+            }
+        }
         #endregion
 
         #region 事件
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            if (this.isRecording)
+                StopRecord();
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e) => ChangePlace();
         /// <summary>
         /// 关闭程序
         /// </summary>
-        private void btClose_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void btClose_Click(object sender, RoutedEventArgs e) => Close();
         /// <summary>
         /// 拖动到其他屏幕
         /// </summary>
@@ -141,6 +161,9 @@ namespace RecordWin
         private volatile bool isRecording = false;
         private volatile bool isParsing = false;
         private bool justRecordVideo = false;
+
+        private Timer timer;
+        private int seconds = 0;
         private void ImageCaptured(Bitmap bm)
         {
             if (this.isRecording && !this.isParsing)
@@ -184,6 +207,15 @@ namespace RecordWin
                         this.videoFileMaker.AddAudioFrame(audioData);
                     }
                 }
+            }
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            if (this.isRecording && !this.isParsing)
+            {
+                var ts = new TimeSpan(0, 0, ++seconds);
+                this.lbTime.Content = ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00");
             }
         }
 
@@ -304,6 +336,8 @@ namespace RecordWin
             this.isParsing = false;
             HiddenTools(true);
             btSet.Visibility = Visibility.Hidden;
+            lbTime.Visibility = Visibility.Visible;
+            TitleDragMove(false);
         }
 
         private void StopRecord()
@@ -334,6 +368,8 @@ namespace RecordWin
                 btClose.Visibility = Visibility.Visible;
                 btStop.Visibility = Visibility.Collapsed;
                 btSet.Visibility = Visibility.Visible;
+                lbTime.Visibility = Visibility.Collapsed;
+                TitleDragMove(true);
             }
             catch (Exception ex)
             {
@@ -349,7 +385,7 @@ namespace RecordWin
                     this.isParsing = false;
                 else
                     BeginRecord();
-
+                this.timer.Start();
                 btBegin.Visibility = Visibility.Collapsed;
                 btParse.Visibility = Visibility.Visible;
                 btClose.Visibility = Visibility.Collapsed;
@@ -367,6 +403,7 @@ namespace RecordWin
             btBegin.Visibility = Visibility.Visible;
             btParse.Visibility = Visibility.Collapsed;
             this.isParsing = true;
+            this.timer.Stop();
         }
 
         private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord();
@@ -381,6 +418,8 @@ namespace RecordWin
             TitleGrid.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
             SettingPop.IsOpen = !SettingPop.IsOpen;
             btSet.IsActived = SettingPop.IsOpen;
+            btBegin.Visibility = SettingPop.IsOpen ? Visibility.Hidden : Visibility.Visible;
+            TitleDragMove(!SettingPop.IsOpen);
         }
 
         private void rbSet_Click(object sender, RoutedEventArgs e)
@@ -413,6 +452,7 @@ namespace RecordWin
                 btPen.IsActived = true;
                 win.Owner = this;
                 win.Show();
+                TitleDragMove(false);
             }
         }
         #endregion
