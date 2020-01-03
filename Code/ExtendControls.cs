@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-namespace RecordWin.Code.ScreenDraw
+namespace RecordWin
 {
     public class ActivableButton : Button
     {
@@ -12,13 +12,6 @@ namespace RecordWin.Code.ScreenDraw
             get { return (bool)GetValue(IsActivedProperty); }
             set { SetValue(IsActivedProperty, value); }
         }
-    }
-
-    public enum ColorPickerButtonSize
-    {
-        Small,
-        Middle,
-        Large
     }
 
     public class ColorPicker : ActivableButton

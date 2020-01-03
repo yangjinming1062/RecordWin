@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace RecordWin.Code.ScreenDraw
+namespace RecordWin
 {
     class CornerRadiusAnimation : AnimationTimeline
     {

@@ -5,100 +5,132 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Title="" WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged">
+        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged">
     <Canvas x:Name="Canva">
-        <Grid Canvas.Top="-1" x:Name="Title" Width="300" Height="40" Background="Transparent" MouseDown="Title_MouseDown" Cursor="SizeAll" >
-            <Grid.Triggers>
-                <EventTrigger RoutedEvent="MouseEnter">
-                    <EventTrigger.Actions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="0:0:0.2"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger.Actions>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseLeave">
-                    <EventTrigger.Actions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="0:0:0.2"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger.Actions>
-                </EventTrigger>
-            </Grid.Triggers>
-            <Border BorderThickness="1" BorderBrush="Black">
+        <Border x:Name="TitleBorder" BorderThickness="1" BorderBrush="Black">
+            <Grid x:Name="TitleGrid" Height="40" MouseDown="Title_MouseDown" Cursor="SizeAll">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Width" Value="32"/>
+                        <Setter Property="Height" Value="32"/>
+                        <Setter Property="Margin" Value="4"/>
+                        <Setter Property="Cursor" Value="Arrow"/>
+                    </Style>
+                    <Style TargetType="Path">
+                        <Setter Property="Fill" Value="White"/>
+                        <Setter Property="Stretch" Value="Uniform"/>
+                        <Setter Property="Width" Value="15"/>
+                        <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property ="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA1ECF3" Offset="1"/>
+                        <GradientStop Color="#FF97B0DA"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Grid.Triggers>
+                <local:ActivableButton x:Name="btBegin" Grid.Column="1" Click="btBegin_Click" ToolTip="开始录制" Focusable="False">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconPlay}"/>
+                </local:ActivableButton>
+                <local:ActivableButton x:Name="btParse" Grid.Column="1" Click="btParse_Click" ToolTip="暂停录制" Focusable="False" Visibility="Collapsed">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconParse}"/>
+                </local:ActivableButton>
+                <local:ActivableButton x:Name="btPen" Grid.Column="2" Click="btPen_Click" ToolTip="屏幕画笔" Focusable="False">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconPen}" />
+                </local:ActivableButton>
+                <local:ActivableButton x:Name="btSet" Grid.Column="3" Click="btSet_Click" ToolTip="设置" Focusable="False">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconSet}" />
+                </local:ActivableButton>
+                <local:ActivableButton x:Name="btClose" Grid.Column="4" Click="btClose_Click" ToolTip="关闭工具" Focusable="False">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconCross}" />
+                </local:ActivableButton>
+                <local:ActivableButton x:Name="btStop" Grid.Column="4" Click="btStop_Click" ToolTip="停止录制" Focusable="False" Visibility="Collapsed">
+                    <local:ActivableButton.RenderTransform >
+                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                    </local:ActivableButton.RenderTransform>
+                    <Path Data="{DynamicResource IconStop}" />
+                </local:ActivableButton>
+            </Grid>
+        </Border>
+        <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
+            <Border Margin="0" BorderThickness="1" BorderBrush="#FFD44343">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA1ECF3" Offset="1"/>
+                        <GradientStop Color="#FF97B0DA"/>
+                    </LinearGradientBrush>
+                </Border.Background>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="4"/>
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#FF4B4B4B"/>
-                                        <GradientStop Color="#FFE4E0E0" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Cursor" Value="Arrow"/>
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.Background>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                            <GradientStop Color="#FF97B0DA"/>
-                        </LinearGradientBrush>
-                    </Grid.Background>
-
-                    <Button x:Name="btBegin" Grid.Column="1" Content="开始" Click="btBegin_Click"/>
-                    <Button x:Name="btPen" Grid.Column="2" Content="画笔" Click="btPen_Click"/>
-                    <Button x:Name="btSet" Grid.Column="3" Content="设置" Click="btSet_Click"/>
-                    <Button x:Name="btClose" Grid.Column="4" Content="结束" Click="btClose_Click"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="录制方式">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
+                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSXT" Content="摄像头" VerticalAlignment="Center"/>
+                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Header="声音来源">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
+                            <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="2" Header="软件设置">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbHidden" Content="隐藏" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbHidden_Click"/>
+                        </StackPanel>
+                    </GroupBox>
                 </Grid>
             </Border>
-            <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
-                <Border Margin="0" BorderThickness="1" BorderBrush="#FFD44343">
-                    <Border.Background>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                            <GradientStop Color="#FF97B0DA"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <GroupBox Header="录制方式">
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
-                                <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSXT" Content="摄像头" VerticalAlignment="Center"/>
-                                <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Grid.Row="1" Header="声音来源">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
-                                <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Grid.Row="2" Header="软件设置">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="cbHidden" Content="隐藏" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbHidden_Click"/>
-                            </StackPanel>
-                        </GroupBox>
-                    </Grid>
-                </Border>
-            </Popup>
-        </Grid>
+        </Popup>
     </Canvas>
 </Window>

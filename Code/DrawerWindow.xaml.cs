@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -17,7 +16,7 @@ using System.Windows.Threading;
 using Brush = System.Windows.Media.Brush;
 using Point = System.Windows.Point;
 
-namespace RecordWin.Code.ScreenDraw
+namespace RecordWin
 {
     /// <summary>
     /// DrawerWindow.xaml 的交互逻辑
@@ -78,7 +77,7 @@ namespace RecordWin.Code.ScreenDraw
         private void Exit(object sender, EventArgs e)
         {
             if (this.Owner is MainWindow)
-                (this.Owner as MainWindow).btPen.IsEnabled = true;
+                (this.Owner as MainWindow).btPen.IsActived = false;
             Close();
         }
 
@@ -211,7 +210,7 @@ namespace RecordWin.Code.ScreenDraw
 
             if (_mode == DrawMode.Ray)
             {
-                MainInkCanvas.Cursor = new Cursor(new MemoryStream(RecordWin.Properties.Resource.raycursor));
+                //MainInkCanvas.Cursor = new Cursor(new MemoryStream(RecordWin.Properties.Resource.raycursor));
             }
             else
             {
@@ -288,7 +287,7 @@ namespace RecordWin.Code.ScreenDraw
         }
         private void SetTopMost(bool v)
         {
-            //PinButton.IsActived = v;
+            PinButton.IsActived = v;
             Topmost = v;
         }
         #endregion
@@ -524,12 +523,16 @@ namespace RecordWin.Code.ScreenDraw
             if (_history.Count == 0) return;
             var last = Pop(_history);
             _ignoreStrokesChange = true;
-            if (last.Type == StrokesHistoryNodeType.Added)
-                MainInkCanvas.Strokes.Remove(last.Strokes);
-            else
-                MainInkCanvas.Strokes.Add(last.Strokes);
-            _ignoreStrokesChange = false;
-            Push(_redoHistory, last);
+            try
+            {
+                if (last.Type == StrokesHistoryNodeType.Added)
+                    MainInkCanvas.Strokes.Remove(last.Strokes);
+                else
+                    MainInkCanvas.Strokes.Add(last.Strokes);
+                _ignoreStrokesChange = false;
+                Push(_redoHistory, last);
+            }
+            catch { }
         }
         private void Redo()
         {
@@ -662,7 +665,7 @@ namespace RecordWin.Code.ScreenDraw
                 var h = (int)(SystemParameters.PrimaryScreenHeight * fromHwnd.DpiY / 96.0);
                 var image = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 Graphics.FromImage(image).CopyFromScreen(0, 0, 0, 0, new System.Drawing.Size(w, h), CopyPixelOperation.SourceCopy);
-                image.Save(s, ImageFormat.Png);
+                image.Save(s, System.Drawing.Imaging.ImageFormat.Png);
                 Palette.Opacity = 1;
                 s.Close();
                 Display("图片导出成功");

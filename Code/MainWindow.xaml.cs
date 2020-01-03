@@ -1,7 +1,6 @@
 ﻿using ESBasic;
 using Oraycn.MCapture;
 using Oraycn.MFile;
-using RecordWin.Code;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -19,15 +18,10 @@ namespace RecordWin
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region 变量
-        
-        #endregion
-
         public MainWindow()
         {
             InitializeComponent();
-            cbHidden.IsChecked = SettingHelp.Settings.自动隐藏;
-            IsHiddenTitle();
+            HiddenTools(SettingHelp.Settings.自动隐藏);
             switch (SettingHelp.Settings.录制类型)
             {
                 case 0: rbZM.IsChecked = true; break;
@@ -36,6 +30,7 @@ namespace RecordWin
             }
             cbSK.IsChecked = SettingHelp.Settings.声卡;
             cbMK.IsChecked = SettingHelp.Settings.麦克风;
+
             if (true)//不允许多开，如果已经有一个录屏进程存在则干死它……
             {
                 Process current = Process.GetCurrentProcess();
@@ -51,7 +46,6 @@ namespace RecordWin
                 }
                 catch { }
             }
-            ChangePlace();
         }
 
         #region 私有方法
@@ -67,7 +61,7 @@ namespace RecordWin
             Left = S.Bounds.Left;
             Top = S.Bounds.Top;
             Topmost = true;
-            Canvas.SetLeft(Title, (ActualWidth - Title.Width) / 2);
+            Canvas.SetLeft(TitleBorder, (ActualWidth - TitleGrid.ActualWidth) / 2);
         }
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于tmp文件夹中
@@ -91,7 +85,12 @@ namespace RecordWin
         /// <summary>
         /// 工具栏显隐状态
         /// </summary>
-        private void IsHiddenTitle() => Title.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
+        private void HiddenTools(bool? Hidden = null)
+        {
+            if (Hidden.HasValue)
+                cbHidden.IsChecked = Hidden;
+            TitleGrid.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
+        }
         #endregion
 
         #region 事件
@@ -101,12 +100,10 @@ namespace RecordWin
         /// </summary>
         private void btClose_Click(object sender, RoutedEventArgs e)
         {
-            if (btBegin.Content.ToString() == "停止")
-                btBegin_Click(null, null);
             Close();
         }
         /// <summary>
-        /// 拖动到其他屏幕，录制其他屏幕
+        /// 拖动到其他屏幕
         /// </summary>
         private void Title_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -122,7 +119,7 @@ namespace RecordWin
         private void cbHidden_Click(object sender, RoutedEventArgs e)
         {
             SettingHelp.Settings.自动隐藏 = cbHidden.IsChecked.Value;
-            IsHiddenTitle();
+            HiddenTools();
         }
         /// <summary>
         /// 防止UC跑丢，我就死活一个状态
@@ -305,72 +302,74 @@ namespace RecordWin
 
             this.isRecording = true;
             this.isParsing = false;
-            cbHidden.IsChecked = true;
-            IsHiddenTitle();
-            btBegin.Content = "停止";
-            btSet.IsEnabled = false;
+            HiddenTools(true);
+            btSet.Visibility = Visibility.Hidden;
         }
 
         private void StopRecord()
         {
-            if (SettingHelp.Settings.麦克风) // 麦克风
-            {
-                this.microphoneCapturer.Stop();
-            }
-            if (SettingHelp.Settings.声卡) //声卡
-            {
-                this.soundcardCapturer.Stop();
-            }
-            if (SettingHelp.Settings.录制类型 == 1)
-            {
-                this.cameraCapturer.Stop();
-            }
-            if (SettingHelp.Settings.录制类型 == 0)
-            {
-                this.desktopCapturer.Stop();
-            }
-            if (SettingHelp.Settings.录制类型 == 2)
-            {
-                this.audioFileMaker.Close(true);
-            }
-            else
-            {
-                if (!this.justRecordVideo)
-                {
-                    this.videoFileMaker.Close(true);
-                }
-                else
-                {
-                    this.silenceVideoFileMaker.Close(true);
-                }
-            }
-            this.isRecording = false;
-            cbHidden.IsChecked = SettingHelp.Settings.自动隐藏;
-            IsHiddenTitle();
-            btBegin.Content = "开始";
-            btSet.IsEnabled = true;
-        }
-        /// <summary>
-        /// 录制与停止录制
-        /// </summary>
-        private void btBegin_Click(object sender, RoutedEventArgs e)
-        {
             try
             {
-                if (btBegin.Content.ToString() == "开始")
-                {
-                    BeginRecord();
-                }
+                if (SettingHelp.Settings.麦克风) // 麦克风
+                    this.microphoneCapturer.Stop();
+                if (SettingHelp.Settings.声卡) //声卡
+                    this.soundcardCapturer.Stop();
+                if (SettingHelp.Settings.录制类型 == 1)
+                    this.cameraCapturer.Stop();
+                if (SettingHelp.Settings.录制类型 == 0)
+                    this.desktopCapturer.Stop();
+                if (SettingHelp.Settings.录制类型 == 2)
+                    this.audioFileMaker.Close(true);
                 else
                 {
-                    StopRecord();
+                    if (!this.justRecordVideo)
+                        this.videoFileMaker.Close(true);
+                    else
+                        this.silenceVideoFileMaker.Close(true);
                 }
+                this.isRecording = false;
+                HiddenTools(SettingHelp.Settings.自动隐藏);
+                btBegin.Visibility = Visibility.Visible;
+                btParse.Visibility = Visibility.Collapsed;
+                btClose.Visibility = Visibility.Visible;
+                btStop.Visibility = Visibility.Collapsed;
+                btSet.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {
                 Message(ex.Message);
             }
         }
+
+        private void btBegin_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.isRecording)
+                    this.isParsing = false;
+                else
+                    BeginRecord();
+
+                btBegin.Visibility = Visibility.Collapsed;
+                btParse.Visibility = Visibility.Visible;
+                btClose.Visibility = Visibility.Collapsed;
+                btStop.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                StopRecord();
+                Message(ex.Message);
+            }
+        }
+
+        private void btParse_Click(object sender, RoutedEventArgs e)
+        {
+            btBegin.Visibility = Visibility.Visible;
+            btParse.Visibility = Visibility.Collapsed;
+            this.isParsing = true;
+        }
+
+        private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord();
         #endregion
 
         #region 设置
@@ -379,8 +378,9 @@ namespace RecordWin
         /// </summary>
         private void btSet_Click(object sender, RoutedEventArgs e)
         {
-            Title.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
+            TitleGrid.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
             SettingPop.IsOpen = !SettingPop.IsOpen;
+            btSet.IsActived = SettingPop.IsOpen;
         }
 
         private void rbSet_Click(object sender, RoutedEventArgs e)
@@ -407,10 +407,13 @@ namespace RecordWin
         #region 画笔
         private void btPen_Click(object sender, RoutedEventArgs e)
         {
-            Code.ScreenDraw.DrawerWindow win = new Code.ScreenDraw.DrawerWindow();
-            btPen.IsEnabled = false;
-            win.Owner = this;
-            win.Show();
+            if (!btPen.IsActived)
+            {
+                DrawerWindow win = new DrawerWindow();
+                btPen.IsActived = true;
+                win.Owner = this;
+                win.Show();
+            }
         }
         #endregion
     }

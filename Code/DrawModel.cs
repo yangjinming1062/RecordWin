@@ -1,6 +1,6 @@
 ﻿using System.Windows.Ink;
 
-namespace RecordWin.Code.ScreenDraw
+namespace RecordWin
 {
     public enum DrawMode
     {
@@ -19,6 +19,12 @@ namespace RecordWin.Code.ScreenDraw
     {
         Removed,
         Added
+    }
+    public enum ColorPickerButtonSize
+    {
+        Small,
+        Middle,
+        Large
     }
     internal class StrokesHistoryNode
     {

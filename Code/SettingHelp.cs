@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace RecordWin.Code
+namespace RecordWin
 {
     internal static class SettingHelp
     {
