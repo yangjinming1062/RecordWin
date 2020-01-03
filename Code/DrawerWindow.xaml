@@ -254,13 +254,13 @@
                                         <Setter Property="Height" Value="32"/>
                                     </Style>
                                 </WrapPanel.Resources>
-                                <local:ActivableButton x:Name="FontReduceButton" Click="FontReduceButton_Click" ToolTip="缩小字体" Focusable="False">
+                                <local:ActivableButton x:Name="FontReduceButton" Click="FontReduceButton_Click" ToolTip="缩小字体" Focusable="False" Opacity="0">
                                     <local:ActivableButton.RenderTransform >
                                         <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
                                     </local:ActivableButton.RenderTransform>
                                     <Path Data="{DynamicResource IconFontReduce}" />
                                 </local:ActivableButton>
-                                <local:ActivableButton x:Name="FontIncreaseButton" Click="FontIncreaseButton_Click" ToolTip="放大字体" Focusable="False">
+                                <local:ActivableButton x:Name="FontIncreaseButton" Click="FontIncreaseButton_Click" ToolTip="放大字体" Focusable="False" Opacity="0">
                                     <local:ActivableButton.RenderTransform >
                                         <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
                                     </local:ActivableButton.RenderTransform>

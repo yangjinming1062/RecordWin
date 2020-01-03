@@ -59,12 +59,9 @@ namespace RecordWin
         {
             var handle = new WindowInteropHelper(this).Handle;
             var S = Screen.FromHandle(handle);
-            Width = S.Bounds.Width;
-            Height = S.Bounds.Height;
-            Left = S.Bounds.Left;
+            Left = S.Bounds.Left + (S.Bounds.Width - TitleGrid.ActualWidth) / 2;
             Top = S.Bounds.Top;
             Topmost = true;
-            Canvas.SetLeft(TitleBorder, (ActualWidth - TitleGrid.ActualWidth) / 2);
         }
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于tmp文件夹中

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged">
+        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged" Width="300" Height="50">
     <Canvas x:Name="Canva">
         <Border x:Name="TitleBorder" BorderThickness="1" BorderBrush="Black">
             <Grid x:Name="TitleGrid" Height="40" MouseDown="Title_MouseDown" Cursor="SizeAll">
@@ -36,8 +36,9 @@
                 </Grid.Resources>
                 <Grid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                        <GradientStop Color="#FF97B0DA"/>
+                        <GradientStop Color="#FF97B0DA" Offset="1"/>
+                        <!--<GradientStop Color="FFA1ECF3"/>-->
+                        <GradientStop Color="Transparent"/>
                     </LinearGradientBrush>
                 </Grid.Background>
                 <Grid.Triggers>
@@ -62,39 +63,21 @@
                 </Grid.Triggers>
                 <Label x:Name="lbTime" Content="00:00:00" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
                 <local:ActivableButton x:Name="btBegin" Grid.Column="1" Click="btBegin_Click" ToolTip="开始录制">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconPlay}"/>
                 </local:ActivableButton>
                 <local:ActivableButton x:Name="btParse" Grid.Column="1" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconParse}"/>
                 </local:ActivableButton>
                 <local:ActivableButton x:Name="btPen" Grid.Column="2" Click="btPen_Click" ToolTip="屏幕画笔">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconPen}" />
                 </local:ActivableButton>
                 <local:ActivableButton x:Name="btSet" Grid.Column="3" Click="btSet_Click" ToolTip="设置">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconSet}" />
                 </local:ActivableButton>
                 <local:ActivableButton x:Name="btClose" Grid.Column="4" Click="btClose_Click" ToolTip="关闭工具">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconCross}" />
                 </local:ActivableButton>
                 <local:ActivableButton x:Name="btStop" Grid.Column="4" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
-                    <local:ActivableButton.RenderTransform >
-                        <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=TitleGrid}"/>
-                    </local:ActivableButton.RenderTransform>
                     <Path Data="{DynamicResource IconStop}" />
                 </local:ActivableButton>
             </Grid>
