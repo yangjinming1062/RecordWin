@@ -119,6 +119,12 @@
                                         </Path.RenderTransform>
                                     </Path>
                                 </Button>
+                                <Button x:Name="MinimizeButton" Style="{StaticResource SpinningButton}" Background="#FF0F9DE4" Click="MinimizeButton_Click"  VerticalAlignment="Center" ToolTip="微缩化" >
+                                    <Button.RenderTransform>
+                                        <RotateTransform CenterX="12.5" CenterY="12.5" Angle="{Binding MinWidth, ElementName=Palette}"/>
+                                    </Button.RenderTransform>
+                                    <Path Width="12" Data="{DynamicResource IconMinimize}" Margin="1,1,0,0"/>
+                                </Button>
                                 <Button x:Name="CloseButton" Style="{StaticResource SpinningButton}" Background="#FFFF7774" Click="CloseButton_Click"  VerticalAlignment="Center" ToolTip="退出" >
                                     <Path Data="{DynamicResource IconCross}" Margin="1,1,0,0" Width="10">
                                         <Path.RenderTransform >
@@ -128,7 +134,8 @@
                                 </Button>
                             </WrapPanel>
                         </Grid>
-                        <Grid x:Name="ColorPickersPanel" Margin="0 4 0 0" Width="{StaticResource HorizontalModeColorPickersPanel}" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <WrapPanel x:Name="FuncPanel">
+                            <Grid x:Name="ColorPickersPanel" Margin="0 4 0 0" Width="{StaticResource HorizontalModeColorPickersPanel}" HorizontalAlignment="Right" VerticalAlignment="Center" >
                             <WrapPanel  Margin="0" HorizontalAlignment="Right">
                                 <WrapPanel.Resources>
                                     <Style TargetType="local:ColorPicker" BasedOn="{StaticResource ColorPicker}">
@@ -199,7 +206,7 @@
                                 </local:ColorPicker>
                             </WrapPanel>
                         </Grid>
-                        <StackPanel x:Name="ExtraToolPanel" Width="{StaticResource HorizontalModeFlowPanel}"  Margin="0,4,0,0">
+                            <StackPanel x:Name="ExtraToolPanel" Width="{StaticResource HorizontalModeFlowPanel}"  Margin="0,4,0,0">
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Style.Triggers>
@@ -245,7 +252,7 @@
                                 </local:ActivableButton>
                             </WrapPanel>
                         </StackPanel>
-                        <Grid x:Name="ButtonGrid" Margin="0 4 0 0" Width="{StaticResource HorizontalModeFlowPanel}">
+                            <Grid x:Name="ButtonGrid" Margin="0 4 0 0" Width="{StaticResource HorizontalModeFlowPanel}">
                             <WrapPanel x:Name="ButtonPanel" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <WrapPanel.Resources>
                                     <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -353,6 +360,7 @@
                                 </local:ActivableButton>
                             </WrapPanel>
                         </Grid>
+                        </WrapPanel>
                     </WrapPanel>
                 </Grid>
             </Grid>

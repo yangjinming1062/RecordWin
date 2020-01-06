@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -21,6 +20,7 @@ namespace RecordWin
         public MainWindow()
         {
             InitializeComponent();
+            lbTime.Visibility = Visibility.Collapsed;
             HiddenTools(SettingHelp.Settings.自动隐藏);
             switch (SettingHelp.Settings.录制类型)
             {
@@ -61,7 +61,6 @@ namespace RecordWin
             var S = Screen.FromHandle(handle);
             Left = S.Bounds.Left + (S.Bounds.Width - TitleGrid.ActualWidth) / 2;
             Top = S.Bounds.Top;
-            Topmost = true;
         }
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于tmp文件夹中
@@ -443,7 +442,19 @@ namespace RecordWin
         #region 画笔
         private void btPen_Click(object sender, RoutedEventArgs e)
         {
-            if (!btPen.IsActived)
+            if (btPen.IsActived)
+            {
+                foreach (Window drawer in System.Windows.Application.Current.Windows)
+                {
+                    if (drawer is DrawerWindow)
+                    {
+                        drawer.Close();
+                        btPen.IsActived = false;
+                        return;
+                    }
+                }
+            }
+            else
             {
                 DrawerWindow win = new DrawerWindow();
                 btPen.IsActived = true;

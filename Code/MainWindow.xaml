@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged" Width="300" Height="50">
+        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged" Width="220" Height="42" Topmost="True">
     <Canvas x:Name="Canva">
         <Border x:Name="TitleBorder" BorderThickness="1" BorderBrush="Black">
             <Grid x:Name="TitleGrid" Height="40" MouseDown="Title_MouseDown" Cursor="SizeAll">
@@ -61,7 +61,7 @@
                         </EventTrigger.Actions>
                     </EventTrigger>
                 </Grid.Triggers>
-                <Label x:Name="lbTime" Content="00:00:00" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+                <Label x:Name="lbTime" Content="00:00:00" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 <local:ActivableButton x:Name="btBegin" Grid.Column="1" Click="btBegin_Click" ToolTip="开始录制">
                     <Path Data="{DynamicResource IconPlay}"/>
                 </local:ActivableButton>

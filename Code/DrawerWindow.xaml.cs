@@ -31,7 +31,6 @@ namespace RecordWin
         private static readonly Duration Duration5 = (Duration)Application.Current.Resources["Duration5"];
         private static readonly Duration Duration7 = (Duration)Application.Current.Resources["Duration7"];
         private static readonly Duration Duration10 = (Duration)Application.Current.Resources["Duration10"];
-
         #endregion
 
         public DrawerWindow()
@@ -41,7 +40,7 @@ namespace RecordWin
 
             InitializeComponent();
             SetColor(DefaultColorPicker);
-            SetEnable(false, _mode);
+            SetEnable(true, _mode);
             SetTopMost(true);
             SetBrushSize(_brushSizes[_brushIndex]);
 
@@ -700,6 +699,19 @@ namespace RecordWin
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //SetBrushSize(e.NewValue);
+        }
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MinimizeButton.ToolTip.ToString() == "微缩化")
+            {
+                MinimizeButton.ToolTip = "恢复";
+                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, Duration4));
+            }
+            else
+            {
+                MinimizeButton.ToolTip = "微缩化";
+                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, Duration4));
+            }
         }
         private void HideButton_Click(object sender, RoutedEventArgs e) => SetInkVisibility(!_inkVisibility);
         private void OrientationButton_Click(object sender, RoutedEventArgs e) => SetOrientation(!_displayOrientation);
