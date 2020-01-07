@@ -30,7 +30,9 @@ namespace RecordWin
             }
             cbSK.IsChecked = SettingHelp.Settings.声卡;
             cbMK.IsChecked = SettingHelp.Settings.麦克风;
-
+            frameRate = SettingHelp.Settings.视频帧率;
+            txtZL.Text = frameRate.ToString();
+            txtZL.TextChanged += txtZL_TextChanged;
             if (true)//不允许多开，如果已经有一个录屏进程存在则干死它……
             {
                 Process current = Process.GetCurrentProcess();
@@ -165,7 +167,7 @@ namespace RecordWin
         private VideoFileMaker videoFileMaker;
         private SilenceVideoFileMaker silenceVideoFileMaker;
         private AudioFileMaker audioFileMaker;
-        private int frameRate = 10; // 采集视频的帧频
+        private int frameRate = 21; // 采集视频的帧频
         private bool sizeRevised = false;// 是否需要将图像帧的长宽裁剪为4的整数倍
         private volatile bool isRecording = false;
         private volatile bool isParsing = false;
@@ -346,6 +348,7 @@ namespace RecordWin
             HiddenTools(true);
             btSet.Visibility = Visibility.Hidden;
             lbTime.Visibility = Visibility.Visible;
+            ChangePlace();
             TitleDragMove(false);
         }
 
@@ -450,6 +453,21 @@ namespace RecordWin
         private void cbSK_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.声卡 = cbSK.IsChecked.Value;
 
         private void cbMK_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.麦克风 = cbMK.IsChecked.Value;
+
+        private void txtZL_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (int.TryParse(txtZL.Text, out frameRate))
+            {
+                if (frameRate > 30 || frameRate < 0)
+                    Message("请输入(0，30]之间正整数！");
+                else
+                    SettingHelp.Settings.视频帧率 = frameRate;
+            }
+            else
+            {
+                Message("请输入(0，30]之间正整数！");
+            }
+        }
         #endregion
 
         #region 画笔

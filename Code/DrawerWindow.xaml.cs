@@ -133,8 +133,6 @@ namespace RecordWin
                 //DefaultColorPicker.Size = ColorPickerButtonSize.Middle;
                 ExtraToolPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, Duration4));
                 //PaletteGrip.BeginAnimation(WidthProperty, new DoubleAnimation(130, Duration3));
-                //MinimizeButton.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, Duration3));
-                //MinimizeButton.BeginAnimation(HeightProperty, new DoubleAnimation(0, 25, Duration3));
             }
             else
             {
@@ -142,8 +140,6 @@ namespace RecordWin
                 //DefaultColorPicker.Size = ColorPickerButtonSize.Small;
                 ExtraToolPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, Duration4));
                 //PaletteGrip.BeginAnimation(WidthProperty, new DoubleAnimation(80, Duration3));
-                //MinimizeButton.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, Duration3));
-                //MinimizeButton.BeginAnimation(HeightProperty, new DoubleAnimation(25, 0, Duration3));
             }
             _displayExtraToolPanel = v;
         }
@@ -705,12 +701,12 @@ namespace RecordWin
             if (MinimizeButton.ToolTip.ToString() == "微缩化")
             {
                 MinimizeButton.ToolTip = "恢复";
-                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, Duration4));
+                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(0, Duration4));
             }
             else
             {
                 MinimizeButton.ToolTip = "微缩化";
-                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, Duration4));
+                FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, Duration4));
             }
         }
         private void HideButton_Click(object sender, RoutedEventArgs e) => SetInkVisibility(!_inkVisibility);

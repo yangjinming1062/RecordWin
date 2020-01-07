@@ -89,16 +89,24 @@
                                     <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </GroupBox>
-                            <GroupBox Grid.Row="1" Header="声音来源">
+                            <GroupBox Header="声音来源">
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
                                     <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
                                 </StackPanel>
                             </GroupBox>
-                            <GroupBox Grid.Row="2" Header="软件设置">
+                            <GroupBox Header="软件设置">
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox x:Name="cbHidden" Content="隐藏" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbHidden_Click"/>
                                     <CheckBox x:Name="cbSaveHidden" Content="保持拖拽位置" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbSaveHidden_Click"/>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="高级设置">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="4">
+                                        <TextBlock Text="视频帧率："/>
+                                        <TextBox x:Name="txtZL" Width="50" ToolTip="视频帧率：数字越高越流畅但体积较大，推荐21"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </GroupBox>
                         </WrapPanel>

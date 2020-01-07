@@ -102,5 +102,12 @@ namespace RecordWin
             get { return _保持位置; }
             set { _保持位置 = value; SettingHelp.SaveSetting(); }
         }
+
+        int _视频帧率 = 21;
+        public int 视频帧率
+        {
+            get { return _视频帧率; }
+            set { _视频帧率 = value; SettingHelp.SaveSetting(); }
+        }
     }
 }
