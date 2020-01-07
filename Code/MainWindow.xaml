@@ -6,17 +6,10 @@
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
         WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged" Width="220" Height="42" Topmost="True">
-    <Canvas x:Name="Canva">
-        <Border x:Name="TitleBorder" BorderThickness="1" BorderBrush="Black">
-            <Grid x:Name="TitleGrid" Height="40" MouseDown="Title_MouseDown" Cursor="SizeAll">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.Resources>
+    <Canvas>
+        <Border BorderThickness="1" BorderBrush="Black">
+            <WrapPanel x:Name="TitlePanel" MouseDown="Title_MouseDown" Cursor="SizeAll">
+                <WrapPanel.Resources>
                     <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Width" Value="32"/>
@@ -33,15 +26,15 @@
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property ="HorizontalAlignment" Value="Center"/>
                     </Style>
-                </Grid.Resources>
-                <Grid.Background>
+                </WrapPanel.Resources>
+                <WrapPanel.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF97B0DA" Offset="1"/>
                         <!--<GradientStop Color="FFA1ECF3"/>-->
                         <GradientStop Color="Transparent"/>
                     </LinearGradientBrush>
-                </Grid.Background>
-                <Grid.Triggers>
+                </WrapPanel.Background>
+                <WrapPanel.Triggers>
                     <EventTrigger RoutedEvent="MouseEnter">
                         <EventTrigger.Actions>
                             <BeginStoryboard>
@@ -60,62 +53,58 @@
                             </BeginStoryboard>
                         </EventTrigger.Actions>
                     </EventTrigger>
-                </Grid.Triggers>
-                <Label x:Name="lbTime" Content="00:00:00" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <local:ActivableButton x:Name="btBegin" Grid.Column="1" Click="btBegin_Click" ToolTip="开始录制">
+                </WrapPanel.Triggers>
+                <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <local:ActivableButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
                     <Path Data="{DynamicResource IconPlay}"/>
                 </local:ActivableButton>
-                <local:ActivableButton x:Name="btParse" Grid.Column="1" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
+                <local:ActivableButton x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconParse}"/>
                 </local:ActivableButton>
-                <local:ActivableButton x:Name="btPen" Grid.Column="2" Click="btPen_Click" ToolTip="屏幕画笔">
+                <local:ActivableButton x:Name="btPen" Click="btPen_Click" ToolTip="屏幕画笔">
                     <Path Data="{DynamicResource IconPen}" />
                 </local:ActivableButton>
-                <local:ActivableButton x:Name="btSet" Grid.Column="3" Click="btSet_Click" ToolTip="设置">
+                <local:ActivableButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
                     <Path Data="{DynamicResource IconSet}" />
                 </local:ActivableButton>
-                <local:ActivableButton x:Name="btClose" Grid.Column="4" Click="btClose_Click" ToolTip="关闭工具">
+                <local:ActivableButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
                     <Path Data="{DynamicResource IconCross}" />
                 </local:ActivableButton>
-                <local:ActivableButton x:Name="btStop" Grid.Column="4" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
+                <local:ActivableButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconStop}" />
                 </local:ActivableButton>
-            </Grid>
+                <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFA1ECF3" Offset="1"/>
+                                <GradientStop Color="#FF97B0DA"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <WrapPanel Orientation="Vertical">
+                            <GroupBox Header="录制方式">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
+                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSXT" Content="摄像头" VerticalAlignment="Center"/>
+                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Grid.Row="1" Header="声音来源">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
+                                    <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Grid.Row="2" Header="软件设置">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="cbHidden" Content="隐藏" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbHidden_Click"/>
+                                    <CheckBox x:Name="cbSaveHidden" Content="保持拖拽位置" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbSaveHidden_Click"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </WrapPanel>
+                    </Border>
+                </Popup>
+            </WrapPanel>
         </Border>
-        <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
-            <Border Margin="0" BorderThickness="1" BorderBrush="#FFD44343">
-                <Border.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                        <GradientStop Color="#FF97B0DA"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <GroupBox Header="录制方式">
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
-                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSXT" Content="摄像头" VerticalAlignment="Center"/>
-                            <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Grid.Row="1" Header="声音来源">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
-                            <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Grid.Row="2" Header="软件设置">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="cbHidden" Content="隐藏" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Click="cbHidden_Click"/>
-                        </StackPanel>
-                    </GroupBox>
-                </Grid>
-            </Border>
-        </Popup>
     </Canvas>
 </Window>

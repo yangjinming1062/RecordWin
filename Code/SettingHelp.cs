@@ -95,5 +95,12 @@ namespace RecordWin
             get { return _自动隐藏; }
             set { _自动隐藏 = value; SettingHelp.SaveSetting(); }
         }
+
+        bool _保持位置 = false;
+        public bool 保持位置
+        {
+            get { return _保持位置; }
+            set { _保持位置 = value; SettingHelp.SaveSetting(); }
+        }
     }
 }

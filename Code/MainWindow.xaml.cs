@@ -59,7 +59,7 @@ namespace RecordWin
         {
             var handle = new WindowInteropHelper(this).Handle;
             var S = Screen.FromHandle(handle);
-            Left = S.Bounds.Left + (S.Bounds.Width - TitleGrid.ActualWidth) / 2;
+            Left = S.Bounds.Left + (S.Bounds.Width - TitlePanel.ActualWidth) / 2;
             Top = S.Bounds.Top;
         }
         /// <summary>
@@ -69,8 +69,8 @@ namespace RecordWin
         private string MakeFilePath(string Type)
         {
             string path = $"{DateTime.Now.ToString("yyMMdd_HHmmss")}{Type}";
-            path = Path.Combine("tmp", path);
-            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            path = Path.Combine("Temp", path);
+            if (!Directory.Exists(path))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
         }
@@ -86,22 +86,24 @@ namespace RecordWin
         /// </summary>
         private void HiddenTools(bool? Hidden = null)
         {
-            if (Hidden.HasValue)
+            if (Hidden.HasValue)//参数赋值了则设置
                 cbHidden.IsChecked = Hidden;
-            TitleGrid.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
+            TitlePanel.Height = cbHidden.IsChecked.Value && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现
         }
-
+        /// <summary>
+        /// 工具栏是否可拖动
+        /// </summary>
         public void TitleDragMove(bool move)
         {
             if (move && !SettingPop.IsOpen && !btPen.IsActived)
             {
-                TitleGrid.MouseDown += Title_MouseDown;
-                TitleGrid.Cursor = System.Windows.Input.Cursors.SizeAll;
+                TitlePanel.MouseDown += Title_MouseDown;
+                TitlePanel.Cursor = System.Windows.Input.Cursors.SizeAll;
             }
             else
             {
-                TitleGrid.MouseDown -= Title_MouseDown;
-                TitleGrid.Cursor = System.Windows.Input.Cursors.Arrow;
+                TitlePanel.MouseDown -= Title_MouseDown;
+                TitlePanel.Cursor = System.Windows.Input.Cursors.Arrow;
             }
         }
         #endregion
@@ -109,10 +111,13 @@ namespace RecordWin
         #region 事件
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            base.OnClosing(e);
             if (this.isRecording)
                 StopRecord();
+            base.OnClosing(e);
         }
+        /// <summary>
+        /// 窗体加载后自动定位
+        /// </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e) => ChangePlace();
         /// <summary>
         /// 关闭程序
@@ -126,7 +131,8 @@ namespace RecordWin
             if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
-                ChangePlace();
+                if (!SettingHelp.Settings.保持位置)
+                    ChangePlace();
             }
         }
         /// <summary>
@@ -136,6 +142,13 @@ namespace RecordWin
         {
             SettingHelp.Settings.自动隐藏 = cbHidden.IsChecked.Value;
             HiddenTools();
+        }
+        /// <summary>
+        /// 保留拖拽位置
+        /// </summary>
+        private void cbSaveHidden_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelp.Settings.保持位置 = cbSaveHidden.IsChecked.Value;
         }
         /// <summary>
         /// 防止UC跑丢，我就死活一个状态
@@ -411,7 +424,7 @@ namespace RecordWin
         /// </summary>
         private void btSet_Click(object sender, RoutedEventArgs e)
         {
-            TitleGrid.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
+            TitlePanel.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
             SettingPop.IsOpen = !SettingPop.IsOpen;
             btSet.IsActived = SettingPop.IsOpen;
             btBegin.Visibility = SettingPop.IsOpen ? Visibility.Hidden : Visibility.Visible;
