@@ -96,18 +96,32 @@ namespace RecordWin
             set { _自动隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
-        bool _保持位置 = false;
-        public bool 保持位置
-        {
-            get { return _保持位置; }
-            set { _保持位置 = value; SettingHelp.SaveSetting(); }
-        }
-
         int _视频帧率 = 21;
         public int 视频帧率
         {
             get { return _视频帧率; }
             set { _视频帧率 = value; SettingHelp.SaveSetting(); }
+        }
+
+        Tuple<HotKey.KeyModifiers, int> _播放暂停 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Space);
+        public Tuple<HotKey.KeyModifiers, int> 播放暂停
+        {
+            get { return _播放暂停; }
+            set { _播放暂停 = value; SettingHelp.SaveSetting(); }
+        }
+
+        Tuple<HotKey.KeyModifiers, int> _停止关闭 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Escape);
+        public Tuple<HotKey.KeyModifiers, int> 停止关闭
+        {
+            get { return _停止关闭; }
+            set { _停止关闭 = value; SettingHelp.SaveSetting(); }
+        }
+
+        bool _播放隐藏 = true;
+        public bool 播放隐藏
+        {
+            get { return _播放隐藏; }
+            set { _播放隐藏 = value; SettingHelp.SaveSetting(); }
         }
     }
 }
