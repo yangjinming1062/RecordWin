@@ -151,11 +151,7 @@ namespace RecordWin
         private VideoFileWriter videoWriter = new VideoFileWriter();
         private ScreenCaptureStream videoStreamer;
         private static RecordSound recordSound = new RecordSound();//录音
-        private VideoCaptureDevice Camera;//用来操作摄像头
-        private VideoFileWriter VideoOutPut = new VideoFileWriter();//用来把每一帧图像编码到视频文件
-        //图像缓存
-        private Bitmap bmp = new Bitmap(1, 1);
-
+        private string curVedioName;
         /// <summary>
         /// 桌面输出回调
         /// </summary>
@@ -170,29 +166,16 @@ namespace RecordWin
                 }));
             }
         }
-        /// <summary>
-        /// 摄像头输出回调
-        /// </summary>
-        private void Camera_NewFrame(object sender, NewFrameEventArgs eventArgs)
-        {
-            //写到文件
-            VideoOutPut.WriteVideoFrame(eventArgs.Frame);
-            lock (bmp)
-            {
-                bmp.Dispose();//释放上一个缓存
-                bmp = eventArgs.Frame.Clone() as Bitmap;//保存一份缓存
-                //this.pictureBox1.Image = bmp;
-            }
-        }
 
         private void BeginRecord()
         {
+            curVedioName = MakeFilePath(".mp4");
             if (SettingHelp.Settings.桌面)
             {
                 var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
                 lock (this)
                 {
-                    this.videoWriter.Open(MakeFilePath(".mp4"), curScreen.Bounds.Width, curScreen.Bounds.Height, 
+                    this.videoWriter.Open(curVedioName, curScreen.Bounds.Width, curScreen.Bounds.Height, 
                         SettingHelp.Settings.视频帧率, VideoCodec.MPEG4, 
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
@@ -202,23 +185,10 @@ namespace RecordWin
             }
             if (SettingHelp.Settings.摄像头)
             {
-                var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表 
-                if (devs.Count != 0)
-                {
-                    Camera = new VideoCaptureDevice(devs[0].MonikerString);//实例化设备控制类(我选了第1个)
-                    //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置,从这里面选一个赋值接即可
-                    Camera.VideoResolution = Camera.VideoCapabilities[Camera.VideoCapabilities.Length - 1];
-                    Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据
-                    Camera.Start();//打开摄像头
-
-                    //打开录像文件(如果没有则创建,如果有也会清空),这里还有关于
-                    lock (this)
-                    {
-                        VideoOutPut.Open(MakeFilePath(".mp4"),
-                           Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MPEG4, Camera.VideoResolution.BitCount);
-                    }
-                }
+                var carmeraShow = new CameraShow(SettingHelp.Settings.桌面 ? "" : curVedioName);//如果录制桌面又开启摄像头则摄像头只在右下角显示用，不单独保存文件
+                Visibility = SettingHelp.Settings.桌面 ? Visibility.Visible : Visibility.Collapsed;//当只录摄像头时隐藏主命令栏
+                carmeraShow.Owner = this;
+                carmeraShow.Show();
             }
             if (SettingHelp.Settings.声音)
                 recordSound.StartRecordSound();
@@ -231,24 +201,42 @@ namespace RecordWin
             TitleDragMove(false);
         }
 
-        private void StopRecord(bool ShowErr = true)
+        internal void StopRecord(bool ShowErr = true)
         {
             try
             {
+                this.Visibility = Visibility.Visible;//防止调用CameraShow的Close死循环
                 if (SettingHelp.Settings.摄像头)
                 {
-                    Camera.Stop();//停摄像头
-                    VideoOutPut.Close();//关闭录像文件,如果忘了不关闭,将会得到一个损坏的文件,无法播放
+                    foreach (Window shower in Application.Current.Windows)
+                    {
+                        if (shower is CameraShow)
+                        {
+                            shower.Close();
+                            break;
+                        }
+                    }
                 }
                 if (SettingHelp.Settings.桌面)
                 {
                     videoStreamer.Stop();
                     videoWriter.Close();
                 }
+                string audioName = MakeFilePath(".wav");
                 if (SettingHelp.Settings.声音)
                 {
-                    recordSound.EndRecordSound(MakeFilePath(".wav"));
+                    recordSound.EndRecordSound(audioName);
                 }
+
+                #region 音视频合成
+                if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//有视频源
+                {
+                    if (SettingHelp.Settings.声音)//又有声音,则合成
+                    {
+                        //todo
+                    }
+                }
+                #endregion
 
                 this.isRecording = false;
                 stopWatch.Reset();
@@ -367,7 +355,7 @@ namespace RecordWin
         {
             if (btPen.IsActived)
             {
-                foreach (Window drawer in System.Windows.Application.Current.Windows)
+                foreach (Window drawer in Application.Current.Windows)
                 {
                     if (drawer is DrawerWindow)
                     {
