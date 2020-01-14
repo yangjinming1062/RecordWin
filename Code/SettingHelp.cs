@@ -68,25 +68,25 @@ namespace RecordWin
     [Serializable]
     class Setting
     {
-        int _录制类型 = 0;
-        public int 录制类型
+        bool _桌面 = true;
+        public bool 桌面
         {
-            get { return _录制类型; }
-            set { _录制类型 = value;SettingHelp.SaveSetting(); }
+            get { return _桌面; }
+            set { _桌面 = value; SettingHelp.SaveSetting(); }
         }
 
-        bool _麦克风 = true;
-        public bool 麦克风
+        bool _摄像头 = true;
+        public bool 摄像头
         {
-            get { return _麦克风; }
-            set { _麦克风 = value; SettingHelp.SaveSetting(); }
+            get { return _摄像头; }
+            set { _摄像头 = value; SettingHelp.SaveSetting(); }
         }
 
-        bool _声卡 = false;
-        public bool 声卡
+        bool _声音 = true;
+        public bool 声音
         {
-            get { return _声卡; }
-            set { _声卡 = value; SettingHelp.SaveSetting(); }
+            get { return _声音; }
+            set { _声音 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _自动隐藏 = false;
@@ -101,6 +101,13 @@ namespace RecordWin
         {
             get { return _视频帧率; }
             set { _视频帧率 = value; SettingHelp.SaveSetting(); }
+        }
+
+        int _视频质量 = 3;
+        public int 视频质量
+        {
+            get { return _视频质量; }
+            set { _视频质量 = value; SettingHelp.SaveSetting(); }
         }
 
         Tuple<HotKey.KeyModifiers, int> _播放暂停 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Space);

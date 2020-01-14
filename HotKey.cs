@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecordWin
 {
@@ -54,26 +50,5 @@ namespace RecordWin
         /// 热键的对应的消息ID 
         /// </summary> 
         public const int WM_HOTKEY = 0x312;
-
-        public static Tuple<KeyModifiers,int> GetKeysFormString(string key)
-        {
-            KeyModifiers A = KeyModifiers.None;
-            int B = 0;
-            if (key.Contains("-"))
-            {
-                string[] s = key.Split('-');
-                try
-                {
-                    B = (int)Enum.Parse(typeof(System.Windows.Forms.Keys), s[1]);
-                    A = (KeyModifiers)Enum.Parse(typeof(KeyModifiers), s[0]);
-                }
-                catch { A = KeyModifiers.None; }
-            }
-            else
-            {
-                B = (int)Enum.Parse(typeof(System.Windows.Forms.Keys), key);
-            }
-            return new Tuple<KeyModifiers, int>(A, B);
-        }
     }
 }

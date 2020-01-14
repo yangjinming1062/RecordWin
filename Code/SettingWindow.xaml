@@ -41,7 +41,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="高级设置" Grid.Column="0"/>
+                <!--<TextBlock Text="高级设置" Grid.Column="0"/>-->
                 <local:ActivableButton Grid.Column="1" x:Name="btClose" Click="btClose_Click" ToolTip="关闭" HorizontalAlignment="Right" Margin="4,0">
                     <Path Data="{DynamicResource IconCross}" />
                 </local:ActivableButton>
@@ -53,8 +53,12 @@
                     <StackPanel>
                         <CheckBox x:Name="cbPlayHidden" Content="录制时缩小命令栏" Click="cbPlayHidden_Click" ToolTip="当勾选时，无论当前是否钉住命令栏录制中都将取消钉住"/>
                         <StackPanel Orientation="Horizontal" Margin="4">
-                            <TextBlock Text="视频帧率："/>
-                            <TextBox x:Name="txtZL" Width="50" ToolTip="视频帧率：数字越高越流畅但体积较大，推荐21"/>
+                            <Label Content="视频帧率："/>
+                            <Slider x:Name="slZhenLv" Minimum="10" Maximum="40" Value="10" TickFrequency="1" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="4">
+                            <Label Content="视频质量："/>
+                            <Slider x:Name="slZHiLiang" Minimum="1" Maximum="30" Value="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
@@ -70,8 +74,8 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="播放/暂停："/>
-                        <TextBlock Grid.Row="1" Text="停止/关闭："/>
+                        <Label Grid.Row="0" Content="播放/暂停："/>
+                        <Label Grid.Row="1" Content="停止/关闭："/>
                         <ComboBox x:Name="cbBF" Grid.Row="0" Grid.Column="1">
                             <TextBlock Text="None"/>
                             <TextBlock Text="Alt"/>
@@ -86,8 +90,8 @@
                             <TextBlock Text="Shift"/>
                             <TextBlock Text="WindowsKey"/>
                         </ComboBox>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="+" Margin="5,0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="+" Margin="5,0"/>
+                        <Label Grid.Row="0" Grid.Column="2" Content="+" Margin="5,0"/>
+                        <Label Grid.Row="1" Grid.Column="2" Content="+" Margin="5,0"/>
                         <TextBox x:Name="txtBF" Grid.Row="0" Grid.Column="3" PreviewKeyDown="txtBF_KeyDown"/>
                         <TextBox x:Name="txtTZ" Grid.Row="1" Grid.Column="3" KeyDown="txtTZ_KeyDown"/>
                     </Grid>

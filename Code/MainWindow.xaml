@@ -89,17 +89,11 @@
                             </LinearGradientBrush>
                         </Border.Background>
                         <WrapPanel Orientation="Vertical">
-                            <GroupBox Header="录制方式">
+                            <GroupBox Header="录制设置">
                                 <StackPanel Orientation="Horizontal">
-                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
-                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSXT" Content="摄像头" VerticalAlignment="Center"/>
-                                    <RadioButton Margin="4" Click="rbSet_Click" x:Name="rbSY" Content="只录制声音" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </GroupBox>
-                            <GroupBox Header="声音来源">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="cbSK" Content="声卡" Margin="4" Click="cbSK_Click"/>
-                                    <CheckBox x:Name="cbMK" Content="麦克风" Margin="4" Click="cbMK_Click"/>
+                                    <CheckBox Margin="4" Click="cbZM_Click" x:Name="cbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
+                                    <CheckBox Margin="4" Click="cbSXT_Click" x:Name="cbSXT" Content="摄像头" VerticalAlignment="Center"/>
+                                    <CheckBox Margin="4" Click="cbSY_Click" x:Name="cbSY" Content="声音" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </GroupBox>
                             <GroupBox Header="软件设置">

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace RecordWin
 {
@@ -19,12 +10,9 @@ namespace RecordWin
     /// </summary>
     public partial class SettingWindow : Window
     {
-        private int frameRate = 21; // 采集视频的帧频
         public SettingWindow()
         {
             InitializeComponent();
-            txtZL.Text = SettingHelp.Settings.视频帧率.ToString();
-            txtZL.TextChanged += txtZL_TextChanged;
             cbPlayHidden.IsChecked = SettingHelp.Settings.播放隐藏;
             cbBF.Text = SettingHelp.Settings.播放暂停.Item1.ToString();
             cbTZ.Text = SettingHelp.Settings.停止关闭.Item1.ToString();
@@ -32,14 +20,10 @@ namespace RecordWin
             cbTZ.SelectionChanged += cbTZ_SelectionChanged;
             txtBF.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2);
             txtTZ.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2);
-        }
-
-        /// <summary>
-        /// 统一消息提醒
-        /// </summary>
-        private void Message(string msg)
-        {
-            System.Windows.MessageBox.Show(msg);
+            slZHiLiang.Value = SettingHelp.Settings.视频质量;
+            slZHiLiang.ValueChanged += SlZL_ValueChanged;
+            slZhenLv.Value = SettingHelp.Settings.视频帧率;
+            slZhenLv.ValueChanged += SlZhenLv_ValueChanged;
         }
 
         private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b)
@@ -55,21 +39,6 @@ namespace RecordWin
             return new Tuple<HotKey.KeyModifiers, int>(A, B);
         }
 
-        private void txtZL_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (int.TryParse(txtZL.Text, out frameRate))
-            {
-                if (frameRate > 30 || frameRate < 0)
-                    Message("请输入(0，30]之间正整数！");
-                else
-                    SettingHelp.Settings.视频帧率 = frameRate;
-            }
-            else
-            {
-                Message("请输入(0，30]之间正整数！");
-            }
-        }
-
         private void btClose_Click(object sender, RoutedEventArgs e) => Close();
 
         private void cbPlayHidden_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.播放隐藏 = cbPlayHidden.IsChecked.Value;
@@ -77,6 +46,10 @@ namespace RecordWin
         private void cbBF_SelectionChanged(object sender, SelectionChangedEventArgs e) => SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text);
 
         private void cbTZ_SelectionChanged(object sender, SelectionChangedEventArgs e) => SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text);
+
+        private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
+
+        private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
 
         private void txtBF_KeyDown(object sender, KeyEventArgs e)
         {
