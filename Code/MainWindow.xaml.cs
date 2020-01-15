@@ -156,11 +156,12 @@ namespace RecordWin
         #region 录制
         private bool isRecording;
         private bool isParsing;
-        private Stopwatch stopWatch = new Stopwatch();//用来实时显示当前录制时长
+        private TimeSpan videoSpan;//用来实时显示当前录制时长
         private VideoFileWriter videoWriter = new VideoFileWriter();
         private ScreenCaptureStream videoStreamer;
         private static RecordSound recordSound = new RecordSound();//录音
         private string curVideoName;
+        private int FrameCount;
         /// <summary>
         /// 桌面输出回调
         /// </summary>
@@ -169,16 +170,25 @@ namespace RecordWin
             if (this.isRecording && !isParsing)
             {
                 this.videoWriter.WriteVideoFrame(e.Frame);
-                this.Dispatcher.Invoke(new Action(() =>
+                FrameCount += 1;
+                if (FrameCount % SettingHelp.Settings.视频帧率 == 0)//凑够一个帧组加1s1,一切努力都是为了使实际视频时长和显示的时长高度匹配
                 {
-                    this.lbTime.Content = this.stopWatch.Elapsed.ToString("hh\\:mm\\:ss");
-                }));
+                    FrameCount = 0;
+                    videoSpan = videoSpan.Add(new TimeSpan(0, 0, 0, 1));
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+
+                    }));
+                }
             }
         }
 
         private void BeginRecord()
         {
             curVideoName = MakeFilePath(".avi");
+            videoSpan = new TimeSpan();
+            FrameCount = 0;
             if (SettingHelp.Settings.桌面)
             {
                 var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
@@ -250,7 +260,6 @@ namespace RecordWin
                 #endregion
                 curVideoName = "";
                 this.isRecording = false;
-                stopWatch.Reset();
                 HiddenTools(SettingHelp.Settings.自动隐藏);
                 btBegin.Visibility = Visibility.Visible;
                 btParse.Visibility = Visibility.Collapsed;
@@ -282,7 +291,6 @@ namespace RecordWin
                 }
                 else
                     BeginRecord();
-                this.stopWatch.Start();
                 btBegin.Visibility = Visibility.Collapsed;
                 btParse.Visibility = Visibility.Visible;
                 btClose.Visibility = Visibility.Collapsed;
@@ -301,7 +309,6 @@ namespace RecordWin
             btParse.Visibility = Visibility.Collapsed;
             this.isParsing = true;
             videoStreamer.SignalToStop();
-            this.stopWatch.Stop();
         }
 
         private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord();

@@ -49,7 +49,11 @@ namespace RecordWin
 
         private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
 
-        private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
+        private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            slZhenLv.Value = ((int)(slZhenLv.Value / 10)) * 10;//只允许整10的
+            SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
+        }
 
         #region 快捷键
         private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b)

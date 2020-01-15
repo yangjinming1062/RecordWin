@@ -54,7 +54,7 @@
                         <CheckBox x:Name="cbPlayHidden" Content="录制时缩小命令栏" Click="cbPlayHidden_Click" ToolTip="当勾选时，无论当前是否钉住命令栏录制中都将取消钉住"/>
                         <StackPanel Orientation="Horizontal" Margin="4">
                             <Label Content="视频帧率："/>
-                            <Slider x:Name="slZhenLv" Minimum="10" Maximum="40" Value="10" TickFrequency="1" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
+                            <Slider x:Name="slZhenLv" Minimum="10" Maximum="80" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="4">
                             <Label Content="视频质量："/>
