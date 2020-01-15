@@ -107,6 +107,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AudioStream.cs" />
+    <Compile Include="Code\Media\AviStream.cs" />
+    <Compile Include="Code\Media\Avi.cs" />
     <Compile Include="Code\CameraShow.xaml.cs">
       <DependentUpon>CameraShow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +117,7 @@
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Code\RecordSound.cs" />
+    <Compile Include="Code\Media\VideoStream.cs" />
     <Page Include="Code\CameraShow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -155,6 +159,7 @@
     </Compile>
     <Compile Include="Code\SettingHelp.cs" />
     <Compile Include="Code\HotKey.cs" />
+    <Compile Include="Code\Media\VedioManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="450" Width="600" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True">
+        Height="450" Width="600" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid>
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -66,34 +66,49 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Content="播放/暂停："/>
                         <Label Grid.Row="1" Content="停止/关闭："/>
-                        <ComboBox x:Name="cbBF" Grid.Row="0" Grid.Column="1">
-                            <TextBlock Text="None"/>
-                            <TextBlock Text="Alt"/>
-                            <TextBlock Text="Ctrl"/>
-                            <TextBlock Text="Shift"/>
-                            <TextBlock Text="WindowsKey"/>
-                        </ComboBox>
-                        <ComboBox x:Name="cbTZ" Grid.Row="1" Grid.Column="1">
-                            <TextBlock Text="None"/>
-                            <TextBlock Text="Alt"/>
-                            <TextBlock Text="Ctrl"/>
-                            <TextBlock Text="Shift"/>
-                            <TextBlock Text="WindowsKey"/>
-                        </ComboBox>
-                        <Label Grid.Row="0" Grid.Column="2" Content="+" Margin="5,0"/>
-                        <Label Grid.Row="1" Grid.Column="2" Content="+" Margin="5,0"/>
-                        <TextBox x:Name="txtBF" Grid.Row="0" Grid.Column="3" PreviewKeyDown="txtBF_KeyDown"/>
-                        <TextBox x:Name="txtTZ" Grid.Row="1" Grid.Column="3" KeyDown="txtTZ_KeyDown"/>
+                        <Label Grid.Row="2" Content="开/关画笔："/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                            <ComboBox x:Name="cbBF" Width="60" DropDownClosed="cbBF_DropDownClosed">
+                                <TextBlock Text="None"/>
+                                <TextBlock Text="Alt"/>
+                                <TextBlock Text="Ctrl"/>
+                                <TextBlock Text="Shift"/>
+                                <TextBlock Text="WindowsKey"/>
+                            </ComboBox>
+                            <Label Content="+" Margin="5,0"/>
+                            <TextBox Width="60" x:Name="txtBF" KeyDown="txtBF_KeyDown"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                            <ComboBox x:Name="cbTZ" Width="60" DropDownClosed="cbTZ_DropDownClosed">
+                                <TextBlock Text="None"/>
+                                <TextBlock Text="Alt"/>
+                                <TextBlock Text="Ctrl"/>
+                                <TextBlock Text="Shift"/>
+                                <TextBlock Text="WindowsKey"/>
+                            </ComboBox>
+                            <Label Content="+" Margin="5,0"/>
+                            <TextBox Width="60" x:Name="txtTZ" KeyDown="txtTZ_KeyDown"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                            <ComboBox x:Name="cbHB" Width="60" DropDownClosed="cbHB_DropDownClosed">
+                                <TextBlock Text="None"/>
+                                <TextBlock Text="Alt"/>
+                                <TextBlock Text="Ctrl"/>
+                                <TextBlock Text="Shift"/>
+                                <TextBlock Text="WindowsKey"/>
+                            </ComboBox>
+                            <Label Content="+" Margin="5,0"/>
+                            <TextBox Width="60" x:Name="txtHB" KeyDown="txtHB_KeyDown"/>
+                        </StackPanel>
                     </Grid>
                 </GroupBox>
             </WrapPanel>

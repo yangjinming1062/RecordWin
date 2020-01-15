@@ -68,6 +68,7 @@ namespace RecordWin
     [Serializable]
     class Setting
     {
+        #region 录制源
         bool _桌面 = true;
         public bool 桌面
         {
@@ -88,7 +89,9 @@ namespace RecordWin
             get { return _声音; }
             set { _声音 = value; SettingHelp.SaveSetting(); }
         }
+        #endregion
 
+        #region 功能
         bool _自动隐藏 = false;
         public bool 自动隐藏
         {
@@ -96,6 +99,15 @@ namespace RecordWin
             set { _自动隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
+        bool _播放隐藏 = true;
+        public bool 播放隐藏
+        {
+            get { return _播放隐藏; }
+            set { _播放隐藏 = value; SettingHelp.SaveSetting(); }
+        }
+        #endregion
+
+        #region 录制
         int _视频帧率 = 21;
         public int 视频帧率
         {
@@ -109,7 +121,9 @@ namespace RecordWin
             get { return _视频质量; }
             set { _视频质量 = value; SettingHelp.SaveSetting(); }
         }
+        #endregion
 
+        #region 热键
         Tuple<HotKey.KeyModifiers, int> _播放暂停 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Space);
         public Tuple<HotKey.KeyModifiers, int> 播放暂停
         {
@@ -124,11 +138,12 @@ namespace RecordWin
             set { _停止关闭 = value; SettingHelp.SaveSetting(); }
         }
 
-        bool _播放隐藏 = true;
-        public bool 播放隐藏
+        Tuple<HotKey.KeyModifiers, int> _开关画笔 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.None, (int)System.Windows.Forms.Keys.Escape);
+        public Tuple<HotKey.KeyModifiers, int> 开关画笔
         {
-            get { return _播放隐藏; }
-            set { _播放隐藏 = value; SettingHelp.SaveSetting(); }
+            get { return _开关画笔; }
+            set { _开关画笔 = value; SettingHelp.SaveSetting(); }
         }
+        #endregion
     }
 }

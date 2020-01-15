@@ -47,6 +47,7 @@ namespace RecordWin
                            Camera.VideoResolution.AverageFrameRate, VideoCodec.MPEG4, Camera.VideoResolution.BitCount);
                     }
                 }
+                Show();
             }
             else
             {

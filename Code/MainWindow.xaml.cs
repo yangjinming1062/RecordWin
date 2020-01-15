@@ -3,7 +3,6 @@ using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -17,10 +16,20 @@ namespace RecordWin
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// 当前窗体指针
+        /// </summary>
+        private IntPtr winHandle;
         private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
         public MainWindow()
         {
             InitializeComponent();
+            var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表
+            if (devs.Count < 1)//未检测到摄像头则不显示摄像头配置
+            {
+                cbSXT.Visibility = Visibility.Collapsed;
+                SettingHelp.Settings.摄像头 = false;
+            }
             lbTime.Visibility = Visibility.Collapsed;
             HiddenTools(SettingHelp.Settings.自动隐藏);
             cbZM.IsChecked = SettingHelp.Settings.桌面;
@@ -54,7 +63,7 @@ namespace RecordWin
             Top = S.Bounds.Top;
         }
         /// <summary>
-        /// 根据时间生成保存文件名称，文件位于tmp文件夹中
+        /// 根据时间生成保存文件名称，文件位于Temp文件夹中
         /// </summary>
         /// <param name="Type">文件后缀，需要带点，如.mp4</param>
         private string MakeFilePath(string Type)
@@ -97,7 +106,7 @@ namespace RecordWin
         }
         #endregion
 
-        #region 事件
+        #region 基础事件
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             if (this.isRecording) StopRecord();
@@ -151,7 +160,7 @@ namespace RecordWin
         private VideoFileWriter videoWriter = new VideoFileWriter();
         private ScreenCaptureStream videoStreamer;
         private static RecordSound recordSound = new RecordSound();//录音
-        private string curVedioName;
+        private string curVideoName;
         /// <summary>
         /// 桌面输出回调
         /// </summary>
@@ -169,26 +178,25 @@ namespace RecordWin
 
         private void BeginRecord()
         {
-            curVedioName = MakeFilePath(".mp4");
+            curVideoName = MakeFilePath(".avi");
             if (SettingHelp.Settings.桌面)
             {
                 var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
                 lock (this)
                 {
-                    this.videoWriter.Open(curVedioName, curScreen.Bounds.Width, curScreen.Bounds.Height, 
-                        SettingHelp.Settings.视频帧率, VideoCodec.MPEG4, 
+                    this.videoWriter.Open(curVideoName, curScreen.Bounds.Width, curScreen.Bounds.Height, 
+                        SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v2, 
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
-                this.videoStreamer = new ScreenCaptureStream(curScreen.Bounds, 1000 / SettingHelp.Settings.视频帧率);
+                this.videoStreamer = new ScreenCaptureStream(curScreen.Bounds, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
                 this.videoStreamer.NewFrame += new NewFrameEventHandler(video_NewFrame);
                 this.videoStreamer.Start();
             }
             if (SettingHelp.Settings.摄像头)
             {
-                var carmeraShow = new CameraShow(SettingHelp.Settings.桌面 ? "" : curVedioName);//如果录制桌面又开启摄像头则摄像头只在右下角显示用，不单独保存文件
+                var carmeraShow = new CameraShow(SettingHelp.Settings.桌面 ? "" : curVideoName);//如果录制桌面又开启摄像头则摄像头只在右下角显示用，不单独保存文件
                 Visibility = SettingHelp.Settings.桌面 ? Visibility.Visible : Visibility.Collapsed;//当只录摄像头时隐藏主命令栏
                 carmeraShow.Owner = this;
-                carmeraShow.Show();
             }
             if (SettingHelp.Settings.声音)
                 recordSound.StartRecordSound();
@@ -222,7 +230,7 @@ namespace RecordWin
                     videoStreamer.Stop();
                     videoWriter.Close();
                 }
-                string audioName = MakeFilePath(".wav");
+                string audioName = string.IsNullOrEmpty(curVideoName) ? MakeFilePath(".wav") : curVideoName.Replace(".avi", ".wav");//如果有视频则音频文件和视频文件同名，否则新生成一个
                 if (SettingHelp.Settings.声音)
                 {
                     recordSound.EndRecordSound(audioName);
@@ -233,11 +241,14 @@ namespace RecordWin
                 {
                     if (SettingHelp.Settings.声音)//又有声音,则合成
                     {
-                        //todo
+                        var video = new VideoManager(curVideoName, true);
+                        video.AddAudioStream(audioName, 0);
+                        video.Close();
+                        File.Delete(audioName);//合成后移除音频文件
                     }
                 }
                 #endregion
-
+                curVideoName = "";
                 this.isRecording = false;
                 stopWatch.Reset();
                 HiddenTools(SettingHelp.Settings.自动隐藏);
@@ -251,8 +262,7 @@ namespace RecordWin
             }
             catch (Exception ex)
             {
-                if (ShowErr)
-                    Message(ex.Message);
+                if (ShowErr) Message(ex.Message);
             }
         }
 
@@ -298,16 +308,6 @@ namespace RecordWin
         #endregion
 
         #region 设置
-        /// <summary>
-        /// 当前窗体指针
-        /// </summary>
-        private IntPtr winHandle;
-        HwndSource hWndSource;
-        int HotKeyBF;
-        int HotKeyTZ;
-        /// <summary>
-        /// 打开设置窗口
-        /// </summary>
         private void btSet_Click(object sender, RoutedEventArgs e)
         {
             TitlePanel.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
@@ -326,27 +326,6 @@ namespace RecordWin
             SetHotKey(false);//开始设置前先把当前热键卸载
             new SettingWindow().ShowDialog();
             SetHotKey(true);//重新加载（可能）新的热键设置
-        }
-
-        private void SetHotKey(bool Add)
-        {
-            if (Add)
-            {
-                hWndSource.AddHook(MainWindowProc);
-                HotKeyBF = HotKey.GlobalAddAtom($"{SettingHelp.Settings.播放暂停.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2)}");
-                HotKeyTZ = HotKey.GlobalAddAtom($"{SettingHelp.Settings.停止关闭.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2)}");
-                
-                HotKey.RegisterHotKey(winHandle, HotKeyBF, SettingHelp.Settings.播放暂停.Item1, SettingHelp.Settings.播放暂停.Item2);
-                HotKey.RegisterHotKey(winHandle, HotKeyTZ, SettingHelp.Settings.停止关闭.Item1, SettingHelp.Settings.停止关闭.Item2);
-            }
-            else//暂时没起作用，todo
-            {
-                hWndSource.RemoveHook(MainWindowProc);
-                HotKey.GlobalDeleteAtom((short)HotKeyBF);
-                HotKey.GlobalDeleteAtom((short)HotKeyTZ);
-                HotKey.UnregisterHotKey(winHandle, HotKeyBF);
-                HotKey.UnregisterHotKey(winHandle, HotKeyTZ);
-            }
         }
         #endregion
 
@@ -376,7 +355,35 @@ namespace RecordWin
         }
         #endregion
 
-        #region 键盘操作
+        #region 热键
+        HwndSource hWndSource;
+        int HotKeyBF;
+        int HotKeyTZ;
+        int HotKeyHB;
+        private void SetHotKey(bool Add)
+        {
+            if (Add)
+            {
+                hWndSource.AddHook(MainWindowProc);
+                HotKeyBF = HotKey.GlobalAddAtom($"{SettingHelp.Settings.播放暂停.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2)}");
+                HotKeyTZ = HotKey.GlobalAddAtom($"{SettingHelp.Settings.停止关闭.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2)}");
+                HotKeyHB = HotKey.GlobalAddAtom($"{SettingHelp.Settings.开关画笔.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2)}");
+
+                HotKey.RegisterHotKey(winHandle, HotKeyBF, SettingHelp.Settings.播放暂停.Item1, SettingHelp.Settings.播放暂停.Item2);
+                HotKey.RegisterHotKey(winHandle, HotKeyTZ, SettingHelp.Settings.停止关闭.Item1, SettingHelp.Settings.停止关闭.Item2);
+                HotKey.RegisterHotKey(winHandle, HotKeyHB, SettingHelp.Settings.开关画笔.Item1, SettingHelp.Settings.开关画笔.Item2);
+            }
+            else//暂时没起作用，todo
+            {
+                hWndSource.RemoveHook(MainWindowProc);
+                HotKey.GlobalDeleteAtom((short)HotKeyBF);
+                HotKey.GlobalDeleteAtom((short)HotKeyTZ);
+                HotKey.GlobalDeleteAtom((short)HotKeyHB);
+                HotKey.UnregisterHotKey(winHandle, HotKeyBF);
+                HotKey.UnregisterHotKey(winHandle, HotKeyTZ);
+                HotKey.UnregisterHotKey(winHandle, HotKeyHB);
+            }
+        }
         private IntPtr MainWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
@@ -400,6 +407,10 @@ namespace RecordWin
                                 else
                                     btClose_Click(null, null);
                             }
+                        }
+                        if(sid == HotKeyHB)
+                        {
+                            btPen_Click(null, null);
                         }
                         handled = true;
                         break;
