@@ -76,15 +76,6 @@
     <Reference Include="AForge.Video.FFMPEG">
       <HintPath>Dlls\AForge.Video.FFMPEG.dll</HintPath>
     </Reference>
-    <Reference Include="AForge.Video.Kinect">
-      <HintPath>Dlls\AForge.Video.Kinect.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.VFW">
-      <HintPath>Dlls\AForge.Video.VFW.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.Ximea">
-      <HintPath>Dlls\AForge.Video.Ximea.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />

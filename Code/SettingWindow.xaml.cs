@@ -18,6 +18,7 @@ namespace RecordWin
             cbBF.Text = SettingHelp.Settings.播放暂停.Item1.ToString();
             cbTZ.Text = SettingHelp.Settings.停止关闭.Item1.ToString();
             cbHB.Text = SettingHelp.Settings.开关画笔.Item1.ToString();
+            cbVideoCode.Text = SettingHelp.Settings.编码类型;
             txtBF.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2);
             txtTZ.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2);
             txtHB.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2);
@@ -25,6 +26,10 @@ namespace RecordWin
             slZHiLiang.ValueChanged += SlZL_ValueChanged;//必须放在Text赋值后再加载事件
             slZhenLv.Value = SettingHelp.Settings.视频帧率;
             slZhenLv.ValueChanged += SlZhenLv_ValueChanged;
+            txtSavePath.Text = SettingHelp.Settings.保存路径;
+            txtSavePath.TextChanged += txtSavePath_TextChanged;
+            txtNameRule.Text = SettingHelp.Settings.命名规则;
+            txtNameRule.TextChanged += txtNameRule_TextChanged;
         }
 
         /// <summary>
@@ -47,7 +52,11 @@ namespace RecordWin
 
         private void cbPlayHidden_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.播放隐藏 = cbPlayHidden.IsChecked.Value;
 
-        private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
+        private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            slZHiLiang.Value = (int)slZHiLiang.Value;
+            SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
+        }
 
         private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -56,7 +65,7 @@ namespace RecordWin
         }
 
         #region 快捷键
-        private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b)
+        private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b,string curSet)
         {
             HotKey.KeyModifiers A = HotKey.KeyModifiers.None;
             int B = 0;
@@ -73,7 +82,7 @@ namespace RecordWin
                 if (pi.PropertyType.Equals(typeof(Tuple<HotKey.KeyModifiers, int>)))//先判断是热键类设置
                 {
                     var v = (Tuple<HotKey.KeyModifiers, int>)pi.GetValue(SettingHelp.Settings);//取除设置的值
-                    if (Equals(result, v))
+                    if (Equals(result, v) && pi.Name != curSet)//防止没有变化的修改提示冲突
                     {
                         Message("当前热键设置冲突，可能导致部分热键失效，请重新设置");
                         break;
@@ -95,21 +104,36 @@ namespace RecordWin
             e.Handled = true;//到此为止，不加这个Text处会显示重复的字母等混乱情况
             return true;
         }
-        private void cbBF_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text);
-        private void cbTZ_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text);
-        private void cbHB_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text);
+        private void cbBF_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text, "播放暂停");
+        private void cbTZ_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text, "停止关闭");
+        private void cbHB_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text, "开关画笔");
         private void txtBF_KeyDown(object sender, KeyEventArgs e)
         {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text);
+            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text, "播放暂停");
         }
         private void txtTZ_KeyDown(object sender, KeyEventArgs e)
         {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text);
+            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text, "停止关闭");
         }
         private void txtHB_KeyDown(object sender, KeyEventArgs e)
         {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text);
+            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text, "开关画笔");
         }
         #endregion
+
+        private void SavePath_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                txtSavePath.Text = folderBrowser.SelectedPath;
+            }
+        }
+
+        private void txtSavePath_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.保存路径 = txtSavePath.Text;
+
+        private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
+
+        private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
     }
 }

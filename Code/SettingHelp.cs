@@ -105,17 +105,38 @@ namespace RecordWin
             get { return _播放隐藏; }
             set { _播放隐藏 = value; SettingHelp.SaveSetting(); }
         }
+
+        string _保存路径 = "Temp";
+        public string 保存路径
+        {
+            get { return _保存路径; }
+            set { _保存路径 = value; SettingHelp.SaveSetting(); }
+        }
+
+        string _编码类型 = "MSMPEG4v2";
+        public string 编码类型
+        {
+            get { return _编码类型; }
+            set { _编码类型 = value; SettingHelp.SaveSetting(); }
+        }
+
+        string _命名规则 = "yyMMdd_HHmmss";
+        public string 命名规则
+        {
+            get { return _命名规则; }
+            set { _命名规则 = value; SettingHelp.SaveSetting(); }
+        }
         #endregion
 
         #region 录制
-        int _视频帧率 = 21;
+        int _视频帧率 = 20;
         public int 视频帧率
         {
             get { return _视频帧率; }
             set { _视频帧率 = value; SettingHelp.SaveSetting(); }
         }
 
-        int _视频质量 = 3;
+        int _视频质量 = 5;
         public int 视频质量
         {
             get { return _视频质量; }

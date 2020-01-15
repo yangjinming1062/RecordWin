@@ -44,7 +44,7 @@ namespace RecordWin
                     {
                         VideoOutPut = new VideoFileWriter();
                         VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MPEG4, Camera.VideoResolution.BitCount);
+                           Camera.VideoResolution.AverageFrameRate, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型), Camera.VideoResolution.BitCount);
                     }
                 }
                 Show();

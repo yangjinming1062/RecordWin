@@ -68,7 +68,7 @@ namespace RecordWin
         /// <param name="Type">文件后缀，需要带点，如.mp4</param>
         private string MakeFilePath(string Type)
         {
-            string path = Path.Combine("Temp", $"{DateTime.Now.ToString("yyMMdd_HHmmss")}{Type}");
+            string path = Path.Combine(SettingHelp.Settings.保存路径, $"{DateTime.Now.ToString(SettingHelp.Settings.命名规则)}{Type}");
             if (!Directory.Exists(path)) Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
         }
@@ -178,7 +178,6 @@ namespace RecordWin
                     this.Dispatcher.Invoke(new Action(() =>
                     {
                         this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
-
                     }));
                 }
             }
@@ -194,8 +193,8 @@ namespace RecordWin
                 var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
                 lock (this)
                 {
-                    this.videoWriter.Open(curVideoName, curScreen.Bounds.Width, curScreen.Bounds.Height, 
-                        SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v2, 
+                    this.videoWriter.Open(curVideoName, curScreen.Bounds.Width, curScreen.Bounds.Height,
+                        SettingHelp.Settings.视频帧率, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
                 this.videoStreamer = new ScreenCaptureStream(curScreen.Bounds, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
