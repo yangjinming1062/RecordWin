@@ -1,6 +1,7 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
+using NAudio.Wave;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -24,11 +25,15 @@ namespace RecordWin
         public MainWindow()
         {
             InitializeComponent();
-            var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表
-            if (devs.Count < 1)//未检测到摄像头则不显示摄像头配置
+            if (new FilterInfoCollection(FilterCategory.VideoInputDevice).Count < 1)//未检测到摄像头则不显示摄像头配置
             {
                 cbSXT.Visibility = Visibility.Collapsed;
                 SettingHelp.Settings.摄像头 = false;
+            }
+            if (new WaveInEvent().DeviceNumber < 1)
+            {
+                cbSY.Visibility = Visibility.Collapsed;
+                SettingHelp.Settings.声音 = false;
             }
             lbTime.Visibility = Visibility.Collapsed;
             HiddenTools(SettingHelp.Settings.自动隐藏);
@@ -157,10 +162,12 @@ namespace RecordWin
         private bool isRecording;
         private bool isParsing;
         private TimeSpan videoSpan;//用来实时显示当前录制时长
-        private VideoFileWriter videoWriter = new VideoFileWriter();
-        private ScreenCaptureStream videoStreamer;
-        private static RecordSound recordSound = new RecordSound();//录音
-        private string curVideoName;
+        private VideoFileWriter videoWriter = new VideoFileWriter();//视频写入
+        private ScreenCaptureStream videoStreamer;//视频捕获
+        private WaveInEvent audioStreamer;//音频捕获
+        private WaveFileWriter audioWriter;//音频写入
+        private string curVideoName;//当前录制的视频路径
+        private string curAudioName;//当前录制的音频路径
         private int FrameCount;
         /// <summary>
         /// 桌面输出回调
@@ -186,12 +193,22 @@ namespace RecordWin
                 });
             }
         }
+        /// <summary>
+        /// 音频回调
+        /// </summary>
+        private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
+        {
+            if (this.isRecording && !isParsing)
+                audioWriter.Write(e.Buffer, 0, e.BytesRecorded);
+        }
 
         private void BeginRecord()
         {
             curVideoName = MakeFilePath(".avi");
+            curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             videoSpan = new TimeSpan();
+            this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
             FrameCount = 0;
             int RecordWidth = 0;
             int RecordHeight = 0;
@@ -230,7 +247,13 @@ namespace RecordWin
                 carmeraShow.Owner = this;
             }
             if (SettingHelp.Settings.声音)
-                recordSound.StartRecordSound();
+            {
+                audioStreamer = new WaveInEvent();
+                audioStreamer.DataAvailable += WaveIn_DataAvailable;
+                audioWriter = new WaveFileWriter(curAudioName, audioStreamer.WaveFormat);
+                audioStreamer.StartRecording();
+            }
+
             this.isRecording = true;
             this.isParsing = false;
             if (SettingHelp.Settings.录制隐藏) HiddenTools(true);
@@ -261,10 +284,11 @@ namespace RecordWin
                     videoStreamer.Stop();
                     videoWriter.Close();
                 }
-                string audioName = string.IsNullOrEmpty(curVideoName) ? MakeFilePath(".wav") : curVideoName.Replace(".avi", ".wav");//如果有视频则音频文件和视频文件同名，否则新生成一个
+                
                 if (SettingHelp.Settings.声音)
                 {
-                    recordSound.EndRecordSound(audioName);
+                    audioStreamer.StopRecording();
+                    audioStreamer.Dispose();
                 }
 
                 #region 音视频合成
@@ -273,13 +297,14 @@ namespace RecordWin
                     if (SettingHelp.Settings.声音)//又有声音,则合成
                     {
                         var video = new VideoManager(curVideoName, true);
-                        video.AddAudioStream(audioName, 0);
+                        video.AddAudioStream(curAudioName, 0);
                         video.Close();
-                        File.Delete(audioName);//合成后移除音频文件
+                        //File.Delete(audioName);//合成后移除音频文件
                     }
                 }
                 #endregion
                 curVideoName = "";
+                curAudioName = "";
                 this.isRecording = false;
                 HiddenTools(SettingHelp.Settings.自动隐藏);
                 btBegin.Visibility = Visibility.Visible;

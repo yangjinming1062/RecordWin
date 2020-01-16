@@ -69,8 +69,8 @@
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
                         <StackPanel>
-                            <Label Content="录制隐藏："/>
-                            <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="当勾选时，无论当前是否钉住命令栏开始录制时都将取消钉住" VerticalAlignment="Center"/>
+                            <Label Content="录制时隐藏："/>
+                            <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="开始录制时命令栏将临时取消钉住" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel>
                             <Label Content="文件保存位置："/>
@@ -138,11 +138,11 @@
                         </StackPanel>
                         <StackPanel>
                             <Label Content="命名规则："/>
-                            <TextBox x:Name="txtNameRule"/>
+                            <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认"/>
                         </StackPanel>
                         <StackPanel x:Name="sMulScreen">
                             <Label Content="跨屏录制："/>
-                            <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="当勾选时，会录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="勾选时录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>

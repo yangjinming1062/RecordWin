@@ -76,6 +76,9 @@
     <Reference Include="AForge.Video.FFMPEG">
       <HintPath>Dlls\AForge.Video.FFMPEG.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>Dlls\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -107,7 +110,6 @@
     <Compile Include="Code\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Code\RecordSound.cs" />
     <Compile Include="Code\Media\VideoStream.cs" />
     <Page Include="Code\CameraShow.xaml">
       <SubType>Designer</SubType>
