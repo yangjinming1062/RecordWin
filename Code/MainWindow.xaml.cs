@@ -190,18 +190,36 @@ namespace RecordWin
         private void BeginRecord()
         {
             curVideoName = MakeFilePath(".avi");
+            var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             videoSpan = new TimeSpan();
             FrameCount = 0;
+            int RecordWidth = 0;
+            int RecordHeight = 0;
+            if (SettingHelp.Settings.跨屏录制)
+            {
+                foreach (var s in System.Windows.Forms.Screen.AllScreens)
+                {
+                    RecordWidth += s.Bounds.Width;
+                    if (s.Bounds.Height > RecordHeight)
+                        RecordHeight = s.Bounds.Height;
+                }
+            }
+            else
+            {
+                RecordWidth = curScreen.Bounds.Width;
+                RecordHeight = curScreen.Bounds.Height;
+            }
             if (SettingHelp.Settings.桌面)
             {
-                var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
                 lock (this)
                 {
-                    this.videoWriter.Open(curVideoName, curScreen.Bounds.Width, curScreen.Bounds.Height,
+                    this.videoWriter.Open(curVideoName, RecordWidth, RecordHeight,
                         SettingHelp.Settings.视频帧率, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
-                this.videoStreamer = new ScreenCaptureStream(curScreen.Bounds, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
+                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X, 
+                    SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.Y, RecordWidth, RecordHeight);
+                this.videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
                 this.videoStreamer.NewFrame += new NewFrameEventHandler(video_NewFrame);
                 this.videoStreamer.Start();
             }

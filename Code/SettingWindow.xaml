@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="430" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Height="460" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -139,6 +139,10 @@
                         <StackPanel>
                             <Label Content="命名规则："/>
                             <TextBox x:Name="txtNameRule"/>
+                        </StackPanel>
+                        <StackPanel x:Name="sMulScreen">
+                            <Label Content="跨屏录制："/>
+                            <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="当勾选时，会录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>

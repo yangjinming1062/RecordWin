@@ -98,7 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AudioStream.cs" />
+    <Compile Include="Code\AudioStream.cs" />
     <Compile Include="Code\Media\AviStream.cs" />
     <Compile Include="Code\Media\Avi.cs" />
     <Compile Include="Code\CameraShow.xaml.cs">

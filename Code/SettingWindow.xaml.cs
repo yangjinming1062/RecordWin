@@ -15,6 +15,12 @@ namespace RecordWin
         {
             InitializeComponent();
             cbPlayHidden.IsChecked = SettingHelp.Settings.录制隐藏;
+            if (System.Windows.Forms.Screen.AllScreens.Length < 2)//没有多个屏幕则不显示
+            {
+                sMulScreen.Visibility = Visibility.Collapsed;
+                SettingHelp.Settings.跨屏录制 = false;
+            }
+            cbMultiScreen.IsChecked = SettingHelp.Settings.跨屏录制;
             cbBF.Text = SettingHelp.Settings.播放暂停.Item1.ToString();
             cbTZ.Text = SettingHelp.Settings.停止关闭.Item1.ToString();
             cbHB.Text = SettingHelp.Settings.开关画笔.Item1.ToString();
@@ -138,6 +144,8 @@ namespace RecordWin
         private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
 
         private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
+        
+        private void cbMultiScreen_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.跨屏录制 = cbMultiScreen.IsChecked.Value;
         #endregion
     }
 }

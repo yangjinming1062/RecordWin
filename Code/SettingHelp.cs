@@ -126,6 +126,13 @@ namespace RecordWin
             get { return _命名规则; }
             set { _命名规则 = value; SettingHelp.SaveSetting(); }
         }
+
+        bool _跨屏录制 = false;
+        public bool 跨屏录制
+        {
+            get { return _跨屏录制; }
+            set { _跨屏录制 = value; SettingHelp.SaveSetting(); }
+        }
         #endregion
 
         #region 录制
