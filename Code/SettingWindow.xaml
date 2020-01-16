@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="450" Width="600" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
-    <Grid>
+        Height="430" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+    <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
                 <Setter Property="Padding" Value="0"/>
-                <Setter Property="Width" Value="32"/>
-                <Setter Property="Height" Value="32"/>
+                <Setter Property="Width" Value="24"/>
+                <Setter Property="Height" Value="24"/>
                 <Setter Property="Margin" Value="4"/>
                 <Setter Property="Cursor" Value="Arrow"/>
                 <Setter Property="Focusable" Value="False"/>
@@ -19,31 +19,29 @@
             <Style TargetType="Path">
                 <Setter Property="Fill" Value="White"/>
                 <Setter Property="Stretch" Value="Uniform"/>
-                <Setter Property="Width" Value="15"/>
+                <Setter Property="Width" Value="12"/>
                 <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property ="HorizontalAlignment" Value="Center"/>
             </Style>
             <Style TargetType="GroupBox">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="Width" Value="590"/>
+                <Setter Property="Width" Value="540"/>
+                <Setter Property="Foreground" Value="#FFD34B4B"/>
             </Style>
             <Style TargetType="TextBox">
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="MinWidth" Value="60"/>
             </Style>
+            <Style TargetType="StackPanel">
+                <Setter Property="Orientation" Value="Horizontal"/>
+                <Setter Property="Margin" Value="4"/>
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="26*"/>
-            <RowDefinition Height="113*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                <GradientStop Color="#FF97B0DA"/>
-            </LinearGradientBrush>
-        </Grid.Background>
         <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1,1,1,0">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -56,43 +54,35 @@
                 </local:ActivableButton>
             </Grid>
         </Border>
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Grid.RowSpan="2">
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
             <WrapPanel Orientation="Vertical">
-                <GroupBox Header="录制相关">
-                    <StackPanel>
-                        <CheckBox x:Name="cbPlayHidden" Content="录制时缩小命令栏" Click="cbPlayHidden_Click" ToolTip="当勾选时，无论当前是否钉住命令栏录制中都将取消钉住" Margin="0,8,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="4">
+                <GroupBox Header="录制设置">
+                    <StackPanel Orientation="Vertical" Margin="0">
+                        <StackPanel>
                             <Label Content="视频帧率："/>
-                            <Slider x:Name="slZhenLv" Minimum="10" Maximum="80" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
+                            <Slider Foreground="White" x:Name="slZhenLv" Minimum="10" Maximum="60" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
                             <Label Content="{Binding ElementName=slZhenLv, Path=Value}" ToolTip="帧率当前值"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="4">
+                        <StackPanel>
                             <Label Content="视频质量："/>
-                            <Slider x:Name="slZHiLiang" Minimum="1" Maximum="30" Value="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
+                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="30" Value="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="4">
+                        <StackPanel>
+                            <Label Content="录制隐藏："/>
+                            <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="当勾选时，无论当前是否钉住命令栏开始录制时都将取消钉住" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel>
                             <Label Content="文件保存位置："/>
                             <TextBox x:Name="txtSavePath" Width="255" Focusable="True" ToolTip="可手动输入或者点击右侧浏览选择电脑中文件夹"/>
                             <Button Width="20" Content="..." Click="SavePath_Click" ToolTip="浏览"/>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="快捷键设置(重启生效)">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Content="播放/暂停："/>
-                        <Label Grid.Row="1" Content="停止/关闭："/>
-                        <Label Grid.Row="2" Content="开/关画笔："/>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                <GroupBox Header="热键设置（重启生效）">
+                    <StackPanel Orientation="Vertical" Margin="0">
+                        <StackPanel>
+                            <Label Content="播放/暂停："/>
                             <ComboBox x:Name="cbBF" MinWidth="60" DropDownClosed="cbBF_DropDownClosed">
                                 <TextBlock Text="None"/>
                                 <TextBlock Text="Alt"/>
@@ -103,7 +93,8 @@
                             <Label Content="+" Margin="5,0"/>
                             <TextBox x:Name="txtBF" PreviewKeyDown="txtBF_KeyDown" ToolTip="按下键盘进行修改"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                        <StackPanel>
+                            <Label Content="停止/关闭："/>
                             <ComboBox x:Name="cbTZ" MinWidth="60" DropDownClosed="cbTZ_DropDownClosed">
                                 <TextBlock Text="None"/>
                                 <TextBlock Text="Alt"/>
@@ -114,7 +105,8 @@
                             <Label Content="+" Margin="5,0"/>
                             <TextBox x:Name="txtTZ" PreviewKeyDown="txtTZ_KeyDown" ToolTip="按下键盘进行修改"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                        <StackPanel>
+                            <Label Content="开/关画笔："/>
                             <ComboBox x:Name="cbHB" MinWidth="60" DropDownClosed="cbHB_DropDownClosed">
                                 <TextBlock Text="None"/>
                                 <TextBlock Text="Alt"/>
@@ -125,11 +117,11 @@
                             <Label Content="+" Margin="5,0"/>
                             <TextBox x:Name="txtHB" PreviewKeyDown="txtHB_KeyDown" ToolTip="按下键盘进行修改"/>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </GroupBox>
-                <GroupBox Header="高级设置（不懂请保持默认）">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="4">
+                <GroupBox Header="高级设置（慎重修改）">
+                    <StackPanel Orientation="Vertical" Margin="0">
+                        <StackPanel>
                             <Label Content="编码方案："/>
                             <ComboBox x:Name="cbVideoCode" MinWidth="60" DropDownClosed="cbVideoCode_DropDownClosed">
                                 <TextBlock Text="Default"/>
@@ -144,7 +136,7 @@
                                 <!--<TextBlock Text="Raw"/>-->
                             </ComboBox>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="4">
+                        <StackPanel>
                             <Label Content="命名规则："/>
                             <TextBox x:Name="txtNameRule"/>
                         </StackPanel>

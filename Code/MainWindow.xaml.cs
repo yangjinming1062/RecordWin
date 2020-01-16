@@ -170,16 +170,20 @@ namespace RecordWin
             if (this.isRecording && !isParsing)
             {
                 this.videoWriter.WriteVideoFrame(e.Frame);
-                FrameCount += 1;
-                if (FrameCount % SettingHelp.Settings.视频帧率 == 0)//凑够一个帧组加1s1,一切努力都是为了使实际视频时长和显示的时长高度匹配
+                //计算当前进度这个会拖慢视频录制进程,新开线程来处理进度显示
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
-                    FrameCount = 0;
-                    videoSpan = videoSpan.Add(new TimeSpan(0, 0, 0, 1));
-                    this.Dispatcher.Invoke(new Action(() =>
+                    FrameCount += 1;
+                    if (FrameCount == SettingHelp.Settings.视频帧率)//凑够一个帧组加1s1,一切努力都是为了使实际视频时长和显示的时长高度匹配
                     {
-                        this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
-                    }));
-                }
+                        FrameCount = 0;
+                        videoSpan = videoSpan.Add(new TimeSpan(0, 0, 0, 1));
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+                        }));
+                    }
+                });
             }
         }
 
@@ -211,7 +215,7 @@ namespace RecordWin
                 recordSound.StartRecordSound();
             this.isRecording = true;
             this.isParsing = false;
-            if (SettingHelp.Settings.播放隐藏) HiddenTools(true);
+            if (SettingHelp.Settings.录制隐藏) HiddenTools(true);
             btSet.Visibility = Visibility.Hidden;
             lbTime.Visibility = Visibility.Visible;
             ChangePlace();

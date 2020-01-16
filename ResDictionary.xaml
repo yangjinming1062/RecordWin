@@ -23,6 +23,10 @@
     <SolidColorBrush x:Key="ToolButtonBackground" Color="{StaticResource FunctionalButtonBackgroundColor}" />
     <SolidColorBrush x:Key="ToolButtonHover" Color="{StaticResource FunctionalButtonHoverColor}" />
     <SolidColorBrush x:Key="ToollButtonActive" Color="{StaticResource FunctionalButtonActiveColor}" />
+    <LinearGradientBrush x:Key="LinearBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFA1ECF3" Offset="1"/>
+        <GradientStop Color="#FF97B0DA"/>
+    </LinearGradientBrush>
 
     <Duration x:Key="Duration1">0:0:0:0.1</Duration>
     <Duration x:Key="Duration2">0:0:0:0.2</Duration>

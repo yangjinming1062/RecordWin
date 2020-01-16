@@ -99,11 +99,11 @@ namespace RecordWin
             set { _自动隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
-        bool _播放隐藏 = true;
-        public bool 播放隐藏
+        bool _录制隐藏 = true;
+        public bool 录制隐藏
         {
-            get { return _播放隐藏; }
-            set { _播放隐藏 = value; SettingHelp.SaveSetting(); }
+            get { return _录制隐藏; }
+            set { _录制隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
         string _保存路径 = "Temp";

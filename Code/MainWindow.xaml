@@ -81,15 +81,9 @@
                     <Path Data="{DynamicResource IconStop}" />
                 </local:ActivableButton>
                 <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
-                    <Border BorderThickness="1" BorderBrush="Black">
-                        <Border.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FFA1ECF3" Offset="1"/>
-                                <GradientStop Color="#FF97B0DA"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
+                    <Border BorderThickness="1" BorderBrush="Black" Background="{StaticResource LinearBackground}">
                         <WrapPanel Orientation="Vertical">
-                            <GroupBox Header="录制设置">
+                            <GroupBox Header="录制内容">
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Margin="4" Click="cbZM_Click" x:Name="cbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
                                     <CheckBox Margin="4" Click="cbSXT_Click" x:Name="cbSXT" Content="摄像头" VerticalAlignment="Center"/>

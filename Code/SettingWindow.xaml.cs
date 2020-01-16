@@ -14,7 +14,7 @@ namespace RecordWin
         public SettingWindow()
         {
             InitializeComponent();
-            cbPlayHidden.IsChecked = SettingHelp.Settings.播放隐藏;
+            cbPlayHidden.IsChecked = SettingHelp.Settings.录制隐藏;
             cbBF.Text = SettingHelp.Settings.播放暂停.Item1.ToString();
             cbTZ.Text = SettingHelp.Settings.停止关闭.Item1.ToString();
             cbHB.Text = SettingHelp.Settings.开关画笔.Item1.ToString();
@@ -50,7 +50,8 @@ namespace RecordWin
 
         private void btClose_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void cbPlayHidden_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.播放隐藏 = cbPlayHidden.IsChecked.Value;
+        #region 录制设置
+        private void cbPlayHidden_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.录制隐藏 = cbPlayHidden.IsChecked.Value;
 
         private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -63,6 +64,18 @@ namespace RecordWin
             slZhenLv.Value = ((int)(slZhenLv.Value / 10)) * 10;//只允许整10的
             SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
         }
+
+        private void SavePath_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                txtSavePath.Text = folderBrowser.SelectedPath;
+            }
+        }
+
+        private void txtSavePath_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.保存路径 = txtSavePath.Text;
+        #endregion
 
         #region 快捷键
         private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b,string curSet)
@@ -121,19 +134,10 @@ namespace RecordWin
         }
         #endregion
 
-        private void SavePath_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.FolderBrowserDialog folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                txtSavePath.Text = folderBrowser.SelectedPath;
-            }
-        }
-
-        private void txtSavePath_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.保存路径 = txtSavePath.Text;
-
+        #region 高级设置
         private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
 
         private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
+        #endregion
     }
 }
