@@ -81,6 +81,8 @@ namespace RecordWin
         }
 
         private void txtSavePath_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.保存路径 = txtSavePath.Text;
+
+        private void cbMultiScreen_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.跨屏录制 = cbMultiScreen.IsChecked.Value;
         #endregion
 
         #region 快捷键
@@ -144,8 +146,6 @@ namespace RecordWin
         private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
 
         private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
-        
-        private void cbMultiScreen_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.跨屏录制 = cbMultiScreen.IsChecked.Value;
         #endregion
     }
 }

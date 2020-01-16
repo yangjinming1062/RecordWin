@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
-        mc:Ignorable="d" ResizeMode="NoResize" UseLayoutRounding="True" WindowState="Maximized" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
+        mc:Ignorable="d" ResizeMode="NoResize" UseLayoutRounding="True" WindowState="Normal" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
     <Window.Resources>
         <SolidColorBrush x:Key="PaintingColor1" Color="#FF86E238"/>
         <SolidColorBrush x:Key="PaintingColor2" Color="#FF38E2A8"/>

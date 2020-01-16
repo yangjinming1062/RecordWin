@@ -403,7 +403,6 @@ namespace RecordWin
                 btPen.IsActived = true;
                 win.Owner = this;
                 win.Show();
-                TitleDragMove(false);
             }
         }
         #endregion

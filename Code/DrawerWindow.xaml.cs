@@ -37,7 +37,18 @@ namespace RecordWin
         {
             _history = new Stack<StrokesHistoryNode>();
             _redoHistory = new Stack<StrokesHistoryNode>();
-
+            #region 跨屏
+            Left = 0;
+            Top = 0;
+            Width = 0;
+            Height = 0;
+            foreach (var s in System.Windows.Forms.Screen.AllScreens)
+            {
+                Width += s.Bounds.Width;
+                if (s.Bounds.Height > Height)
+                    Height = s.Bounds.Height;
+            }
+            #endregion
             InitializeComponent();
             SetColor(DefaultColorPicker);
             SetEnable(true, _mode);

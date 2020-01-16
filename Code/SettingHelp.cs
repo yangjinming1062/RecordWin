@@ -33,7 +33,9 @@ namespace RecordWin
             else
                 GetSetting();
         }
-
+        /// <summary>
+        /// 根据当前filePath获取配置
+        /// </summary>
         private static void GetSetting()
         {
             if (Path.GetDirectoryName(filePath).Length > 0)
