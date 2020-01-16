@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="460" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Height="400" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -26,7 +26,6 @@
             </Style>
             <Style TargetType="GroupBox">
                 <Setter Property="Margin" Value="4"/>
-                <Setter Property="Width" Value="540"/>
                 <Setter Property="Foreground" Value="#FFD34B4B"/>
             </Style>
             <Style TargetType="TextBox">
@@ -87,69 +86,71 @@
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Header="热键设置（重启生效）">
-                    <StackPanel Orientation="Vertical" Margin="0">
-                        <StackPanel>
-                            <Label Content="播放/暂停："/>
-                            <ComboBox x:Name="cbBF" MinWidth="60" DropDownClosed="cbBF_DropDownClosed">
-                                <TextBlock Text="None"/>
-                                <TextBlock Text="Alt"/>
-                                <TextBlock Text="Ctrl"/>
-                                <TextBlock Text="Shift"/>
-                                <TextBlock Text="WindowsKey"/>
-                            </ComboBox>
-                            <Label Content="+" Margin="5,0"/>
-                            <TextBox x:Name="txtBF" PreviewKeyDown="txtBF_KeyDown" ToolTip="按下键盘进行修改"/>
+                <WrapPanel>
+                    <GroupBox Header="热键设置（重启生效）" Width="290">
+                        <StackPanel Orientation="Vertical" Margin="0">
+                            <StackPanel>
+                                <Label Content="播放/暂停："/>
+                                <ComboBox x:Name="cbBF" MinWidth="60" DropDownClosed="cbBF_DropDownClosed">
+                                    <TextBlock Text="None"/>
+                                    <TextBlock Text="Alt"/>
+                                    <TextBlock Text="Ctrl"/>
+                                    <TextBlock Text="Shift"/>
+                                    <TextBlock Text="WindowsKey"/>
+                                </ComboBox>
+                                <Label Content="+" Margin="5,0"/>
+                                <TextBox x:Name="txtBF" PreviewKeyDown="txtBF_KeyDown" ToolTip="按下键盘进行修改"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="停止/关闭："/>
+                                <ComboBox x:Name="cbTZ" MinWidth="60" DropDownClosed="cbTZ_DropDownClosed">
+                                    <TextBlock Text="None"/>
+                                    <TextBlock Text="Alt"/>
+                                    <TextBlock Text="Ctrl"/>
+                                    <TextBlock Text="Shift"/>
+                                    <TextBlock Text="WindowsKey"/>
+                                </ComboBox>
+                                <Label Content="+" Margin="5,0"/>
+                                <TextBox x:Name="txtTZ" PreviewKeyDown="txtTZ_KeyDown" ToolTip="按下键盘进行修改"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="开/关画笔："/>
+                                <ComboBox x:Name="cbHB" MinWidth="60" DropDownClosed="cbHB_DropDownClosed">
+                                    <TextBlock Text="None"/>
+                                    <TextBlock Text="Alt"/>
+                                    <TextBlock Text="Ctrl"/>
+                                    <TextBlock Text="Shift"/>
+                                    <TextBlock Text="WindowsKey"/>
+                                </ComboBox>
+                                <Label Content="+" Margin="5,0"/>
+                                <TextBox x:Name="txtHB" PreviewKeyDown="txtHB_KeyDown" ToolTip="按下键盘进行修改"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel>
-                            <Label Content="停止/关闭："/>
-                            <ComboBox x:Name="cbTZ" MinWidth="60" DropDownClosed="cbTZ_DropDownClosed">
-                                <TextBlock Text="None"/>
-                                <TextBlock Text="Alt"/>
-                                <TextBlock Text="Ctrl"/>
-                                <TextBlock Text="Shift"/>
-                                <TextBlock Text="WindowsKey"/>
-                            </ComboBox>
-                            <Label Content="+" Margin="5,0"/>
-                            <TextBox x:Name="txtTZ" PreviewKeyDown="txtTZ_KeyDown" ToolTip="按下键盘进行修改"/>
+                    </GroupBox>
+                    <GroupBox Header="高级设置（慎重修改）" Width="242">
+                        <StackPanel Orientation="Vertical" Margin="0">
+                            <StackPanel>
+                                <Label Content="编码方案："/>
+                                <ComboBox x:Name="cbVideoCode" MinWidth="60" DropDownClosed="cbVideoCode_DropDownClosed">
+                                    <TextBlock Text="Default"/>
+                                    <TextBlock Text="MPEG4"/>
+                                    <TextBlock Text="WMV1"/>
+                                    <TextBlock Text="WMV2"/>
+                                    <TextBlock Text="MSMPEG4v2"/>
+                                    <TextBlock Text="MSMPEG4v3"/>
+                                    <TextBlock Text="H263P"/>
+                                    <TextBlock Text="FLV1"/>
+                                    <TextBlock Text="MPEG2"/>
+                                    <!--<TextBlock Text="Raw"/>-->
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="命名规则："/>
+                                <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel>
-                            <Label Content="开/关画笔："/>
-                            <ComboBox x:Name="cbHB" MinWidth="60" DropDownClosed="cbHB_DropDownClosed">
-                                <TextBlock Text="None"/>
-                                <TextBlock Text="Alt"/>
-                                <TextBlock Text="Ctrl"/>
-                                <TextBlock Text="Shift"/>
-                                <TextBlock Text="WindowsKey"/>
-                            </ComboBox>
-                            <Label Content="+" Margin="5,0"/>
-                            <TextBox x:Name="txtHB" PreviewKeyDown="txtHB_KeyDown" ToolTip="按下键盘进行修改"/>
-                        </StackPanel>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Header="高级设置（慎重修改）">
-                    <StackPanel Orientation="Vertical" Margin="0">
-                        <StackPanel>
-                            <Label Content="编码方案："/>
-                            <ComboBox x:Name="cbVideoCode" MinWidth="60" DropDownClosed="cbVideoCode_DropDownClosed">
-                                <TextBlock Text="Default"/>
-                                <TextBlock Text="MPEG4"/>
-                                <TextBlock Text="WMV1"/>
-                                <TextBlock Text="WMV2"/>
-                                <TextBlock Text="MSMPEG4v2"/>
-                                <TextBlock Text="MSMPEG4v3"/>
-                                <TextBlock Text="H263P"/>
-                                <TextBlock Text="FLV1"/>
-                                <TextBlock Text="MPEG2"/>
-                                <!--<TextBlock Text="Raw"/>-->
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <Label Content="命名规则："/>
-                            <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认"/>
-                        </StackPanel>
-                    </StackPanel>
-                </GroupBox>
+                    </GroupBox>
+                </WrapPanel>
             </WrapPanel>
         </Border>
     </Grid>
