@@ -5,6 +5,7 @@ using NAudio.Wave;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -169,13 +170,42 @@ namespace RecordWin
         private string curVideoName;//当前录制的视频路径
         private string curAudioName;//当前录制的音频路径
         private int FrameCount;
+
+        #region 鼠标捕获
+        [DllImport("user32.dll")]
+        static extern bool GetCursorInfo(out CURSORINFO pci);
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct POINT
+        {
+            public Int32 x;
+            public Int32 y;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        struct CURSORINFO
+        {
+            public Int32 cbSize;
+            public Int32 flags;
+            public IntPtr hCursor;
+            public POINT ptScreenPos;
+        }
+        #endregion
         /// <summary>
         /// 桌面输出回调
         /// </summary>
-        private void video_NewFrame(object sender, NewFrameEventArgs e)
+        private void VideoNewFrame(object sender, NewFrameEventArgs e)
         {
             if (this.isRecording && !isParsing)
             {
+                if (SettingHelp.Settings.捕获鼠标)
+                {
+                    var g = System.Drawing.Graphics.FromImage(e.Frame);
+                    CURSORINFO pci;
+                    pci.cbSize = Marshal.SizeOf(typeof(CURSORINFO));
+                    GetCursorInfo(out pci);
+                    System.Windows.Forms.Cursor cur = new System.Windows.Forms.Cursor(pci.hCursor);
+                    cur.Draw(g, new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10, System.Windows.Forms.Cursor.Position.Y - 10, cur.Size.Width, cur.Size.Height));
+                }
                 this.videoWriter.WriteVideoFrame(e.Frame);
                 //计算当前进度这个会拖慢视频录制进程,新开线程来处理进度显示
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
@@ -196,7 +226,7 @@ namespace RecordWin
         /// <summary>
         /// 音频回调
         /// </summary>
-        private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
+        private void AudioDataAvailable(object sender, WaveInEventArgs e)
         {
             if (this.isRecording && !isParsing)
                 audioWriter.Write(e.Buffer, 0, e.BytesRecorded);
@@ -237,7 +267,7 @@ namespace RecordWin
                 System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X, 
                     SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.Y, RecordWidth, RecordHeight);
                 this.videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
-                this.videoStreamer.NewFrame += new NewFrameEventHandler(video_NewFrame);
+                this.videoStreamer.NewFrame += VideoNewFrame;
                 this.videoStreamer.Start();
             }
             if (SettingHelp.Settings.摄像头)
@@ -249,7 +279,7 @@ namespace RecordWin
             if (SettingHelp.Settings.声音)
             {
                 audioStreamer = new WaveInEvent();
-                audioStreamer.DataAvailable += WaveIn_DataAvailable;
+                audioStreamer.DataAvailable += AudioDataAvailable;
                 audioWriter = new WaveFileWriter(curAudioName, audioStreamer.WaveFormat);
                 audioStreamer.StartRecording();
             }

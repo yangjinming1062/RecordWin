@@ -135,10 +135,17 @@ namespace RecordWin
             get { return _跨屏录制; }
             set { _跨屏录制 = value; SettingHelp.SaveSetting(); }
         }
+
+        bool _捕获鼠标 = false;
+        public bool 捕获鼠标
+        {
+            get { return _捕获鼠标; }
+            set { _捕获鼠标 = value; SettingHelp.SaveSetting(); }
+        }
         #endregion
 
         #region 录制
-        int _视频帧率 = 20;
+        int _视频帧率 = 10;
         public int 视频帧率
         {
             get { return _视频帧率; }
@@ -168,7 +175,7 @@ namespace RecordWin
             set { _停止关闭 = value; SettingHelp.SaveSetting(); }
         }
 
-        Tuple<HotKey.KeyModifiers, int> _开关画笔 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.None, (int)System.Windows.Forms.Keys.Escape);
+        Tuple<HotKey.KeyModifiers, int> _开关画笔 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.None, (int)System.Windows.Forms.Keys.F1);
         public Tuple<HotKey.KeyModifiers, int> 开关画笔
         {
             get { return _开关画笔; }

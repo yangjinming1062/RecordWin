@@ -15,6 +15,7 @@ namespace RecordWin
         {
             InitializeComponent();
             cbPlayHidden.IsChecked = SettingHelp.Settings.录制隐藏;
+            cbMouse.IsChecked = SettingHelp.Settings.捕获鼠标;
             if (System.Windows.Forms.Screen.AllScreens.Length < 2)//没有多个屏幕则不显示
             {
                 sMulScreen.Visibility = Visibility.Collapsed;
@@ -83,6 +84,8 @@ namespace RecordWin
         private void txtSavePath_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.保存路径 = txtSavePath.Text;
 
         private void cbMultiScreen_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.跨屏录制 = cbMultiScreen.IsChecked.Value;
+
+        private void cbMouse_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.捕获鼠标 = cbMouse.IsChecked.Value;
         #endregion
 
         #region 快捷键
