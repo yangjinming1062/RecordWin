@@ -290,7 +290,7 @@ namespace RecordWin
             btSet.Visibility = Visibility.Hidden;
             lbTime.Visibility = Visibility.Visible;
             ChangePlace();
-            TitleDragMove(false);
+            //TitleDragMove(false);
         }
 
         internal void StopRecord(bool ShowErr = true)

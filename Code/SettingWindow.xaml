@@ -133,11 +133,11 @@
                                 <Label Content="编码方案："/>
                                 <ComboBox x:Name="cbVideoCode" MinWidth="60" DropDownClosed="cbVideoCode_DropDownClosed">
                                     <TextBlock Text="Default"/>
-                                    <TextBlock Text="MPEG4"/>
+                                    <TextBlock Text="MPEG4" />
                                     <TextBlock Text="WMV1"/>
                                     <TextBlock Text="WMV2"/>
                                     <TextBlock Text="MSMPEG4v2"/>
-                                    <TextBlock Text="MSMPEG4v3"/>
+                                    <TextBlock Text="MSMPEG4v3" ToolTip="默认值"/>
                                     <TextBlock Text="H263P"/>
                                     <TextBlock Text="FLV1"/>
                                     <TextBlock Text="MPEG2"/>
@@ -146,7 +146,7 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="命名规则："/>
-                                <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认"/>
+                                <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认值"/>
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
