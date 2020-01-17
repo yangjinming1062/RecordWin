@@ -17,10 +17,7 @@ namespace RecordWin
         public static readonly DependencyProperty FromProperty;
         public CornerRadius From
         {
-            get
-            {
-                return (CornerRadius)GetValue(FromProperty);
-            }
+            get => (CornerRadius)GetValue(FromProperty);
             set
             {
                 SetValue(FromProperty, value);
@@ -30,10 +27,7 @@ namespace RecordWin
         public static readonly DependencyProperty ToProperty;
         public CornerRadius To
         {
-            get
-            {
-                return (CornerRadius)GetValue(ToProperty);
-            }
+            get => (CornerRadius)GetValue(ToProperty);
             set
             {
                 SetValue(ToProperty, value);

@@ -74,9 +74,9 @@ namespace RecordWin
 
         private void Exit(object sender, EventArgs e)
         {
-            if (this.Owner is MainWindow)
+            if (Owner is MainWindow)
             {
-                var main = this.Owner as MainWindow;
+                var main = Owner as MainWindow;
                 main.btPen.IsActived = false;
                 main.TitleDragMove(true);
             }
@@ -84,7 +84,10 @@ namespace RecordWin
             Close();
         }
 
-        private static string GenerateFileName(string fileExt = ".png") => DateTime.Now.ToString("yyyyMMdd-HHmmss") + fileExt;
+        private static string GenerateFileName(string fileExt = ".png")
+        {
+            return DateTime.Now.ToString("yyyyMMdd-HHmmss") + fileExt;
+        }
 
         private List<Point> GenerateEclipseGeometry(Point st, Point ed)
         {
@@ -547,8 +550,16 @@ namespace RecordWin
             _ignoreStrokesChange = false;
             Push(_history, last);
         }
-        private static void Push(Stack<StrokesHistoryNode> collection, StrokesHistoryNode node) => collection.Push(node);
-        private static StrokesHistoryNode Pop(Stack<StrokesHistoryNode> collection) => collection.Count == 0 ? null : collection.Pop();
+        private static void Push(Stack<StrokesHistoryNode> collection, StrokesHistoryNode node)
+        {
+            collection.Push(node);
+        }
+
+        private static StrokesHistoryNode Pop(Stack<StrokesHistoryNode> collection)
+        {
+            return collection.Count == 0 ? null : collection.Pop();
+        }
+
         private void StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             if (_ignoreStrokesChange) return;
@@ -563,7 +574,11 @@ namespace RecordWin
             ClearHistory(_history);
             ClearHistory(_redoHistory);
         }
-        private static void ClearHistory(Stack<StrokesHistoryNode> collection) => collection?.Clear();
+        private static void ClearHistory(Stack<StrokesHistoryNode> collection)
+        {
+            collection?.Clear();
+        }
+
         private void Clear()
         {
             MainInkCanvas.Children.Clear();
@@ -606,7 +621,11 @@ namespace RecordWin
             _isDraging = false;
             Palette.Background = null;
         }
-        private void PaletteGrip_MouseDown(object sender, MouseButtonEventArgs e) => StartDrag();
+        private void PaletteGrip_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            StartDrag();
+        }
+
         private void Palette_MouseMove(object sender, MouseEventArgs e)
         {
             if (!_isDraging) return;
@@ -617,8 +636,15 @@ namespace RecordWin
             Canvas.SetRight(Palette, Canvas.GetRight(Palette) - offset.X);
             _lastMousePosition = currentMousePosition;
         }
-        private void Palette_MouseUp(object sender, MouseButtonEventArgs e) => EndDrag();
-        private void Palette_MouseLeave(object sender, MouseEventArgs e) => EndDrag();
+        private void Palette_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            EndDrag();
+        }
+
+        private void Palette_MouseLeave(object sender, MouseEventArgs e)
+        {
+            EndDrag();
+        }
         #endregion
 
         #region 事件
@@ -628,7 +654,11 @@ namespace RecordWin
             if (border == null) return;
             SetColor(border);
         }
-        private void PinButton_Click(object sender, RoutedEventArgs e) => SetTopMost(!Topmost);
+        private void PinButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetTopMost(!Topmost);
+        }
+
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -682,20 +712,76 @@ namespace RecordWin
             if (_brushIndex > _brushSizes.Count() - 1) _brushIndex = 0;
             SetBrushSize(_brushSizes[_brushIndex]);
         }
-        private void EnableButton_Click(object sender, RoutedEventArgs e) => SetEnable(false, _mode);
-        private void SelectButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Select);
-        private void PenButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Pen);
-        private void TextButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Text);
-        private void LineButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Line);
-        private void ArrowButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Arrow);
-        private void RectangleButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Rectangle);
-        private void CircleButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Circle);
-        private void RayButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Ray);
-        private void UndoButton_Click(object sender, RoutedEventArgs e) => Undo();
-        private void RedoButton_Click(object sender, RoutedEventArgs e) => Redo();
-        private void EraserButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Erase);
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => AnimatedClear();
-        private void DetailToggler_Click(object sender, RoutedEventArgs e) => SetExtralToolPanel(!_displayExtraToolPanel);
+        private void EnableButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(false, _mode);
+        }
+
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Select);
+        }
+
+        private void PenButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Pen);
+        }
+
+        private void TextButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Text);
+        }
+
+        private void LineButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Line);
+        }
+
+        private void ArrowButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Arrow);
+        }
+
+        private void RectangleButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Rectangle);
+        }
+
+        private void CircleButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Circle);
+        }
+
+        private void RayButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Ray);
+        }
+
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            Undo();
+        }
+
+        private void RedoButton_Click(object sender, RoutedEventArgs e)
+        {
+            Redo();
+        }
+
+        private void EraserButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetEnable(true, DrawMode.Erase);
+        }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            AnimatedClear();
+        }
+
+        private void DetailToggler_Click(object sender, RoutedEventArgs e)
+        {
+            SetExtralToolPanel(!_displayExtraToolPanel);
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Topmost = false;
@@ -720,8 +806,16 @@ namespace RecordWin
                 FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, Duration4));
             }
         }
-        private void HideButton_Click(object sender, RoutedEventArgs e) => SetInkVisibility(!_inkVisibility);
-        private void OrientationButton_Click(object sender, RoutedEventArgs e) => SetOrientation(!_displayOrientation);
+        private void HideButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetInkVisibility(!_inkVisibility);
+        }
+
+        private void OrientationButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetOrientation(!_displayOrientation);
+        }
+
         private void FontReduceButton_Click(object sender, RoutedEventArgs e)
         {
             _drawerTextBox.FontSize -= 2;

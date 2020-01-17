@@ -74,21 +74,21 @@ namespace RecordWin
         bool _桌面 = true;
         public bool 桌面
         {
-            get { return _桌面; }
+            get => _桌面;
             set { _桌面 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _摄像头 = true;
         public bool 摄像头
         {
-            get { return _摄像头; }
+            get => _摄像头;
             set { _摄像头 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _声音 = true;
         public bool 声音
         {
-            get { return _声音; }
+            get => _声音;
             set { _声音 = value; SettingHelp.SaveSetting(); }
         }
         #endregion
@@ -97,49 +97,49 @@ namespace RecordWin
         bool _自动隐藏 = false;
         public bool 自动隐藏
         {
-            get { return _自动隐藏; }
+            get => _自动隐藏;
             set { _自动隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _录制隐藏 = true;
         public bool 录制隐藏
         {
-            get { return _录制隐藏; }
+            get => _录制隐藏;
             set { _录制隐藏 = value; SettingHelp.SaveSetting(); }
         }
 
         string _保存路径 = "Temp";
         public string 保存路径
         {
-            get { return _保存路径; }
+            get => _保存路径;
             set { _保存路径 = value; SettingHelp.SaveSetting(); }
         }
 
         string _编码类型 = "MSMPEG4v3";
         public string 编码类型
         {
-            get { return _编码类型; }
+            get => _编码类型;
             set { _编码类型 = value; SettingHelp.SaveSetting(); }
         }
 
         string _命名规则 = "yyMMdd_HHmmss";
         public string 命名规则
         {
-            get { return _命名规则; }
+            get => _命名规则;
             set { _命名规则 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _跨屏录制 = false;
         public bool 跨屏录制
         {
-            get { return _跨屏录制; }
+            get => _跨屏录制;
             set { _跨屏录制 = value; SettingHelp.SaveSetting(); }
         }
 
         bool _捕获鼠标 = false;
         public bool 捕获鼠标
         {
-            get { return _捕获鼠标; }
+            get => _捕获鼠标;
             set { _捕获鼠标 = value; SettingHelp.SaveSetting(); }
         }
         #endregion
@@ -148,14 +148,14 @@ namespace RecordWin
         int _视频帧率 = 10;
         public int 视频帧率
         {
-            get { return _视频帧率; }
+            get => _视频帧率;
             set { _视频帧率 = value; SettingHelp.SaveSetting(); }
         }
 
         int _视频质量 = 5;
         public int 视频质量
         {
-            get { return _视频质量; }
+            get => _视频质量;
             set { _视频质量 = value; SettingHelp.SaveSetting(); }
         }
         #endregion
@@ -164,21 +164,21 @@ namespace RecordWin
         Tuple<HotKey.KeyModifiers, int> _播放暂停 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Space);
         public Tuple<HotKey.KeyModifiers, int> 播放暂停
         {
-            get { return _播放暂停; }
+            get => _播放暂停;
             set { _播放暂停 = value; SettingHelp.SaveSetting(); }
         }
 
         Tuple<HotKey.KeyModifiers, int> _停止关闭 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.Shift, (int)System.Windows.Forms.Keys.Escape);
         public Tuple<HotKey.KeyModifiers, int> 停止关闭
         {
-            get { return _停止关闭; }
+            get => _停止关闭;
             set { _停止关闭 = value; SettingHelp.SaveSetting(); }
         }
 
         Tuple<HotKey.KeyModifiers, int> _开关画笔 = new Tuple<HotKey.KeyModifiers, int>(HotKey.KeyModifiers.None, (int)System.Windows.Forms.Keys.F1);
         public Tuple<HotKey.KeyModifiers, int> 开关画笔
         {
-            get { return _开关画笔; }
+            get => _开关画笔;
             set { _开关画笔 = value; SettingHelp.SaveSetting(); }
         }
         #endregion

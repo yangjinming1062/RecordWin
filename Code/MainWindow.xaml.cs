@@ -66,7 +66,7 @@ namespace RecordWin
         {
             var S = System.Windows.Forms.Screen.FromHandle(winHandle);
             Left = S.Bounds.Left + (S.Bounds.Width - TitlePanel.ActualWidth) / 2;
-            Top = S.Bounds.Top;
+            Top = S.Bounds.Top - 1;//使感应更好，不然放到边框的1像素上没反应很尴尬啊
         }
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于Temp文件夹中
@@ -115,7 +115,7 @@ namespace RecordWin
         #region 基础事件
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            if (this.isRecording) StopRecord();
+            if (isRecording) StopRecord();
             base.OnClosing(e);
         }
         /// <summary>
@@ -132,6 +132,7 @@ namespace RecordWin
         /// 关闭程序
         /// </summary>
         private void btClose_Click(object sender, RoutedEventArgs e) => Close();
+
         /// <summary>
         /// 拖动移动
         /// </summary>
@@ -169,7 +170,7 @@ namespace RecordWin
         private WaveFileWriter audioWriter;//音频写入
         private string curVideoName;//当前录制的视频路径
         private string curAudioName;//当前录制的音频路径
-        private int FrameCount;
+        private int FrameCount;//统计帧数计算时长，每凑够一个帧率的数时长加1s并重置回0
 
         #region 鼠标捕获
         [DllImport("user32.dll")]
@@ -195,7 +196,7 @@ namespace RecordWin
         /// </summary>
         private void VideoNewFrame(object sender, NewFrameEventArgs e)
         {
-            if (this.isRecording && !isParsing)
+            if (isRecording && !isParsing)
             {
                 if (SettingHelp.Settings.捕获鼠标)
                 {
@@ -203,10 +204,14 @@ namespace RecordWin
                     CURSORINFO pci;
                     pci.cbSize = Marshal.SizeOf(typeof(CURSORINFO));
                     GetCursorInfo(out pci);
-                    System.Windows.Forms.Cursor cur = new System.Windows.Forms.Cursor(pci.hCursor);
-                    cur.Draw(g, new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10, System.Windows.Forms.Cursor.Position.Y - 10, cur.Size.Width, cur.Size.Height));
+                    try
+                    {
+                        System.Windows.Forms.Cursor cur = new System.Windows.Forms.Cursor(pci.hCursor);
+                        cur.Draw(g, new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10, System.Windows.Forms.Cursor.Position.Y - 10, cur.Size.Width, cur.Size.Height));
+                    }
+                    catch { }//打开任务管理器时会导致异常
                 }
-                this.videoWriter.WriteVideoFrame(e.Frame);
+                videoWriter.WriteVideoFrame(e.Frame);
                 //计算当前进度这个会拖慢视频录制进程,新开线程来处理进度显示
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
@@ -215,9 +220,9 @@ namespace RecordWin
                     {
                         FrameCount = 0;
                         videoSpan = videoSpan.Add(new TimeSpan(0, 0, 0, 1));
-                        this.Dispatcher.Invoke(new Action(() =>
+                        Dispatcher.Invoke(new Action(() =>
                         {
-                            this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+                            lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
                         }));
                     }
                 });
@@ -228,7 +233,7 @@ namespace RecordWin
         /// </summary>
         private void AudioDataAvailable(object sender, WaveInEventArgs e)
         {
-            if (this.isRecording && !isParsing)
+            if (isRecording && !isParsing)
                 audioWriter.Write(e.Buffer, 0, e.BytesRecorded);
         }
 
@@ -238,7 +243,7 @@ namespace RecordWin
             curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             videoSpan = new TimeSpan();
-            this.lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+            lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
             FrameCount = 0;
             int RecordWidth = 0;
             int RecordHeight = 0;
@@ -260,19 +265,19 @@ namespace RecordWin
             {
                 lock (this)
                 {
-                    this.videoWriter.Open(curVideoName, RecordWidth, RecordHeight,
+                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight,
                         SettingHelp.Settings.视频帧率, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
-                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X, 
+                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X,
                     SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.Y, RecordWidth, RecordHeight);
-                this.videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
-                this.videoStreamer.NewFrame += VideoNewFrame;
-                this.videoStreamer.Start();
+                videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
+                videoStreamer.NewFrame += VideoNewFrame;
+                videoStreamer.Start();
             }
             if (SettingHelp.Settings.摄像头)
             {
-                var carmeraShow = new CameraShow(SettingHelp.Settings.桌面 ? "" : curVideoName);//如果录制桌面又开启摄像头则摄像头只在右下角显示用，不单独保存文件
+                var carmeraShow = new CameraShow(curVideoName);//如果录制桌面又开启摄像头则摄像头只在右下角显示用，不单独保存文件
                 Visibility = SettingHelp.Settings.桌面 ? Visibility.Visible : Visibility.Collapsed;//当只录摄像头时隐藏主命令栏
                 carmeraShow.Owner = this;
             }
@@ -284,8 +289,8 @@ namespace RecordWin
                 audioStreamer.StartRecording();
             }
 
-            this.isRecording = true;
-            this.isParsing = false;
+            isRecording = true;
+            isParsing = false;
             if (SettingHelp.Settings.录制隐藏) HiddenTools(true);
             btSet.Visibility = Visibility.Hidden;
             lbTime.Visibility = Visibility.Visible;
@@ -297,7 +302,7 @@ namespace RecordWin
         {
             try
             {
-                this.Visibility = Visibility.Visible;//防止调用CameraShow的Close死循环
+                Visibility = Visibility.Visible;//防止调用CameraShow的Close死循环
                 if (SettingHelp.Settings.摄像头)
                 {
                     foreach (Window shower in Application.Current.Windows)
@@ -314,7 +319,6 @@ namespace RecordWin
                     videoStreamer.Stop();
                     videoWriter.Close();
                 }
-                
                 if (SettingHelp.Settings.声音)
                 {
                     audioStreamer.StopRecording();
@@ -335,7 +339,7 @@ namespace RecordWin
                 #endregion
                 curVideoName = "";
                 curAudioName = "";
-                this.isRecording = false;
+                isRecording = false;
                 HiddenTools(SettingHelp.Settings.自动隐藏);
                 btBegin.Visibility = Visibility.Visible;
                 btParse.Visibility = Visibility.Collapsed;
@@ -343,7 +347,7 @@ namespace RecordWin
                 btStop.Visibility = Visibility.Collapsed;
                 btSet.Visibility = Visibility.Visible;
                 lbTime.Visibility = Visibility.Collapsed;
-                TitleDragMove(true);
+                //TitleDragMove(true);
             }
             catch (Exception ex)
             {
@@ -353,17 +357,17 @@ namespace RecordWin
 
         private void btBegin_Click(object sender, RoutedEventArgs e)
         {
+            if (!SettingHelp.Settings.桌面 && !SettingHelp.Settings.摄像头 && !SettingHelp.Settings.声音)
+            {
+                Message("未选择任何录制源，请先选择录制内容");
+                return;
+            }
             try
             {
-                if (!SettingHelp.Settings.桌面 && !SettingHelp.Settings.摄像头 && !SettingHelp.Settings.声音)
-                {
-                    Message("未选择任何录制源，请先选择录制内容");
-                    return;
-                }
-                if (this.isRecording)
+                if (isRecording)
                 {
                     videoStreamer.Start();
-                    this.isParsing = false;
+                    isParsing = false;
                 }
                 else
                     BeginRecord();
@@ -383,7 +387,7 @@ namespace RecordWin
         {
             btBegin.Visibility = Visibility.Visible;
             btParse.Visibility = Visibility.Collapsed;
-            this.isParsing = true;
+            isParsing = true;
             videoStreamer.SignalToStop();
         }
 
@@ -401,7 +405,9 @@ namespace RecordWin
         }
 
         private void cbSY_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.声音 = cbSY.IsChecked.Value;
+
         private void cbSXT_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.摄像头 = cbSXT.IsChecked.Value;
+
         private void cbZM_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.桌面 = cbZM.IsChecked.Value;
 
         private void btMoreSet_Click(object sender, RoutedEventArgs e)
@@ -422,6 +428,7 @@ namespace RecordWin
                     if (drawer is DrawerWindow)
                     {
                         drawer.Close();
+                        GC.Collect();
                         btPen.IsActived = false;
                         return;
                     }
@@ -490,7 +497,7 @@ namespace RecordWin
                                     btClose_Click(null, null);
                             }
                         }
-                        if(sid == HotKeyHB)
+                        if (sid == HotKeyHB)
                         {
                             btPen_Click(null, null);
                         }

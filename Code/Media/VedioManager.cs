@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -276,8 +275,8 @@ namespace RecordWin
                     ref streamFormat,
                     ref streamLength);
 
-                int startByteIndex = (int)(startAtSecond * (float)(waveStream.CountSamplesPerSecond * streamFormat.nChannels * waveStream.CountBitsPerSample) / 8);
-                int stopByteIndex = (int)(stopAtSecond * (float)(waveStream.CountSamplesPerSecond * streamFormat.nChannels * waveStream.CountBitsPerSample) / 8);
+                int startByteIndex = (int)(startAtSecond * (waveStream.CountSamplesPerSecond * streamFormat.nChannels * waveStream.CountBitsPerSample) / 8);
+                int stopByteIndex = (int)(stopAtSecond * (waveStream.CountSamplesPerSecond * streamFormat.nChannels * waveStream.CountBitsPerSample) / 8);
 
                 IntPtr ptrWavePart = new IntPtr(ptrRawData.ToInt32() + startByteIndex);
 

@@ -33,12 +33,12 @@ namespace RecordWin
             if (devs.Count != 0)
             {
                 Camera = new VideoCaptureDevice(devs[0].MonikerString);//实例化设备控制类(我选了第1个)
-                                                                       //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置,从这里面选一个赋值接即可
+                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置,从这里面选一个赋值接即可
                 Camera.VideoResolution = Camera.VideoCapabilities[Camera.VideoCapabilities.Length - 1];
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据
                 Camera.Start();//打开摄像头
 
-                if (!string.IsNullOrEmpty(FileName))
+                if (!SettingHelp.Settings.桌面)
                 {
                     lock (this) //打开录像文件(如果没有则创建,如果有也会清空),这里还有关于
                     {
@@ -60,9 +60,9 @@ namespace RecordWin
         /// </summary>
         private void Camera_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            if (!this.isParsing)
+            if (!isParsing)
             {
-                if (!string.IsNullOrEmpty(FileName))
+                if (!SettingHelp.Settings.桌面)
                     VideoOutPut.WriteVideoFrame(eventArgs.Frame);//写到文件
                 lock (this)
                 {
@@ -84,14 +84,14 @@ namespace RecordWin
         {
             btBegin.Visibility = Visibility.Collapsed;
             btParse.Visibility = Visibility.Visible;
-            this.isParsing = false;
+            isParsing = false;
         }
 
         private void btParse_Click(object sender, RoutedEventArgs e)
         {
             btBegin.Visibility = Visibility.Visible;
             btParse.Visibility = Visibility.Collapsed;
-            this.isParsing = true;
+            isParsing = true;
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -102,13 +102,13 @@ namespace RecordWin
                 if (Camera != null)
                 {
                     Camera.Stop();//停摄像头
-                    if (!string.IsNullOrEmpty(FileName))
+                    if (!SettingHelp.Settings.桌面)
                     {
                         VideoOutPut.Close();//关闭录像文件,如果忘了不关闭,将会得到一个损坏的文件,无法播放
                     }
-                    if (this.Owner is MainWindow)
+                    if (Owner is MainWindow)
                     {
-                        var main = this.Owner as MainWindow;
+                        var main = Owner as MainWindow;
                         if (main.Visibility != Visibility.Visible)//只录摄像头时，关闭摄像头录制回调主窗体的停录函数，进行音视频合成
                         {
                             main.Visibility = Visibility.Visible;
@@ -127,7 +127,7 @@ namespace RecordWin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(FileName))
+            if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
                 var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
                 Width = S.WorkingArea.Width / 5;
@@ -135,7 +135,7 @@ namespace RecordWin
                 Left = S.WorkingArea.Width - Width - 10;
                 Top = S.WorkingArea.Height - Height - 10;
             }
-            else
+            else//否则独立录制摄像头时最大化显示
             {
                 WindowState = WindowState.Maximized;
             }

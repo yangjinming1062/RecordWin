@@ -9,20 +9,20 @@ namespace RecordWin
         public static readonly DependencyProperty IsActivedProperty = DependencyProperty.Register("IsActived", typeof(bool), typeof(ActivableButton), new PropertyMetadata(default(bool)));
         public bool IsActived
         {
-            get { return (bool)GetValue(IsActivedProperty); }
-            set { SetValue(IsActivedProperty, value); }
+            get => (bool)GetValue(IsActivedProperty);
+            set => SetValue(IsActivedProperty, value);
         }
     }
 
     public class ColorPicker : ActivableButton
     {
-        public static readonly DependencyProperty SizeProperty = DependencyProperty.Register( "Size", typeof(ColorPickerButtonSize), typeof(ColorPicker),
+        public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(ColorPickerButtonSize), typeof(ColorPicker),
             new PropertyMetadata(default(ColorPickerButtonSize), OnColorPickerSizeChanged));
 
         public ColorPickerButtonSize Size
         {
-            get { return (ColorPickerButtonSize)GetValue(SizeProperty); }
-            set { SetValue(SizeProperty, value); }
+            get => (ColorPickerButtonSize)GetValue(SizeProperty);
+            set => SetValue(SizeProperty, value);
         }
 
         private static void OnColorPickerSizeChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
