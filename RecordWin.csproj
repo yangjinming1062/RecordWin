@@ -195,6 +195,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="RecordWin.ico" />
+    <None Include="Resources\激光.cur" />
     <Content Include="swscale-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

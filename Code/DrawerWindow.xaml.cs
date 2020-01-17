@@ -214,7 +214,7 @@ namespace RecordWin
 
             if (_mode == DrawMode.Ray)
             {
-                //MainInkCanvas.Cursor = new Cursor(new MemoryStream(RecordWin.Properties.Resource.raycursor));
+                MainInkCanvas.Cursor = new Cursor(new MemoryStream(RecordWin.Properties.Resources.raycursor));
             }
             else
             {

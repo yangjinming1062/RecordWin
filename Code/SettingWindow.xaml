@@ -76,7 +76,7 @@
                             <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="开始录制时命令栏将临时取消钉住" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel>
-                            <Label Content="捕获鼠标："/>
+                            <Label Content="录制鼠标："/>
                             <CheckBox x:Name="cbMouse" Click="cbMouse_Click" ToolTip="录制的视频中是否包含鼠标" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel>
