@@ -35,6 +35,8 @@ namespace RecordWin
                 Camera = new VideoCaptureDevice(devs[0].MonikerString);//实例化设备控制类(我选了第1个)
                 //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置,从这里面选一个赋值接即可
                 Camera.VideoResolution = Camera.VideoCapabilities[Camera.VideoCapabilities.Length - 1];
+                imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
+                imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据
                 Camera.Start();//打开摄像头
 
@@ -44,7 +46,8 @@ namespace RecordWin
                     {
                         VideoOutPut = new VideoFileWriter();
                         VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型), Camera.VideoResolution.BitCount);
+                           Camera.VideoResolution.AverageFrameRate, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
+                           Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
                     }
                 }
                 Show();
@@ -63,8 +66,8 @@ namespace RecordWin
             if (!isParsing)
             {
                 if (!SettingHelp.Settings.桌面)
-                    VideoOutPut.WriteVideoFrame(eventArgs.Frame);//写到文件
-                lock (this)
+                    VideoOutPut.WriteVideoFrame(eventArgs.Frame);
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     MemoryStream ms = new MemoryStream();
                     eventArgs.Frame.Save(ms, ImageFormat.Bmp);
@@ -73,8 +76,11 @@ namespace RecordWin
                     image.StreamSource = new MemoryStream(ms.GetBuffer());
                     ms.Close();
                     image.EndInit();
-                    imgCamera.Source = image;
-                }
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        imgCamera.Source = image;
+                    }));
+                });
             }
         }
 
@@ -135,11 +141,10 @@ namespace RecordWin
                 Left = S.WorkingArea.Width - Width - 10;
                 Top = S.WorkingArea.Height - Height - 10;
             }
-            else//否则独立录制摄像头时最大化显示
-            {
-                WindowState = WindowState.Maximized;
-            }
-            BeginRecord();
+            //else//否则独立录制摄像头时最大化显示
+            //{
+            //    WindowState = WindowState.Maximized;
+            //}
         }
     }
 }

@@ -31,7 +31,7 @@ namespace RecordWin
                 cbSXT.Visibility = Visibility.Collapsed;
                 SettingHelp.Settings.摄像头 = false;
             }
-            if (new WaveInEvent().DeviceNumber < 1)
+            if (WaveInEvent.DeviceCount < 1)
             {
                 cbSY.Visibility = Visibility.Collapsed;
                 SettingHelp.Settings.声音 = false;
@@ -309,7 +309,11 @@ namespace RecordWin
                     {
                         if (shower is CameraShow)
                         {
-                            shower.Close();
+                            try
+                            {
+                                shower.Close();
+                            }
+                            catch { }
                             break;
                         }
                     }
