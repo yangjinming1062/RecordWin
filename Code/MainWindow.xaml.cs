@@ -239,8 +239,8 @@ namespace RecordWin
 
         private void BeginRecord()
         {
-            curVideoName = MakeFilePath(".mp4");
-            curAudioName = curVideoName.Replace(".mp4", ".wav");//使音频文件和视频文件同名
+            curVideoName = MakeFilePath(".avi");
+            curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             videoSpan = new TimeSpan();
             lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
@@ -337,7 +337,7 @@ namespace RecordWin
                         var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
                         string[] input = new string[2] { curVideoName, curAudioName };
                         var setting = new NReco.VideoConverter.ConcatSettings();
-                        setting.ConcatAudioStream = true;
+                        setting.ConcatVideoStream = false;
                         setting.VideoCodec = SettingHelp.Settings.编码类型;
                         ffMpeg.ConcatMedia(input, MakeFilePath(".mp4"), "mp4", setting);
                         File.Delete(curVideoName);
