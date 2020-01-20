@@ -141,7 +141,7 @@ namespace RecordWin
             if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
-                if (SettingHelp.Settings.自动隐藏) ChangePlace();//未开自动隐藏则拖到哪算哪
+                if (!btDing.IsActived) ChangePlace();//未开自动隐藏则拖到哪算哪
             }
         }
         /// <summary>
