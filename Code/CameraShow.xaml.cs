@@ -4,10 +4,12 @@ using AForge.Video.FFMPEG;
 using System;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace RecordWin
 {
@@ -24,6 +26,7 @@ namespace RecordWin
         {
             InitializeComponent();
             FileName = fileName;
+            ShowShell();
             BeginRecord();
         }
 
@@ -53,6 +56,149 @@ namespace RecordWin
                 Close();
             }
         }
+
+        #region 窗体大小拖拽
+        private void ShowShell()
+        {
+            try
+            {
+                foreach (UIElement element in ResizeGrid.Children)
+                {
+                    if (element is Rectangle)
+                    {
+                        var resizeRectangle = element as Rectangle;
+                        if (resizeRectangle != null)
+                        {
+                            resizeRectangle.Visibility = Visibility.Visible;
+                            resizeRectangle.PreviewMouseDown += ResizeRectangle_PreviewMouseDown;
+                            resizeRectangle.MouseEnter += ResizeRectangle_MouseEnter;
+                            resizeRectangle.MouseLeave += ResizeRectangle_MouseLeave;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
+        private void ResizeRectangle_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// 按下拖动区域发生事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResizeRectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Rectangle rectangle = sender as Rectangle;
+            if (rectangle != null)
+            {
+                switch (rectangle.Name)
+                {
+                    case "Top":
+                        Cursor = Cursors.SizeNS;
+                        ResizeWindow(ResizeDirection.Top);
+                        break;
+                    case "Bottom":
+                        Cursor = Cursors.SizeNS;
+                        ResizeWindow(ResizeDirection.Bottom);
+                        break;
+                    case "Left":
+                        Cursor = Cursors.SizeWE;
+                        ResizeWindow(ResizeDirection.Left);
+                        break;
+                    case "Right":
+                        Cursor = Cursors.SizeWE;
+                        ResizeWindow(ResizeDirection.Right);
+                        break;
+                    case "TopLeft":
+                        Cursor = Cursors.SizeNWSE;
+                        ResizeWindow(ResizeDirection.TopLeft);
+                        break;
+                    case "TopRight":
+                        Cursor = Cursors.SizeNESW;
+                        ResizeWindow(ResizeDirection.TopRight);
+                        break;
+                    case "BottomLeft":
+                        Cursor = Cursors.SizeNESW;
+                        ResizeWindow(ResizeDirection.BottomLeft);
+                        break;
+                    case "BottomRight":
+                        Cursor = Cursors.SizeNWSE;
+                        ResizeWindow(ResizeDirection.BottomRight);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
+        /// <summary>
+        /// 重绘Window
+        /// </summary>
+        /// <param name="direction"></param>
+        private void ResizeWindow(ResizeDirection direction)
+        {
+            SendMessage(((HwndSource)PresentationSource.FromVisual(this)).Handle, 0x112, (IntPtr)(61440 + direction), IntPtr.Zero);
+        }
+        /// <summary>
+        /// 拖动区域内移动前事件
+        /// </summary>
+        private void ResizeRectangle_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Rectangle rectangle = sender as Rectangle;
+            if (rectangle != null)
+            {
+                switch (rectangle.Name)
+                {
+                    case "Top":
+                        Cursor = Cursors.SizeNS;
+                        break;
+                    case "Bottom":
+                        Cursor = Cursors.SizeNS;
+                        break;
+                    case "Left":
+                        Cursor = Cursors.SizeWE;
+                        break;
+                    case "Right":
+                        Cursor = Cursors.SizeWE;
+                        break;
+                    case "TopLeft":
+                        Cursor = Cursors.SizeNWSE;
+                        break;
+                    case "TopRight":
+                        Cursor = Cursors.SizeNESW;
+                        break;
+                    case "BottomLeft":
+                        Cursor = Cursors.SizeNESW;
+                        break;
+                    case "BottomRight":
+                        Cursor = Cursors.SizeNWSE;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        public enum ResizeDirection
+        {
+            Left = 1,
+            Right = 2,
+            Top = 3,
+            TopLeft = 4,
+            TopRight = 5,
+            Bottom = 6,
+            BottomLeft = 7,
+            BottomRight = 8,
+        }
+        #endregion
         /// <summary>
         /// 摄像头输出回调
         /// </summary>
