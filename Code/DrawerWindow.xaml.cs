@@ -24,13 +24,10 @@ namespace RecordWin
     public partial class DrawerWindow : Window
     {
         #region 变量
-        private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
-        private static readonly Duration Duration2 = (Duration)Application.Current.Resources["Duration2"];
         private static readonly Duration Duration3 = (Duration)Application.Current.Resources["Duration3"];
         private static readonly Duration Duration4 = (Duration)Application.Current.Resources["Duration4"];
         private static readonly Duration Duration5 = (Duration)Application.Current.Resources["Duration5"];
         private static readonly Duration Duration7 = (Duration)Application.Current.Resources["Duration7"];
-        private static readonly Duration Duration10 = (Duration)Application.Current.Resources["Duration10"];
         #endregion
 
         public DrawerWindow()
@@ -72,15 +69,18 @@ namespace RecordWin
             _drawerTextBox.LostFocus += _drawerTextBox_LostFocus;
         }
 
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            Clear();
+            base.OnClosing(e);
+        }
+
         private void Exit(object sender, EventArgs e)
         {
             if (Owner is MainWindow)
             {
-                var main = Owner as MainWindow;
-                main.btPen.IsActived = false;
-                main.TitleDragMove(true);
+                (Owner as MainWindow).btPen.IsActived = false;
             }
-
             Close();
         }
 
@@ -129,6 +129,7 @@ namespace RecordWin
             };
             return dialog.ShowDialog() == true ? dialog.OpenFile() : Stream.Null;
         }
+
         #region 设置
         private ColorPicker _selectedColor;
         private bool _inkVisibility = true;
@@ -212,14 +213,7 @@ namespace RecordWin
                     break;
             }
 
-            if (_mode == DrawMode.Ray)
-            {
-                MainInkCanvas.Cursor = new Cursor(new MemoryStream(RecordWin.Properties.Resources.raycursor));
-            }
-            else
-            {
-                MainInkCanvas.Cursor = Cursors.Cross;
-            }
+            MainInkCanvas.Cursor = _mode == DrawMode.Ray ? new Cursor(new MemoryStream(RecordWin.Properties.Resources.raycursor)) : Cursors.Cross;
 
             if (_mode == DrawMode.Text)
             {
@@ -258,18 +252,13 @@ namespace RecordWin
         {
             if (ReferenceEquals(_selectedColor, b)) return;
             SolidColorBrush solidColorBrush = b.Background as SolidColorBrush;
-            if (solidColorBrush == null)
-                return;
-
-            var ani = new ColorAnimation(solidColorBrush.Color, Duration3);
+            if (solidColorBrush == null) return;
 
             MainInkCanvas.DefaultDrawingAttributes.Color = solidColorBrush.Color;
-            brushPreview.Background.BeginAnimation(SolidColorBrush.ColorProperty, ani);
+            brushPreview.Background.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(solidColorBrush.Color, Duration3));
             b.IsActived = true;
-            if (_selectedColor != null)
-                _selectedColor.IsActived = false;
+            if (_selectedColor != null) _selectedColor.IsActived = false;
             _selectedColor = b;
-
             _drawerTextBox.Foreground = solidColorBrush;
         }
         private void SetBrushSize(double s)
@@ -365,18 +354,11 @@ namespace RecordWin
 
                 if (_drawerLastStroke != null && (_mode == DrawMode.Ray || _mode == DrawMode.Text))
                 {
-                    //us animation?
-                    /*
-                    var ani = new DoubleAnimation(1, 1, Duration4);
-                    ani.Completed += (obj,arg)=> { MainInkCanvas.Strokes.Remove(_drawerLastStroke); };
-                    MainInkCanvas.BeginAnimation(OpacityProperty, ani);
-                    */
                     MainInkCanvas.Strokes.Remove(_drawerLastStroke);
                 }
 
                 if (_mode == DrawMode.Text)
                 {
-                    //resize drawer text box
                     _drawerTextBox.Width = Math.Abs(endP.X - _drawerIntPos.X);
                     _drawerTextBox.Height = Math.Abs(endP.Y - _drawerIntPos.Y);
 
@@ -550,15 +532,8 @@ namespace RecordWin
             _ignoreStrokesChange = false;
             Push(_history, last);
         }
-        private static void Push(Stack<StrokesHistoryNode> collection, StrokesHistoryNode node)
-        {
-            collection.Push(node);
-        }
-
-        private static StrokesHistoryNode Pop(Stack<StrokesHistoryNode> collection)
-        {
-            return collection.Count == 0 ? null : collection.Pop();
-        }
+        private static void Push(Stack<StrokesHistoryNode> collection, StrokesHistoryNode node) => collection.Push(node);
+        private static StrokesHistoryNode Pop(Stack<StrokesHistoryNode> collection) => collection.Count == 0 ? null : collection.Pop();
 
         private void StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
@@ -574,10 +549,7 @@ namespace RecordWin
             ClearHistory(_history);
             ClearHistory(_redoHistory);
         }
-        private static void ClearHistory(Stack<StrokesHistoryNode> collection)
-        {
-            collection?.Clear();
-        }
+        private static void ClearHistory(Stack<StrokesHistoryNode> collection) => collection?.Clear();
 
         private void Clear()
         {
@@ -587,8 +559,6 @@ namespace RecordWin
         }
         private void AnimatedClear()
         {
-            //no need any more
-            //if (!PromptToSave()) return;
             var ani = new DoubleAnimation(0, Duration3);
             ani.Completed += ClearAniComplete; ;
             MainInkCanvas.BeginAnimation(OpacityProperty, ani);
@@ -665,8 +635,7 @@ namespace RecordWin
             {
                 var s = SaveDialog("ImageExport_" + GenerateFileName());
                 if (s == Stream.Null) return;
-                var rtb = new RenderTargetBitmap((int)MainInkCanvas.ActualWidth, (int)MainInkCanvas.ActualHeight, 96d,
-                    96d, PixelFormats.Pbgra32);
+                var rtb = new RenderTargetBitmap((int)MainInkCanvas.ActualWidth, (int)MainInkCanvas.ActualHeight, 96d, 96d, PixelFormats.Pbgra32);
                 rtb.Render(MainInkCanvas);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(rtb));
@@ -712,86 +681,26 @@ namespace RecordWin
             if (_brushIndex > _brushSizes.Count() - 1) _brushIndex = 0;
             SetBrushSize(_brushSizes[_brushIndex]);
         }
-        private void EnableButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(false, _mode);
-        }
-
-        private void SelectButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Select);
-        }
-
-        private void PenButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Pen);
-        }
-
-        private void TextButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Text);
-        }
-
-        private void LineButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Line);
-        }
-
-        private void ArrowButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Arrow);
-        }
-
-        private void RectangleButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Rectangle);
-        }
-
-        private void CircleButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Circle);
-        }
-
-        private void RayButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Ray);
-        }
-
-        private void UndoButton_Click(object sender, RoutedEventArgs e)
-        {
-            Undo();
-        }
-
-        private void RedoButton_Click(object sender, RoutedEventArgs e)
-        {
-            Redo();
-        }
-
-        private void EraserButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetEnable(true, DrawMode.Erase);
-        }
-
-        private void ClearButton_Click(object sender, RoutedEventArgs e)
-        {
-            AnimatedClear();
-        }
-
-        private void DetailToggler_Click(object sender, RoutedEventArgs e)
-        {
-            SetExtralToolPanel(!_displayExtraToolPanel);
-        }
-
+        private void EnableButton_Click(object sender, RoutedEventArgs e) => SetEnable(false, _mode);
+        private void SelectButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Select);
+        private void PenButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Pen);
+        private void TextButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Text);
+        private void LineButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Line);
+        private void ArrowButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Arrow);
+        private void RectangleButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Rectangle);
+        private void CircleButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Circle);
+        private void RayButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Ray);
+        private void UndoButton_Click(object sender, RoutedEventArgs e) => Undo();
+        private void RedoButton_Click(object sender, RoutedEventArgs e) => Redo();
+        private void EraserButton_Click(object sender, RoutedEventArgs e) => SetEnable(true, DrawMode.Erase);
+        private void ClearButton_Click(object sender, RoutedEventArgs e) => AnimatedClear();
+        private void DetailToggler_Click(object sender, RoutedEventArgs e) => SetExtralToolPanel(!_displayExtraToolPanel);
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Topmost = false;
             var anim = new DoubleAnimation(0, Duration3);
             anim.Completed += Exit;
             BeginAnimation(OpacityProperty, anim);
-        }
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            //SetBrushSize(e.NewValue);
         }
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -806,16 +715,8 @@ namespace RecordWin
                 FuncPanel.BeginAnimation(OpacityProperty, new DoubleAnimation(1, Duration4));
             }
         }
-        private void HideButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetInkVisibility(!_inkVisibility);
-        }
-
-        private void OrientationButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetOrientation(!_displayOrientation);
-        }
-
+        private void HideButton_Click(object sender, RoutedEventArgs e) => SetInkVisibility(!_inkVisibility);
+        private void OrientationButton_Click(object sender, RoutedEventArgs e) => SetOrientation(!_displayOrientation);
         private void FontReduceButton_Click(object sender, RoutedEventArgs e)
         {
             _drawerTextBox.FontSize -= 2;

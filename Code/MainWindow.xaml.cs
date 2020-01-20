@@ -462,8 +462,12 @@ namespace RecordWin
                     if (drawer is DrawerWindow)
                     {
                         drawer.Close();
-                        GC.Collect();
                         btPen.IsActived = false;
+                        Dispatcher.Invoke(() => {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                            GC.Collect();
+                        });
                         return;
                     }
                 }

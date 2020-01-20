@@ -207,17 +207,16 @@
                             </WrapPanel>
                         </Grid>
                             <StackPanel x:Name="ExtraToolPanel" Width="{StaticResource HorizontalModeFlowPanel}"  Margin="0,4,0,0">
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel">
-                                    <Style.Triggers>
-                                        <Trigger Property="Opacity" Value="0">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
-                            <Slider Background="{DynamicResource FakeTransparent}" Minimum="1" ValueChanged="Slider_ValueChanged" IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" Focusable="False" Maximum="5" Template="{StaticResource SliderHorizontal}" Foreground="#FFBC1919" Value="2" Height="20" Visibility="Collapsed"/>
-                            <WrapPanel x:Name="ExtraToolsPanel" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <Trigger Property="Opacity" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <WrapPanel x:Name="ExtraToolsPanel" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <WrapPanel.Resources>
                                     <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
                                         <Setter Property="Padding" Value="0"/>
@@ -251,7 +250,7 @@
                                     </Path>
                                 </local:ActivableButton>
                             </WrapPanel>
-                        </StackPanel>
+                            </StackPanel>
                             <Grid x:Name="ButtonGrid" Margin="0 4 0 0" Width="{StaticResource HorizontalModeFlowPanel}">
                             <WrapPanel x:Name="ButtonPanel" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <WrapPanel.Resources>
