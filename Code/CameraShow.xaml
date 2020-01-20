@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        WindowStyle="None" Background="Transparent" AllowsTransparency="True" ShowInTaskbar="False" Height="400" Width="500" Topmost="True" MouseDown="Window_MouseDown" Loaded="Window_Loaded">
+        WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" Height="400" Width="500" Topmost="True" Loaded="Window_Loaded">
     <Grid>
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -29,73 +29,65 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Background="{StaticResource LinearBackground}">
-            <Grid x:Name="ResizeGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Rectangle Grid.ColumnSpan="3"
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             VerticalAlignment="Top"
                             Height="5"
-                            x:Name="Top"
                             Margin="5,0,5,0" />
-                <Rectangle Grid.ColumnSpan="3"
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
-                            x:Name="Bottom"
                             Height="5"
                             VerticalAlignment="Bottom"
                             Margin="5,0,5,0" />
-                <Rectangle Grid.ColumnSpan="3"
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             HorizontalAlignment="Left"
                             Margin="0,5,0,5"
-                            Width="5"
-                            x:Name="Left"/>
-                <Rectangle Grid.ColumnSpan="3"
+                            Width="5"/>
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             Margin="0,5,0,5"
                             Width="5"
-                            HorizontalAlignment="Right"
-                            x:Name="Right" />
-                <Rectangle Grid.ColumnSpan="3"
+                            HorizontalAlignment="Right"/>
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
                             Width="5"
-                            Height="5"
-                            x:Name="BottomLeft" />
-                <Rectangle Grid.ColumnSpan="3"
+                            Height="5"/>
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             VerticalAlignment="Bottom"
                             Height="5"
                             Width="5"
-                            HorizontalAlignment="Right"
-                            x:Name="BottomRight" />
-                <Rectangle Grid.ColumnSpan="3"
+                            HorizontalAlignment="Right"/>
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             HorizontalAlignment="Right"
                             Width="5"
                             Height="5"
-                            VerticalAlignment="Top"
-                            x:Name="TopRight" />
-                <Rectangle Grid.ColumnSpan="3"
+                            VerticalAlignment="Top"/>
+        <Rectangle
                             Stroke="{x:Null}"
                             Fill="Transparent"
                             HorizontalAlignment="Left"
                             Width="6"
                             VerticalAlignment="Top"
-                            Height="5"
-                            x:Name="TopLeft" />
+                            Height="5"/>
+        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Background="{StaticResource LinearBackground}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <local:ActivableButton Grid.Column="1" x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconPlay}"/>
                 </local:ActivableButton>
@@ -107,6 +99,6 @@
                 </local:ActivableButton>
             </Grid>
         </Border>
-        <Image x:Name="imgCamera" Grid.Row="1"/>
+        <Image x:Name="imgCamera" Grid.Row="1" MouseDown="Window_MouseDown"/>
     </Grid>
 </Window>

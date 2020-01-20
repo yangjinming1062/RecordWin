@@ -32,8 +32,11 @@ namespace RecordWin
 
         private void BeginRecord()
         {
-            if (Camera != null)
+            if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
             {
+                Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
+                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
+                Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
                 imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
                 imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据
@@ -60,27 +63,20 @@ namespace RecordWin
         #region 窗体大小拖拽
         private void ShowShell()
         {
-            try
-            {
-                foreach (UIElement element in ResizeGrid.Children)
-                {
-                    if (element is Rectangle)
-                    {
-                        var resizeRectangle = element as Rectangle;
-                        if (resizeRectangle != null)
-                        {
-                            resizeRectangle.Visibility = Visibility.Visible;
-                            resizeRectangle.PreviewMouseDown += ResizeRectangle_PreviewMouseDown;
-                            resizeRectangle.MouseEnter += ResizeRectangle_MouseEnter;
-                            resizeRectangle.MouseLeave += ResizeRectangle_MouseLeave;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                
-            }
+            //foreach (UIElement element in ResizeGrid.Children)
+            //{
+            //    if (element is Rectangle)
+            //    {
+            //        var resizeRectangle = element as Rectangle;
+            //        if (resizeRectangle != null)
+            //        {
+            //            resizeRectangle.Visibility = Visibility.Visible;
+            //            resizeRectangle.PreviewMouseDown += ResizeRectangle_PreviewMouseDown;
+            //            resizeRectangle.MouseEnter += ResizeRectangle_MouseEnter;
+            //            resizeRectangle.MouseLeave += ResizeRectangle_MouseLeave;
+            //        }
+            //    }
+            //}
         }
 
         private void ResizeRectangle_MouseLeave(object sender, MouseEventArgs e)
@@ -246,7 +242,13 @@ namespace RecordWin
             {
                 if (Camera != null)
                 {
-                    Camera.Stop();//停摄像头
+                    isParsing = true;
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
+                    {
+                        Camera.SignalToStop();
+                        Camera = null;
+                    });
+                    //停摄像头
                     if (!SettingHelp.Settings.桌面)
                     {
                         VideoOutPut.Close();//关闭录像文件,如果忘了不关闭,将会得到一个损坏的文件,无法播放
@@ -272,12 +274,6 @@ namespace RecordWin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
-            {
-                Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
-                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
-                Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
-            }
             if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
                 var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
