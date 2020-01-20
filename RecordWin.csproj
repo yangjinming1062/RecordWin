@@ -104,7 +104,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Code\AudioStream.cs" />
     <Compile Include="Code\CameraShow.xaml.cs">
       <DependentUpon>CameraShow.xaml</DependentUpon>
     </Compile>

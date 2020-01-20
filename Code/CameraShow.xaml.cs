@@ -29,12 +29,8 @@ namespace RecordWin
 
         private void BeginRecord()
         {
-            var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表 
-            if (devs.Count != 0)
+            if (Camera != null)
             {
-                Camera = new VideoCaptureDevice(devs[0].MonikerString);//实例化设备控制类(我选了第1个)
-                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置,从这里面选一个赋值接即可
-                Camera.VideoResolution = Camera.VideoCapabilities[Camera.VideoCapabilities.Length - 1];
                 imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
                 imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据
@@ -57,7 +53,6 @@ namespace RecordWin
                 Close();
             }
         }
-
         /// <summary>
         /// 摄像头输出回调
         /// </summary>
@@ -65,9 +60,8 @@ namespace RecordWin
         {
             if (!isParsing)
             {
-                if (!SettingHelp.Settings.桌面)
-                    VideoOutPut.WriteVideoFrame(eventArgs.Frame);
-                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                //var bmp = eventArgs.Frame.Clone() as System.Drawing.Bitmap;
+                Dispatcher.Invoke(new Action(() =>
                 {
                     MemoryStream ms = new MemoryStream();
                     eventArgs.Frame.Save(ms, ImageFormat.Bmp);
@@ -76,11 +70,10 @@ namespace RecordWin
                     image.StreamSource = new MemoryStream(ms.GetBuffer());
                     ms.Close();
                     image.EndInit();
-                    Dispatcher.Invoke(new Action(() =>
-                    {
-                        imgCamera.Source = image;
-                    }));
-                });
+                    imgCamera.Source = image;
+                }));
+                if (!SettingHelp.Settings.桌面)
+                    VideoOutPut.WriteVideoFrame(eventArgs.Frame);
             }
         }
 
@@ -133,18 +126,28 @@ namespace RecordWin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
+            {
+                Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
+                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
+                Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
+            }
             if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
                 var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
-                Width = S.WorkingArea.Width / 5;
-                Height = S.WorkingArea.Height / 5;
+                if (Camera != null)
+                {
+                    Width = Camera.VideoResolution.FrameSize.Width / 4;
+                    Height = Camera.VideoResolution.FrameSize.Height / 4;
+                }
+                else
+                {
+                    Width = S.WorkingArea.Width / 5;
+                    Height = S.WorkingArea.Height / 5;
+                }
                 Left = S.WorkingArea.Width - Width - 10;
                 Top = S.WorkingArea.Height - Height - 10;
             }
-            //else//否则独立录制摄像头时最大化显示
-            //{
-            //    WindowState = WindowState.Maximized;
-            //}
         }
     }
 }

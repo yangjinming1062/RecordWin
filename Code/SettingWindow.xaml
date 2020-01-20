@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="400" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Height="420" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -67,7 +67,7 @@
                             <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="30" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
-                        <StackPanel x:Name="sMulScreen">
+                        <StackPanel>
                             <Label Content="跨屏录制："/>
                             <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="勾选时录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -80,7 +80,12 @@
                             <CheckBox x:Name="cbMouse" Click="cbMouse_Click" ToolTip="录制的视频中是否包含鼠标" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel>
-                            <Label Content="文件保存位置："/>
+                            <Label Content="录制摄像头配置："/>
+                            <ComboBox x:Name="cbSXT" DisplayMemberPath="Name" MinWidth="60" DropDownClosed="cbSXT_DropDownClosed" ToolTip="摄像头列表"/>
+                            <ComboBox x:Name="cbSXTcs" DisplayMemberPath="FrameSize" Margin="8,0,0,0" MinWidth="60" DropDownClosed="cbSXTcs_DropDownClosed" ToolTip="当前摄像头所支持的参数列表"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="文件保存的位置："/>
                             <TextBox x:Name="txtSavePath" Width="255" Focusable="True" ToolTip="可手动输入或者点击右侧浏览选择电脑中文件夹"/>
                             <Button Width="20" Content="..." Click="SavePath_Click" ToolTip="浏览"/>
                         </StackPanel>

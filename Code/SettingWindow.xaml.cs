@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AForge.Video.DirectShow;
+using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,9 +17,15 @@ namespace RecordWin
             InitializeComponent();
             cbPlayHidden.IsChecked = SettingHelp.Settings.录制隐藏;
             cbMouse.IsChecked = SettingHelp.Settings.捕获鼠标;
+            var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表 
+            if (devs.Count != 0)
+            {
+                cbSXT.ItemsSource = devs;
+                cbSXT.SelectedIndex = 0;
+            }
             if (System.Windows.Forms.Screen.AllScreens.Length < 2)//没有多个屏幕则不显示
             {
-                sMulScreen.Visibility = Visibility.Collapsed;
+                cbMultiScreen.IsEnabled = false;
                 SettingHelp.Settings.跨屏录制 = false;
             }
             cbMultiScreen.IsChecked = SettingHelp.Settings.跨屏录制;
@@ -80,6 +87,27 @@ namespace RecordWin
         private void cbMultiScreen_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.跨屏录制 = cbMultiScreen.IsChecked.Value;
 
         private void cbMouse_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.捕获鼠标 = cbMouse.IsChecked.Value;
+
+        private void cbSXT_DropDownClosed(object sender, EventArgs e)
+        {
+            if (cbSXT.SelectedItem != null)
+            {
+                var info = cbSXT.SelectedItem as FilterInfo;
+                var Camera = new VideoCaptureDevice(info.MonikerString);//实例化设备控制类(我选了第1个)
+                SettingHelp.Settings.摄像头Key = info.MonikerString;
+                cbSXTcs.ItemsSource = Camera.VideoCapabilities;
+                cbSXTcs.SelectedIndex = 0;
+                SettingHelp.Settings.摄像头参数 = 0;
+            }
+        }
+
+        private void cbSXTcs_DropDownClosed(object sender, EventArgs e)
+        {
+            if (cbSXTcs.SelectedItem != null)
+            {
+                SettingHelp.Settings.摄像头参数 = cbSXTcs.SelectedIndex;
+            }
+        }
         #endregion
 
         #region 快捷键

@@ -158,6 +158,20 @@ namespace RecordWin
             get => _视频质量;
             set { _视频质量 = value; SettingHelp.SaveSetting(); }
         }
+
+        string _摄像头Key;
+        public string 摄像头Key
+        {
+            get => _摄像头Key;
+            set { _摄像头Key = value; SettingHelp.SaveSetting(); }
+        }
+
+        int _摄像头参数 = 0;
+        public int 摄像头参数
+        {
+            get => _摄像头参数;
+            set { _摄像头参数 = value; SettingHelp.SaveSetting(); }
+        }
         #endregion
 
         #region 热键
