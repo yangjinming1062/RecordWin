@@ -334,10 +334,13 @@ namespace RecordWin
                 {
                     if (SettingHelp.Settings.声音)//又有声音,则合成
                     {
-                        var video = new VideoManager(curVideoName, true);
-                        video.AddAudioStream(curAudioName, 0);
-                        video.Close();
-                        //File.Delete(audioName);//合成后移除音频文件
+                        var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
+                        string[] input = new string[2] { curVideoName, curAudioName };
+                        var setting = new NReco.VideoConverter.ConcatSettings();
+                        setting.ConcatAudioStream = true;
+                        setting.VideoCodec = SettingHelp.Settings.编码类型;
+                        ffMpeg.ConcatMedia(input, curVideoName, "mp4", setting);
+                        //File.Delete(curAudioName);//合成后移除音频文件
                     }
                 }
                 #endregion

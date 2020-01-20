@@ -24,7 +24,7 @@
                         <Setter Property="Width" Value="15"/>
                         <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property ="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
                     </Style>
                 </WrapPanel.Resources>
                 <WrapPanel.Background>
@@ -39,7 +39,7 @@
                         <EventTrigger.Actions>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="0:0:0.2"/>
+                                    <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="{StaticResource Duration2}"/>
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger.Actions>
@@ -48,7 +48,7 @@
                         <EventTrigger.Actions>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="0:0:0.2"/>
+                                    <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="{StaticResource Duration2}"/>
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger.Actions>
