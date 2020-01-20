@@ -22,6 +22,7 @@ namespace RecordWin
             {
                 cbSXT.ItemsSource = devs;
                 cbSXT.SelectedIndex = 0;
+                cbSXT_DropDownClosed(null, null);
             }
             if (System.Windows.Forms.Screen.AllScreens.Length < 2)//没有多个屏幕则不显示
             {
@@ -95,7 +96,13 @@ namespace RecordWin
                 var info = cbSXT.SelectedItem as FilterInfo;
                 var Camera = new VideoCaptureDevice(info.MonikerString);//实例化设备控制类(我选了第1个)
                 SettingHelp.Settings.摄像头Key = info.MonikerString;
-                cbSXTcs.ItemsSource = Camera.VideoCapabilities;
+                cbSXTcs.Items.Clear();
+                foreach(var cap in Camera.VideoCapabilities)
+                {
+                    TextBlock b = new TextBlock();
+                    b.Text = $"{cap.FrameSize.Width}X{cap.FrameSize.Height}";
+                    cbSXTcs.Items.Add(b);
+                }
                 cbSXTcs.SelectedIndex = 0;
                 SettingHelp.Settings.摄像头参数 = 0;
             }

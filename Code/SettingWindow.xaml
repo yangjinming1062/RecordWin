@@ -82,7 +82,7 @@
                         <StackPanel>
                             <Label Content="录制摄像头配置："/>
                             <ComboBox x:Name="cbSXT" DisplayMemberPath="Name" MinWidth="60" DropDownClosed="cbSXT_DropDownClosed" ToolTip="摄像头列表"/>
-                            <ComboBox x:Name="cbSXTcs" DisplayMemberPath="FrameSize" Margin="8,0,0,0" MinWidth="60" DropDownClosed="cbSXTcs_DropDownClosed" ToolTip="当前摄像头所支持的参数列表"/>
+                            <ComboBox x:Name="cbSXTcs" DisplayMemberPath="{Binding FrameSize, XPath=Width}" Margin="8,0,0,0" MinWidth="60" DropDownClosed="cbSXTcs_DropDownClosed" ToolTip="当前摄像头所支持的参数列表"/>
                         </StackPanel>
                         <StackPanel>
                             <Label Content="文件保存的位置："/>
