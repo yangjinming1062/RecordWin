@@ -2,6 +2,7 @@
 using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
 using NAudio.Wave;
+using NReco.VideoConverter;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -297,7 +298,30 @@ namespace RecordWin
             ChangePlace();
             //TitleDragMove(false);
         }
-
+        #region 使用ffmpeg.exe进行音视频合成-注释，如有需要可使用
+        //public void CombineVideoAndAudio()
+        //{
+        //    Process p = new Process();//建立外部调用线程
+        //    p.StartInfo.FileName = System.Windows.Forms.Application.StartupPath + "\\ffmpeg.exe";//要调用外部程序的绝对路径
+        //    p.StartInfo.Arguments = "-i " + curVideoName + " -i " + curAudioName + " " + MakeFilePath(".mp4");
+        //    p.StartInfo.UseShellExecute = false;//不使用操作系统外壳程序启动线程(一定为FALSE,详细的请看MSDN)
+        //    p.StartInfo.RedirectStandardError = true;//把外部程序错误输出写到StandardError流中(这个一定要注意,FFMPEG的所有输出信息,都为错误输出流,用StandardOutput是捕获不到任何消息的...这是我耗费了2个多月得出来的经验...mencoder就是用standardOutput来捕获的)
+        //    p.StartInfo.CreateNoWindow = true;//不创建进程窗口
+        //    p.ErrorDataReceived += new DataReceivedEventHandler(CmdOutput);//外部程序(这里是FFMPEG)输出流时候产生的事件,这里是把流的处理过程转移到下面的方法中,详细请查阅MSDN
+        //    p.Start();//启动线程
+        //    p.BeginErrorReadLine();//开始异步读取
+        //    p.WaitForExit();//阻塞等待进程结束
+        //    p.Close();//关闭进程
+        //    p.Dispose();//释放资源
+        //}
+        //private void CmdOutput(object sendProcess, DataReceivedEventArgs output)
+        //{
+        //    if (!String.IsNullOrEmpty(output.Data))
+        //    {
+        //        Message(output.Data);
+        //    }
+        //}
+        #endregion
         internal void StopRecord(bool ShowErr = true)
         {
             try
@@ -329,22 +353,6 @@ namespace RecordWin
                     audioStreamer.Dispose();
                 }
 
-                #region 音视频合成
-                if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//有视频源
-                {
-                    if (SettingHelp.Settings.声音)//又有声音,则合成
-                    {
-                        var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
-                        string[] input = new string[2] { curVideoName, curAudioName };
-                        var setting = new NReco.VideoConverter.ConcatSettings();
-                        setting.ConcatVideoStream = false;
-                        setting.VideoCodec = SettingHelp.Settings.编码类型;
-                        ffMpeg.ConcatMedia(input, MakeFilePath(".mp4"), "mp4", setting);
-                        File.Delete(curVideoName);
-                        File.Delete(curAudioName);//合成后移除音频文件
-                    }
-                }
-                #endregion
                 curVideoName = "";
                 curAudioName = "";
                 isRecording = false;
@@ -354,8 +362,26 @@ namespace RecordWin
                 btClose.Visibility = Visibility.Visible;
                 btStop.Visibility = Visibility.Collapsed;
                 btSet.Visibility = Visibility.Visible;
-                lbTime.Visibility = Visibility.Collapsed;
                 //TitleDragMove(true);
+                #region 音视频合成
+                if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//有视频源
+                {
+                    if (SettingHelp.Settings.声音)//又有声音,则合成
+                    {
+                        lbTime.Content = "处理中，请稍等..";
+                        System.Threading.Tasks.Task.Factory.StartNew(() =>
+                        {
+                            var ffMpeg = new FFMpegConverter();
+                            FFMpegInput[] input = new FFMpegInput[] { new FFMpegInput(curVideoName), new FFMpegInput(curAudioName) };
+                            var setting = new OutputSettings();
+                            ffMpeg.ConvertMedia(input, MakeFilePath(".mp4"), "mp4", setting);
+                            File.Delete(curVideoName);
+                            File.Delete(curAudioName);//合成后移除音频文件
+                        }).Wait();
+                    }
+                }
+                #endregion
+                lbTime.Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {

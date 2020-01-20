@@ -59,12 +59,12 @@
                     <StackPanel Orientation="Vertical" Margin="0">
                         <StackPanel>
                             <Label Content="视频帧率："/>
-                            <Slider Foreground="White" x:Name="slZhenLv" Minimum="10" Maximum="60" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
+                            <Slider Foreground="White" x:Name="slZhenLv" Minimum="10" Maximum="30" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
                             <Label Content="{Binding ElementName=slZhenLv, Path=Value}" ToolTip="帧率当前值"/>
                         </StackPanel>
                         <StackPanel>
                             <Label Content="视频质量："/>
-                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="30" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
+                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
                         <StackPanel>
