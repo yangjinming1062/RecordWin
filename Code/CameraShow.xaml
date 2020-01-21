@@ -24,64 +24,20 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property ="HorizontalAlignment" Value="Center"/>
             </Style>
+            <Style TargetType="Rectangle">
+                <Setter Property="Fill" Value="Transparent"/>
+                <Setter Property="Stroke" Value="{x:Null}"/>
+                <Setter Property="Grid.RowSpan" Value="2"/>
+                <EventSetter Event="PreviewMouseDown" Handler="ResizeRectangle_PreviewMouseDown"/>
+                <EventSetter Event="MouseEnter" Handler="ResizeRectangle_MouseEnter"/>
+                <EventSetter Event="MouseLeave" Handler="ResizeRectangle_MouseLeave"/>
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            VerticalAlignment="Top"
-                            Height="5"
-                            Margin="5,0,5,0" />
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            Height="5"
-                            VerticalAlignment="Bottom"
-                            Margin="5,0,5,0" />
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            HorizontalAlignment="Left"
-                            Margin="0,5,0,5"
-                            Width="5"/>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            Margin="0,5,0,5"
-                            Width="5"
-                            HorizontalAlignment="Right"/>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Bottom"
-                            Width="5"
-                            Height="5"/>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            VerticalAlignment="Bottom"
-                            Height="5"
-                            Width="5"
-                            HorizontalAlignment="Right"/>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            HorizontalAlignment="Right"
-                            Width="5"
-                            Height="5"
-                            VerticalAlignment="Top"/>
-        <Rectangle
-                            Stroke="{x:Null}"
-                            Fill="Transparent"
-                            HorizontalAlignment="Left"
-                            Width="6"
-                            VerticalAlignment="Top"
-                            Height="5"/>
-        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Background="{StaticResource LinearBackground}">
+        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Background="{StaticResource LinearBackground}" MouseDown="Title_MouseDown">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -99,6 +55,50 @@
                 </local:ActivableButton>
             </Grid>
         </Border>
-        <Image x:Name="imgCamera" Grid.Row="1" MouseDown="Window_MouseDown"/>
+        <Image x:Name="imgCamera" Grid.Row="1"/>
+        <Rectangle
+                   VerticalAlignment="Top"
+                   Height="5"
+                   Margin="5,0,5,0"
+                   x:Name="rTop"/>
+        <Rectangle
+                   Height="5"
+                   VerticalAlignment="Bottom"
+                   Margin="5,0,5,0"
+                   x:Name="rBottom"/>
+        <Rectangle
+                   HorizontalAlignment="Left"
+                   Margin="0,5,0,5"
+                   Width="5"
+                   x:Name="rLeft"/>
+        <Rectangle
+                   Margin="0,5,0,5"
+                   Width="5"
+                   HorizontalAlignment="Right"
+                   x:Name="rRight"/>
+        <Rectangle
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Width="5"
+                   Height="5"
+                   x:Name="rBottomLeft"/>
+        <Rectangle
+                   VerticalAlignment="Bottom"
+                   Height="5"
+                   Width="5"
+                   HorizontalAlignment="Right"
+                   x:Name="rBottomRight"/>
+        <Rectangle
+                   HorizontalAlignment="Right"
+                   Width="5"
+                   Height="5"
+                   VerticalAlignment="Top"
+                   x:Name="rTopRight"/>
+        <Rectangle
+                   HorizontalAlignment="Left"
+                   Width="6"
+                   VerticalAlignment="Top"
+                   Height="5"
+                   x:Name="rTopLeft"/>
     </Grid>
 </Window>
