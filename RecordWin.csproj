@@ -140,7 +140,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\CornerRadiusAnimation.cs" />
     <Compile Include="Code\DrawerWindow.xaml.cs">
       <DependentUpon>DrawerWindow.xaml</DependentUpon>
     </Compile>
