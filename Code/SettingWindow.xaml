@@ -146,6 +146,11 @@
                                 <Label Content="命名规则："/>
                                 <TextBox x:Name="txtNameRule" ToolTip="清空可恢复默认值"/>
                             </StackPanel>
+                            <StackPanel>
+                                <Label Content="原始文件："/>
+                                <CheckBox x:Name="cbRawVideo" Click="cbRawVideo_Click" ToolTip="保留原始视频文件（文件名Raw开头）" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="cbRawAudio" Click="cbRawAudio_Click" ToolTip="保留原始音频文件（文件名Raw开头）" Margin="8 0 0 0" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
                     </GroupBox>
                 </WrapPanel>

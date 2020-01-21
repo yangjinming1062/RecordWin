@@ -142,6 +142,20 @@ namespace RecordWin
             get => _捕获鼠标;
             set { _捕获鼠标 = value; SettingHelp.SaveSetting(); }
         }
+
+        bool _保留视频 = false;
+        public bool 保留视频
+        {
+            get => _保留视频;
+            set { _保留视频 = value; SettingHelp.SaveSetting(); }
+        }
+
+        bool _保留音频 = false;
+        public bool 保留音频
+        {
+            get => _保留音频;
+            set { _保留音频 = value; SettingHelp.SaveSetting(); }
+        }
         #endregion
 
         #region 录制

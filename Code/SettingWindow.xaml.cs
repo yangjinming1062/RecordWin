@@ -17,6 +17,8 @@ namespace RecordWin
             InitializeComponent();
             cbPlayHidden.IsChecked = SettingHelp.Settings.录制隐藏;
             cbMouse.IsChecked = SettingHelp.Settings.捕获鼠标;
+            cbRawVideo.IsChecked = SettingHelp.Settings.保留视频;
+            cbRawAudio.IsChecked = SettingHelp.Settings.保留音频;
             var devs = new FilterInfoCollection(FilterCategory.VideoInputDevice);//获取摄像头列表 
             if (devs.Count != 0)
             {
@@ -184,6 +186,10 @@ namespace RecordWin
         private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
 
         private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
+
+        private void cbRawVideo_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.保留视频 = cbRawVideo.IsChecked.Value;
+
+        private void cbRawAudio_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.保留音频 = cbRawAudio.IsChecked.Value;
         #endregion
     }
 }

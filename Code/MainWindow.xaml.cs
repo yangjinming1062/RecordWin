@@ -73,10 +73,10 @@ namespace RecordWin
         /// 根据时间生成保存文件名称，文件位于Temp文件夹中
         /// </summary>
         /// <param name="Type">文件后缀，需要带点，如.mp4</param>
-        private string MakeFilePath(string Type)
+        private string MakeFilePath(string Type, string Begin = "")
         {
             if (!Type.StartsWith(".")) Type = "." + Type;
-            string path = Path.Combine(SettingHelp.Settings.保存路径, $"{DateTime.Now.ToString(SettingHelp.Settings.命名规则)}{Type}");
+            string path = Path.Combine(SettingHelp.Settings.保存路径, $"{Begin}{DateTime.Now.ToString(SettingHelp.Settings.命名规则)}{Type}");
             if (!Directory.Exists(path)) Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
         }
@@ -241,7 +241,7 @@ namespace RecordWin
 
         private void BeginRecord()
         {
-            curVideoName = MakeFilePath(".avi");
+            curVideoName = MakeFilePath(".avi", "Raw");
             curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             videoSpan = new TimeSpan();
@@ -293,35 +293,13 @@ namespace RecordWin
             isRecording = true;
             isParsing = false;
             if (SettingHelp.Settings.录制隐藏) HiddenTools(true);
-            btSet.Visibility = Visibility.Hidden;
+            btSet.Visibility = Visibility.Collapsed;
+            //waitBar.Visibility = Visibility.Collapsed;
             lbTime.Visibility = Visibility.Visible;
             ChangePlace();
             //TitleDragMove(false);
         }
-        #region 使用ffmpeg.exe进行音视频合成-注释，如有需要可使用
-        //public void CombineVideoAndAudio()
-        //{
-        //    Process p = new Process();//建立外部调用线程
-        //    p.StartInfo.FileName = System.Windows.Forms.Application.StartupPath + "\\ffmpeg.exe";//要调用外部程序的绝对路径
-        //    p.StartInfo.Arguments = "-i " + curVideoName + " -i " + curAudioName + " " + MakeFilePath(".mp4");
-        //    p.StartInfo.UseShellExecute = false;//不使用操作系统外壳程序启动线程(一定为FALSE,详细的请看MSDN)
-        //    p.StartInfo.RedirectStandardError = true;//把外部程序错误输出写到StandardError流中(这个一定要注意,FFMPEG的所有输出信息,都为错误输出流,用StandardOutput是捕获不到任何消息的...这是我耗费了2个多月得出来的经验...mencoder就是用standardOutput来捕获的)
-        //    p.StartInfo.CreateNoWindow = true;//不创建进程窗口
-        //    p.ErrorDataReceived += new DataReceivedEventHandler(CmdOutput);//外部程序(这里是FFMPEG)输出流时候产生的事件,这里是把流的处理过程转移到下面的方法中,详细请查阅MSDN
-        //    p.Start();//启动线程
-        //    p.BeginErrorReadLine();//开始异步读取
-        //    p.WaitForExit();//阻塞等待进程结束
-        //    p.Close();//关闭进程
-        //    p.Dispose();//释放资源
-        //}
-        //private void CmdOutput(object sendProcess, DataReceivedEventArgs output)
-        //{
-        //    if (!String.IsNullOrEmpty(output.Data))
-        //    {
-        //        Message(output.Data);
-        //    }
-        //}
-        #endregion
+        
         internal void StopRecord(bool ShowErr = true)
         {
             try
@@ -357,30 +335,44 @@ namespace RecordWin
                 btParse.Visibility = Visibility.Collapsed;
                 btStop.Visibility = Visibility.Collapsed;
                 btSet.Visibility = Visibility.Visible;
-                
-                lbTime.Content = "视频压缩中，请稍等..";//Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
-                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                lbTime.Visibility = Visibility.Collapsed;
+                btClose.Visibility = Visibility.Visible;
+                btBegin.Visibility = Visibility.Visible;
+                waitBar.Value = 0;
+                waitBar.Visibility = Visibility.Visible;
+                //Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
+                if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//没有视频则不转换
                 {
-                    var ffMpeg = new FFMpegConverter();
-                    FFMpegInput[] input;
-                    input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(curVideoName), new FFMpegInput(curAudioName) } : new FFMpegInput[] { new FFMpegInput(curVideoName) };
-                    ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
-                    if (File.Exists(curVideoName)) File.Delete(curVideoName);
-                    if (File.Exists(curAudioName)) File.Delete(curAudioName);//合成后移除音频文件
-                    curVideoName = "";
-                    curAudioName = "";
-                    Dispatcher.Invoke(() =>
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
-                        btBegin.Visibility = Visibility.Visible;
-                        btClose.Visibility = Visibility.Visible;
-                        lbTime.Visibility = Visibility.Collapsed;
+                        string tempVideo = curVideoName;
+                        string tempAudio = curAudioName;
+                        var ffMpeg = new FFMpegConverter();
+                        ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
+                        FFMpegInput[] input;
+                        input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
+                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
+                        if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
+                        if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
+                    Dispatcher.Invoke(() =>
+                        {
+                            waitBar.Visibility = Visibility.Collapsed;
+                        });
                     });
-                });
+                }
             }
             catch (Exception ex)
             {
                 if (ShowErr) Message(ex.Message);
             }
+        }
+
+        private void FfMpeg_ConvertProgress(object sender, ConvertProgressEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                waitBar.Value = (waitBar.Value + 1) % 10;
+            });
         }
 
         private void btBegin_Click(object sender, RoutedEventArgs e)
