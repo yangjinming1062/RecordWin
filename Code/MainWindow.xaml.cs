@@ -518,26 +518,29 @@ namespace RecordWin
                 case HotKey.WM_HOTKEY:
                     {
                         int sid = wParam.ToInt32();
-                        if (!SettingPop.IsOpen)
+                        if (Visibility == Visibility.Visible)
                         {
-                            if (sid == HotKeyBF)
+                            if (!SettingPop.IsOpen)
                             {
-                                if (btBegin.Visibility == Visibility.Visible)
-                                    btBegin_Click(null, null);
-                                else
-                                    btParse_Click(null, null);
+                                if (sid == HotKeyBF)
+                                {
+                                    if (btBegin.Visibility == Visibility.Visible)
+                                        btBegin_Click(null, null);
+                                    else
+                                        btParse_Click(null, null);
+                                }
+                                else if (sid == HotKeyTZ)
+                                {
+                                    if (btStop.Visibility == Visibility.Visible)
+                                        btStop_Click(null, null);
+                                    else
+                                        btClose_Click(null, null);
+                                }
                             }
-                            else if (sid == HotKeyTZ)
+                            if (sid == HotKeyHB)
                             {
-                                if (btStop.Visibility == Visibility.Visible)
-                                    btStop_Click(null, null);
-                                else
-                                    btClose_Click(null, null);
+                                btPen_Click(null, null);
                             }
-                        }
-                        if (sid == HotKeyHB)
-                        {
-                            btPen_Click(null, null);
                         }
                         handled = true;
                         break;

@@ -245,15 +245,15 @@ namespace RecordWin
             if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
                 var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
-                if (Camera != null)
+                if (Camera != null && Camera.VideoResolution.FrameSize.Width / 4 > 150)//如果缩小后变的太小则不缩小了
                 {
                     Width = Camera.VideoResolution.FrameSize.Width / 4;
-                    Height = Camera.VideoResolution.FrameSize.Height / 4;
+                    Height = Camera.VideoResolution.FrameSize.Height / 4 + 30;
                 }
                 else
                 {
                     Width = S.WorkingArea.Width / 5;
-                    Height = S.WorkingArea.Height / 5;
+                    Height = S.WorkingArea.Height / 5 + 30;
                 }
                 Left = S.WorkingArea.Width - Width - 10;
                 Top = S.WorkingArea.Height - Height - 10;
