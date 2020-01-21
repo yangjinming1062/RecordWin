@@ -75,6 +75,7 @@ namespace RecordWin
         /// <param name="Type">文件后缀，需要带点，如.mp4</param>
         private string MakeFilePath(string Type)
         {
+            if (!Type.StartsWith(".")) Type = "." + Type;
             string path = Path.Combine(SettingHelp.Settings.保存路径, $"{DateTime.Now.ToString(SettingHelp.Settings.命名规则)}{Type}");
             if (!Directory.Exists(path)) Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
@@ -266,8 +267,7 @@ namespace RecordWin
             {
                 lock (this)
                 {
-                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight,
-                        SettingHelp.Settings.视频帧率, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
+                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3,
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
                 System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X,
@@ -337,7 +337,7 @@ namespace RecordWin
                             {
                                 shower.Close();
                             }
-                            catch { }
+                            catch { }//关闭摄像头窗口调用的StopRecord方法时再来Close会异常
                             break;
                         }
                     }
@@ -352,36 +352,30 @@ namespace RecordWin
                     audioStreamer.StopRecording();
                     audioStreamer.Dispose();
                 }
-
-                curVideoName = "";
-                curAudioName = "";
                 isRecording = false;
                 HiddenTools(SettingHelp.Settings.自动隐藏);
-                btBegin.Visibility = Visibility.Visible;
                 btParse.Visibility = Visibility.Collapsed;
-                btClose.Visibility = Visibility.Visible;
                 btStop.Visibility = Visibility.Collapsed;
                 btSet.Visibility = Visibility.Visible;
-                //TitleDragMove(true);
-                #region 音视频合成
-                if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//有视频源
+                
+                lbTime.Content = "视频压缩中，请稍等..";//Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
-                    if (SettingHelp.Settings.声音)//又有声音,则合成
+                    var ffMpeg = new FFMpegConverter();
+                    FFMpegInput[] input;
+                    input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(curVideoName), new FFMpegInput(curAudioName) } : new FFMpegInput[] { new FFMpegInput(curVideoName) };
+                    ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
+                    if (File.Exists(curVideoName)) File.Delete(curVideoName);
+                    if (File.Exists(curAudioName)) File.Delete(curAudioName);//合成后移除音频文件
+                    curVideoName = "";
+                    curAudioName = "";
+                    Dispatcher.Invoke(() =>
                     {
-                        lbTime.Content = "处理中，请稍等..";
-                        System.Threading.Tasks.Task.Factory.StartNew(() =>
-                        {
-                            var ffMpeg = new FFMpegConverter();
-                            FFMpegInput[] input = new FFMpegInput[] { new FFMpegInput(curVideoName), new FFMpegInput(curAudioName) };
-                            var setting = new OutputSettings();
-                            ffMpeg.ConvertMedia(input, MakeFilePath(".mp4"), "mp4", setting);
-                            File.Delete(curVideoName);
-                            File.Delete(curAudioName);//合成后移除音频文件
-                        }).Wait();
-                    }
-                }
-                #endregion
-                lbTime.Visibility = Visibility.Collapsed;
+                        btBegin.Visibility = Visibility.Visible;
+                        btClose.Visibility = Visibility.Visible;
+                        lbTime.Visibility = Visibility.Collapsed;
+                    });
+                });
             }
             catch (Exception ex)
             {

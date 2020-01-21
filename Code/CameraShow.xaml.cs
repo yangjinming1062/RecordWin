@@ -156,7 +156,7 @@ namespace RecordWin
                     {
                         VideoOutPut = new VideoFileWriter();
                         VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, (VideoCodec)Enum.Parse(typeof(VideoCodec), SettingHelp.Settings.编码类型),
+                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MSMPEG4v3,
                            Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
                     }
                 }

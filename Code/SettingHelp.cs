@@ -115,7 +115,7 @@ namespace RecordWin
             set { _保存路径 = value; SettingHelp.SaveSetting(); }
         }
 
-        string _编码类型 = "MSMPEG4v3";
+        string _编码类型 = "mp4";
         public string 编码类型
         {
             get => _编码类型;

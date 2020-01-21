@@ -135,18 +135,11 @@
                     <GroupBox Header="高级设置（慎重修改）" Width="242">
                         <StackPanel Orientation="Vertical" Margin="0">
                             <StackPanel>
-                                <Label Content="编码方案："/>
+                                <Label Content="视频类型："/>
                                 <ComboBox x:Name="cbVideoCode" MinWidth="60" DropDownClosed="cbVideoCode_DropDownClosed">
-                                    <TextBlock Text="Default"/>
-                                    <TextBlock Text="MPEG4" />
-                                    <TextBlock Text="WMV1"/>
-                                    <TextBlock Text="WMV2"/>
-                                    <TextBlock Text="MSMPEG4v2"/>
-                                    <TextBlock Text="MSMPEG4v3" ToolTip="默认值"/>
-                                    <TextBlock Text="H263P"/>
-                                    <TextBlock Text="FLV1"/>
-                                    <TextBlock Text="MPEG2"/>
-                                    <!--<TextBlock Text="Raw"/>-->
+                                    <TextBlock Text="mp4" ToolTip="默认值，推荐"/>
+                                    <TextBlock Text="avi"/>
+                                    <TextBlock Text="flv"/>
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel>
