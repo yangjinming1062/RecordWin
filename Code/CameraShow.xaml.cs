@@ -32,48 +32,26 @@ namespace RecordWin
         #region 窗体大小拖拽
         private void ResizeRectangle_MouseEnter(object sender, MouseEventArgs e)
         {
-            Rectangle rectangle = sender as Rectangle;
-            if (rectangle != null)
+            if (sender is Rectangle rectangle)
             {
                 switch (rectangle.Name)
                 {
-                    case "Top":
-                        Cursor = Cursors.SizeNS;
-                        break;
-                    case "Bottom":
-                        Cursor = Cursors.SizeNS;
-                        break;
-                    case "Left":
-                        Cursor = Cursors.SizeWE;
-                        break;
-                    case "Right":
-                        Cursor = Cursors.SizeWE;
-                        break;
-                    case "TopLeft":
-                        Cursor = Cursors.SizeNWSE;
-                        break;
-                    case "TopRight":
-                        Cursor = Cursors.SizeNESW;
-                        break;
-                    case "BottomLeft":
-                        Cursor = Cursors.SizeNESW;
-                        break;
-                    case "BottomRight":
-                        Cursor = Cursors.SizeNWSE;
-                        break;
-                    default:
-                        break;
+                    case "rTop": Cursor = Cursors.SizeNS; break;
+                    case "rBottom": Cursor = Cursors.SizeNS; break;
+                    case "rLeft": Cursor = Cursors.SizeWE; break;
+                    case "rRight": Cursor = Cursors.SizeWE; break;
+                    case "rTopLeft": Cursor = Cursors.SizeNWSE; break;
+                    case "rTopRight": Cursor = Cursors.SizeNESW; break;
+                    case "rBottomLeft": Cursor = Cursors.SizeNESW; break;
+                    case "rBottomRight": Cursor = Cursors.SizeNWSE; break;
+                    default: break;
                 }
             }
         }
-        private void ResizeRectangle_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Arrow;
-        }
+        private void ResizeRectangle_MouseLeave(object sender, MouseEventArgs e) => Cursor = Cursors.Arrow;
         private void ResizeRectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Rectangle rectangle = sender as Rectangle;
-            if (rectangle != null)
+            if (sender is Rectangle rectangle)
             {
                 switch (rectangle.Name)
                 {
@@ -117,13 +95,8 @@ namespace RecordWin
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
-        /// <summary>
-        /// 重绘Window
-        /// </summary>
-        private void ResizeWindow(ResizeDirection direction)
-        {
-            SendMessage(((HwndSource)PresentationSource.FromVisual(this)).Handle, 0x112, (IntPtr)(61440 + direction), IntPtr.Zero);
-        }
+
+        private void ResizeWindow(ResizeDirection direction) => SendMessage(((HwndSource)PresentationSource.FromVisual(this)).Handle, 0x112, (IntPtr)(61440 + direction), IntPtr.Zero);
 
         public enum ResizeDirection
         {
@@ -232,7 +205,7 @@ namespace RecordWin
                         if (main.Visibility != Visibility.Visible)//只录摄像头时，关闭摄像头录制回调主窗体的停录函数，进行音视频合成
                         {
                             main.Visibility = Visibility.Visible;
-                            main.StopRecord();
+                            main.StopRecord(CloseCamera: false);
                         }
                     }
                 }
@@ -262,16 +235,12 @@ namespace RecordWin
 
         private void Title_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left) { return; }
+            if (e.ChangedButton != MouseButton.Left) return;
 
             if (e.ClickCount > 1)
-            {
                 WindowState = WindowState == WindowState.Maximized ? WindowState = WindowState.Normal : WindowState = WindowState.Maximized;
-            }
             else if (e.LeftButton == MouseButtonState.Pressed && WindowState == WindowState.Normal)
-            {
-                this.DragMove();
-            }
+                DragMove();
         }
     }
 }

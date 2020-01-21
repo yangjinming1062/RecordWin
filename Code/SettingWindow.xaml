@@ -92,7 +92,7 @@
                     </StackPanel>
                 </GroupBox>
                 <WrapPanel>
-                    <GroupBox Header="热键设置（重启生效）" Width="290">
+                    <GroupBox Header="热键设置" Width="290">
                         <StackPanel Orientation="Vertical" Margin="0">
                             <StackPanel>
                                 <Label Content="播放/暂停："/>

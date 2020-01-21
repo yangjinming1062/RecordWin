@@ -19,10 +19,7 @@ namespace RecordWin
     /// </summary>
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// 当前窗体指针
-        /// </summary>
-        private IntPtr winHandle;
+        private IntPtr winHandle;// 当前窗体指针
         private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
         public MainWindow()
         {
@@ -51,8 +48,7 @@ namespace RecordWin
                 {
                     foreach (Process temp in pro)
                     {
-                        if (temp.Id != current.Id)
-                            temp.Kill();
+                        if (temp.Id != current.Id) temp.Kill();
                     }
                 }
                 catch { }
@@ -72,7 +68,7 @@ namespace RecordWin
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于Temp文件夹中
         /// </summary>
-        /// <param name="Type">文件后缀，需要带点，如.mp4</param>
+        /// <param name="Type">文件后缀,如.mp4</param>
         private string MakeFilePath(string Type, string Begin = "")
         {
             if (!Type.StartsWith(".")) Type = "." + Type;
@@ -120,9 +116,6 @@ namespace RecordWin
             if (isRecording) StopRecord();
             base.OnClosing(e);
         }
-        /// <summary>
-        /// 窗体加载后自动定位
-        /// </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             winHandle = new WindowInteropHelper(this).Handle;
@@ -130,11 +123,7 @@ namespace RecordWin
             ChangePlace();
             SetHotKey(true);
         }
-        /// <summary>
-        /// 关闭程序
-        /// </summary>
         private void btClose_Click(object sender, RoutedEventArgs e) => Close();
-
         /// <summary>
         /// 拖动移动
         /// </summary>
@@ -235,10 +224,8 @@ namespace RecordWin
         /// </summary>
         private void AudioDataAvailable(object sender, WaveInEventArgs e)
         {
-            if (isRecording && !isParsing)
-                audioWriter.Write(e.Buffer, 0, e.BytesRecorded);
+            if (isRecording && !isParsing) audioWriter.Write(e.Buffer, 0, e.BytesRecorded);
         }
-
         private void BeginRecord()
         {
             curVideoName = MakeFilePath(".avi", "Raw");
@@ -247,8 +234,7 @@ namespace RecordWin
             videoSpan = new TimeSpan();
             lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
             FrameCount = 0;
-            int RecordWidth = 0;
-            int RecordHeight = 0;
+            int RecordWidth = 0, RecordHeight = 0;
             if (SettingHelp.Settings.跨屏录制)
             {
                 foreach (var s in System.Windows.Forms.Screen.AllScreens)
@@ -299,23 +285,17 @@ namespace RecordWin
             ChangePlace();
             //TitleDragMove(false);
         }
-        
-        internal void StopRecord(bool ShowErr = true)
+        internal void StopRecord(bool ShowErr = true, bool CloseCamera = true)
         {
             try
             {
-                Visibility = Visibility.Visible;//防止调用CameraShow的Close死循环
-                if (SettingHelp.Settings.摄像头)
+                if (CloseCamera && SettingHelp.Settings.摄像头)//摄像头关闭时调用该方法不需要再去关闭摄像头
                 {
                     foreach (Window shower in Application.Current.Windows)
                     {
                         if (shower is CameraShow)
                         {
-                            try
-                            {
-                                shower.Close();
-                            }
-                            catch { }//关闭摄像头窗口调用的StopRecord方法时再来Close会异常
+                            shower.Close();
                             break;
                         }
                     }
@@ -345,19 +325,17 @@ namespace RecordWin
                 {
                     System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
-                        string tempVideo = curVideoName;
-                        string tempAudio = curAudioName;
+                        string tempVideo = curVideoName, tempAudio = curAudioName;//运行未完成转换再次开始录制，所以这里需要把当前转换中的文件名记录下来
                         var ffMpeg = new FFMpegConverter();
                         ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
-                        FFMpegInput[] input;
-                        input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
+                        FFMpegInput[] input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
                         ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
                         if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
                         if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
-                    Dispatcher.Invoke(() =>
-                        {
-                            waitBar.Visibility = Visibility.Collapsed;
-                        });
+                        Dispatcher.Invoke(() =>
+                            {
+                                waitBar.Visibility = Visibility.Collapsed;
+                            });
                     });
                 }
             }
@@ -366,15 +344,7 @@ namespace RecordWin
                 if (ShowErr) Message(ex.Message);
             }
         }
-
-        private void FfMpeg_ConvertProgress(object sender, ConvertProgressEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                waitBar.Value = (waitBar.Value + 1) % 10;
-            });
-        }
-
+        private void FfMpeg_ConvertProgress(object sender, ConvertProgressEventArgs e) => Dispatcher.Invoke(() => { waitBar.Value = (waitBar.Value + 1) % 10; });
         private void btBegin_Click(object sender, RoutedEventArgs e)
         {
             if (!SettingHelp.Settings.桌面 && !SettingHelp.Settings.摄像头 && !SettingHelp.Settings.声音)
@@ -402,7 +372,6 @@ namespace RecordWin
                 Message(ex.Message);
             }
         }
-
         private void btParse_Click(object sender, RoutedEventArgs e)
         {
             btBegin.Visibility = Visibility.Visible;
@@ -410,7 +379,6 @@ namespace RecordWin
             isParsing = true;
             videoStreamer.SignalToStop();
         }
-
         private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord();
         #endregion
 
@@ -423,13 +391,9 @@ namespace RecordWin
             btBegin.Visibility = SettingPop.IsOpen ? Visibility.Hidden : Visibility.Visible;
             TitleDragMove(!SettingPop.IsOpen);//根据设置Popup决定是否可以拖住，当正在设置时不允许拖拽（会和设置小窗窗窗分离）
         }
-
         private void cbSY_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.声音 = cbSY.IsChecked.Value;
-
         private void cbSXT_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.摄像头 = cbSXT.IsChecked.Value;
-
         private void cbZM_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.桌面 = cbZM.IsChecked.Value;
-
         private void btMoreSet_Click(object sender, RoutedEventArgs e)
         {
             SetHotKey(false);//开始设置前先把当前热键卸载
