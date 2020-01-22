@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged" Width="300" Height="42" Topmost="True">
+        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" AllowsTransparency="True" ShowInTaskbar="False" StateChanged="Window_StateChanged"
+        MaxWidth="400" Height="42" Topmost="True">
     <Canvas>
         <Border BorderThickness="1" BorderBrush="Black">
             <WrapPanel x:Name="TitlePanel" MouseDown="Title_MouseDown" Cursor="SizeAll">
@@ -62,7 +63,10 @@
                     </Path>
                 </local:ActivableButton>
                 <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <ProgressBar x:Name="waitBar" Width="58" Height="20" Background="Transparent" Maximum="10" ToolTip="视频压缩中，请稍等.." Visibility="Collapsed"/>
+                <Grid x:Name="barGrid">
+                    <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
+                    <Label Content="视频压缩中，请稍等.." VerticalContentAlignment="Center"/>
+                </Grid>
                 <local:ActivableButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
                     <Path Data="{DynamicResource IconPlay}"/>
                 </local:ActivableButton>

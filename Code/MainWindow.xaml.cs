@@ -35,6 +35,7 @@ namespace RecordWin
                 SettingHelp.Settings.声音 = false;
             }
             lbTime.Visibility = Visibility.Collapsed;
+            barGrid.Visibility = Visibility.Collapsed;
             HiddenTools(SettingHelp.Settings.自动隐藏);
             cbZM.IsChecked = SettingHelp.Settings.桌面;
             cbSXT.IsChecked = SettingHelp.Settings.摄像头;
@@ -319,7 +320,7 @@ namespace RecordWin
                 btClose.Visibility = Visibility.Visible;
                 btBegin.Visibility = Visibility.Visible;
                 waitBar.Value = 0;
-                waitBar.Visibility = Visibility.Visible;
+                barGrid.Visibility = Visibility.Visible;
                 //Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
                 if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//没有视频则不转换
                 {
@@ -334,7 +335,7 @@ namespace RecordWin
                         if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
                         Dispatcher.Invoke(() =>
                             {
-                                waitBar.Visibility = Visibility.Collapsed;
+                                barGrid.Visibility = Visibility.Collapsed;
                             });
                     });
                 }
