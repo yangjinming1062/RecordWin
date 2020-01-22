@@ -204,7 +204,6 @@ namespace RecordWin
                     catch { }//打开任务管理器时会导致异常
                 }
                 videoWriter.WriteVideoFrame(e.Frame);
-                //计算当前进度这个会拖慢视频录制进程,新开线程来处理进度显示
                 System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
                     FrameCount += 1;
@@ -331,8 +330,12 @@ namespace RecordWin
                         ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
                         FFMpegInput[] input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
                         ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
-                        if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
-                        if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
+                        try
+                        {
+                            if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
+                            if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
+                        }
+                        catch { }//防止文件被占用删除失败
                         Dispatcher.Invoke(() =>
                             {
                                 barGrid.Visibility = Visibility.Collapsed;
