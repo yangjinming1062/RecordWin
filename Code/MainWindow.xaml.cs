@@ -19,7 +19,7 @@ namespace RecordWin
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IntPtr winHandle;// 当前窗体指针
+        public IntPtr winHandle;// 当前窗体指针
         private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
         public MainWindow()
         {

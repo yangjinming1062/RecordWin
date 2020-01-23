@@ -732,5 +732,22 @@ namespace RecordWin
             Display($"当前字号：{_drawerTextBox.FontSize}");
         }
         #endregion
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.Owner is MainWindow main)
+            {
+                var S = System.Windows.Forms.Screen.FromHandle(main.winHandle);
+                int right = 10;//基础间隔10各单位
+                foreach (var s in System.Windows.Forms.Screen.AllScreens)//使画笔和录屏命令栏处于同一窗口
+                {
+                    if (s.Bounds.X > S.Bounds.X)//记录录屏命令栏右侧的屏幕宽度
+                    {
+                        right += Math.Abs(s.Bounds.Width);
+                    }
+                }
+                Canvas.SetRight(Palette, right);
+            }
+        }
     }
 }
