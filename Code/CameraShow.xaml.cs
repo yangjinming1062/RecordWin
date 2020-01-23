@@ -152,20 +152,17 @@ namespace RecordWin
         {
             if (!isParsing)
             {
-                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                Dispatcher.Invoke(new Action(() =>
                 {
-                    Dispatcher.Invoke(new Action(() =>
-                    {
-                        MemoryStream ms = new MemoryStream();
-                        eventArgs.Frame.Save(ms, ImageFormat.Bmp);
-                        BitmapImage image = new BitmapImage();
-                        image.BeginInit();
-                        image.StreamSource = new MemoryStream(ms.GetBuffer());
-                        ms.Close();
-                        image.EndInit();
-                        imgCamera.Source = image;
-                    }));//同步显示
-                });
+                    MemoryStream ms = new MemoryStream();
+                    eventArgs.Frame.Save(ms, ImageFormat.Bmp);
+                    BitmapImage image = new BitmapImage();
+                    image.BeginInit();
+                    image.StreamSource = new MemoryStream(ms.GetBuffer());
+                    ms.Close();
+                    image.EndInit();
+                    imgCamera.Source = image;
+                }));//同步显示
                 frameCount += 1;//抽帧提速：因为写入速度的影响高帧率时处理不及时30帧可能需要2s，但是视频认为30帧为1s最终导致视频为加速状态
                 if (!SettingHelp.Settings.桌面 && frameCount == frame)
                 {
