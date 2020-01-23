@@ -335,9 +335,13 @@ namespace RecordWin
                         try
                         {
                             if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
-                            if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
                         }
                         catch { }//防止文件被占用删除失败
+                        try
+                        {
+                            if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
+                        }
+                        catch { Message("删除音频失败"); }
                         Dispatcher.Invoke(() =>
                             {
                                 barGrid.Visibility = Visibility.Collapsed;
