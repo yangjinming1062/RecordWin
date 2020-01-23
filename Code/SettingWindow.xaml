@@ -57,8 +57,8 @@
             <WrapPanel Orientation="Vertical">
                 <GroupBox Header="录制设置">
                     <StackPanel Orientation="Vertical" Margin="0">
-                        <StackPanel>
-                            <Label Content="视频帧率："/>
+                        <StackPanel Visibility="Collapsed">
+                            <Label Content="视频帧率：" ToolTip="更高的速度因为写入速度不够快会使视频失速，30帧时10分钟会被录制成5分钟"/>
                             <Slider Foreground="White" x:Name="slZhenLv" Minimum="10" Maximum="30" TickFrequency="10" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300" SmallChange="10" LargeChange="10"/>
                             <Label Content="{Binding ElementName=slZhenLv, Path=Value}" ToolTip="帧率当前值"/>
                         </StackPanel>

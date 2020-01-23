@@ -22,6 +22,8 @@ namespace RecordWin
         private VideoFileWriter VideoOutPut;//用来把每一帧图像编码到视频文件
         private string FileName;
         private bool isParsing;
+        int frameCount;//介于0和frame之间计数用
+        int frame;//抽帧提速：手动将摄像头的帧率将到10帧，30帧的时候每3帧抽一帧出来
         public CameraShow(string fileName)
         {
             InitializeComponent();
@@ -115,9 +117,11 @@ namespace RecordWin
         {
             if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
             {
+                frameCount = 0;
                 Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
                 //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
                 Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
+                frame = Camera.VideoResolution.AverageFrameRate / 10;
                 imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
                 imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据,SnapshotFrame也是有待比较
@@ -129,7 +133,7 @@ namespace RecordWin
                     {
                         VideoOutPut = new VideoFileWriter();
                         VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MSMPEG4v3,
+                           10, VideoCodec.MSMPEG4v3,//为了减小高帧率时视频失速，强制为10帧
                            Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
                     }
                 }
@@ -148,19 +152,26 @@ namespace RecordWin
         {
             if (!isParsing)
             {
-                Dispatcher.Invoke(new Action(() =>
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
-                    MemoryStream ms = new MemoryStream();
-                    eventArgs.Frame.Save(ms, ImageFormat.Bmp);
-                    BitmapImage image = new BitmapImage();
-                    image.BeginInit();
-                    image.StreamSource = new MemoryStream(ms.GetBuffer());
-                    ms.Close();
-                    image.EndInit();
-                    imgCamera.Source = image;
-                }));//同步显示
-                if (!SettingHelp.Settings.桌面)
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        MemoryStream ms = new MemoryStream();
+                        eventArgs.Frame.Save(ms, ImageFormat.Bmp);
+                        BitmapImage image = new BitmapImage();
+                        image.BeginInit();
+                        image.StreamSource = new MemoryStream(ms.GetBuffer());
+                        ms.Close();
+                        image.EndInit();
+                        imgCamera.Source = image;
+                    }));//同步显示
+                });
+                frameCount += 1;//抽帧提速：因为写入速度的影响高帧率时处理不及时30帧可能需要2s，但是视频认为30帧为1s最终导致视频为加速状态
+                if (!SettingHelp.Settings.桌面 && frameCount == frame)
+                {
+                    frameCount = 0;
                     VideoOutPut.WriteVideoFrame(eventArgs.Frame);
+                }
             }
         }
 
