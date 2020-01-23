@@ -37,7 +37,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>RecordWin.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\RecordWin.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -122,7 +122,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="IconDataDictionary.xaml">
+    <Page Include="Resources\IconDataDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -130,7 +130,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ResDictionary.xaml">
+    <Page Include="Resources\ResDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -191,7 +191,7 @@
     <Content Include="avutil-51.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="RecordWin.ico" />
+    <Resource Include="Resources\RecordWin.ico" />
     <None Include="Resources\激光.cur" />
     <Content Include="swscale-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

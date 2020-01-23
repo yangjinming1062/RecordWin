@@ -6,8 +6,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="IconDataDictionary.xaml"/>
-                <ResourceDictionary Source="ResDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/IconDataDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/ResDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
