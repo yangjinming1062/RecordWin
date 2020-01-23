@@ -234,14 +234,16 @@ namespace RecordWin
             videoSpan = new TimeSpan();
             lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
             FrameCount = 0;
-            int RecordWidth = 0, RecordHeight = 0;
+            int RecordWidth = 0, RecordHeight = 0, RecordTop = 0, RecordLeft = 0;
             if (SettingHelp.Settings.跨屏录制)
             {
                 foreach (var s in System.Windows.Forms.Screen.AllScreens)
                 {
-                    RecordWidth += s.Bounds.Width;
-                    if (s.Bounds.Height > RecordHeight)
-                        RecordHeight = s.Bounds.Height;
+                    RecordWidth += Math.Abs(s.Bounds.Width);
+                    if (Math.Abs(s.Bounds.Height) > RecordHeight)
+                        RecordHeight = Math.Abs(s.Bounds.Height);
+                    RecordLeft = Math.Min(s.Bounds.X, RecordLeft);
+                    RecordTop = Math.Min(s.Bounds.Y, RecordTop);
                 }
             }
             else
@@ -256,8 +258,8 @@ namespace RecordWin
                     videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3,
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
-                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.X,
-                    SettingHelp.Settings.跨屏录制 ? 0 : curScreen.Bounds.Y, RecordWidth, RecordHeight);
+                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? RecordLeft : curScreen.Bounds.X,
+                    SettingHelp.Settings.跨屏录制 ? RecordTop : curScreen.Bounds.Y, RecordWidth, RecordHeight);
                 videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
                 videoStreamer.NewFrame += VideoNewFrame;
                 videoStreamer.Start();

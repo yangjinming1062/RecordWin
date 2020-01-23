@@ -41,9 +41,11 @@ namespace RecordWin
             Height = 0;
             foreach (var s in System.Windows.Forms.Screen.AllScreens)
             {
-                Width += s.Bounds.Width;
-                if (s.Bounds.Height > Height)
-                    Height = s.Bounds.Height;
+                Width += Math.Abs(s.Bounds.Width);
+                if (Math.Abs(s.Bounds.Height) > Height)
+                    Height = Math.Abs(s.Bounds.Height);
+                Left = Math.Min(s.Bounds.X, Left);
+                Top = Math.Min(s.Bounds.Y, Top);
             }
             #endregion
             InitializeComponent();
