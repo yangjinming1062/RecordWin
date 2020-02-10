@@ -45,6 +45,12 @@ namespace RecordWin
             txtSavePath.TextChanged += txtSavePath_TextChanged;
             txtNameRule.Text = SettingHelp.Settings.命名规则;
             txtNameRule.TextChanged += txtNameRule_TextChanged;
+            switch(SettingHelp.Settings.视频帧率)
+            {
+                case 1:btZLL.IsActived = true;break;
+                case 5: btZLM.IsActived = true; break;
+                case 10: btZLH.IsActived = true; break;
+            }
         }
 
         /// <summary>
@@ -75,9 +81,9 @@ namespace RecordWin
         {
             switch((sender as ActivableButton).Name)
             {
-                case "btZLL":SettingHelp.Settings.视频帧率 = 1;break;
-                case "btZLM": SettingHelp.Settings.视频帧率 = 5; break;
-                case "btZLH": SettingHelp.Settings.视频帧率 = 10; break;
+                case "btZLL":SettingHelp.Settings.视频帧率 = 1; btZLL.IsActived = true; btZLM.IsActived = false; btZLH.IsActived = false; break;
+                case "btZLM": SettingHelp.Settings.视频帧率 = 5; btZLL.IsActived = false; btZLM.IsActived = true; btZLH.IsActived = false; break;
+                case "btZLH": SettingHelp.Settings.视频帧率 = 10; btZLL.IsActived = false; btZLM.IsActived = false; btZLH.IsActived = true; break;
             }
         }
 
