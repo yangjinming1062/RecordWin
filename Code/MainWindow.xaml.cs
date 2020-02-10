@@ -311,6 +311,7 @@ namespace RecordWin
                 {
                     audioStreamer.StopRecording();
                     audioStreamer.Dispose();
+                    audioWriter.Close();
                 }
                 isRecording = false;
                 HiddenTools(SettingHelp.Settings.自动隐藏);
@@ -341,7 +342,7 @@ namespace RecordWin
                         {
                             if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
                         }
-                        catch { Message("删除音频失败"); }
+                        catch { }
                         Dispatcher.Invoke(() =>
                             {
                                 barGrid.Visibility = Visibility.Collapsed;

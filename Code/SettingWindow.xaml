@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="420" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Height="430" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -57,15 +57,16 @@
             <WrapPanel Orientation="Vertical">
                 <GroupBox Header="录制设置">
                     <StackPanel Orientation="Vertical" Margin="0">
-                        <StackPanel >
-                            <Label Content="视频帧率：" ToolTip="更高的帧率会因为写入速度不够快会使视频轻度失速，推荐5帧"/>
-                            <Slider Foreground="White" x:Name="slZhenLv" Minimum="0" Maximum="10" TickFrequency="5" ToolTip="数值越大视频越流畅，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
-                            <Label Content="{Binding ElementName=slZhenLv, Path=Value}" ToolTip="帧率当前值"/>
-                        </StackPanel>
                         <StackPanel>
                             <Label Content="视频质量："/>
                             <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
+                        </StackPanel>
+                        <StackPanel >
+                            <Label Content="视频帧率：" ToolTip="更高的帧率会因为写入速度不够快会使视频轻度失速，推荐中档"/>
+                            <local:ActivableButton x:Name="btZLL" Click="btZL_Click" Content="低" Height="Auto" Foreground="White" Width="32"/>
+                            <local:ActivableButton x:Name="btZLM" Click="btZL_Click" Content="中" Height="Auto" Foreground="White" Width="32"/>
+                            <local:ActivableButton x:Name="btZLH" Click="btZL_Click" Content="高" Height="Auto" Foreground="White" Width="32"/>
                         </StackPanel>
                         <StackPanel>
                             <Label Content="跨屏录制："/>

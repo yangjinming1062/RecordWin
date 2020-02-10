@@ -41,8 +41,6 @@ namespace RecordWin
             txtHB.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2);
             slZHiLiang.Value = SettingHelp.Settings.视频质量;
             slZHiLiang.ValueChanged += SlZL_ValueChanged;//必须放在Text赋值后再加载事件
-            slZhenLv.Value = SettingHelp.Settings.视频帧率;
-            slZhenLv.ValueChanged += SlZhenLv_ValueChanged;
             txtSavePath.Text = SettingHelp.Settings.保存路径;
             txtSavePath.TextChanged += txtSavePath_TextChanged;
             txtNameRule.Text = SettingHelp.Settings.命名规则;
@@ -73,23 +71,14 @@ namespace RecordWin
             SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
         }
 
-        private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void btZL_Click(object sender, RoutedEventArgs e)
         {
-            if (slZhenLv.Value >= 5)
+            switch((sender as ActivableButton).Name)
             {
-                if (10 - slZhenLv.Value > slZhenLv.Value - 5)
-                    slZhenLv.Value = 5;
-                else
-                    slZhenLv.Value = 10;
+                case "btZLL":SettingHelp.Settings.视频帧率 = 1;break;
+                case "btZLM": SettingHelp.Settings.视频帧率 = 5; break;
+                case "btZLH": SettingHelp.Settings.视频帧率 = 10; break;
             }
-            else
-            {
-                if (5 - slZhenLv.Value > slZhenLv.Value)
-                    slZhenLv.Value = 1;
-                else
-                    slZhenLv.Value = 5;
-            }
-            SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
         }
 
         private void SavePath_Click(object sender, RoutedEventArgs e)
