@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" Height="400" Width="500" Topmost="True" Loaded="Window_Loaded">
+        WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" Height="400" Width="500" Topmost="True" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">

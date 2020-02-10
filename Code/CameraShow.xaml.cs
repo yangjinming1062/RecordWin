@@ -250,6 +250,12 @@ namespace RecordWin
             }
         }
 
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            imgCamera.Width = ActualWidth;
+            imgCamera.Height = ActualHeight - 30;
+        }
+
         private void Title_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left) return;
