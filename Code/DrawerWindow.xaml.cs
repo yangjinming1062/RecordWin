@@ -699,7 +699,6 @@ namespace RecordWin
         private void DetailToggler_Click(object sender, RoutedEventArgs e) => SetExtralToolPanel(!_displayExtraToolPanel);
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Topmost = false;
             var anim = new DoubleAnimation(0, Duration3);
             anim.Completed += Exit;
             BeginAnimation(OpacityProperty, anim);

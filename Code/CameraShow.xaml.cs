@@ -122,8 +122,6 @@ namespace RecordWin
                 //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
                 Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
                 frame = Camera.VideoResolution.AverageFrameRate / 10;
-                imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
-                imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
                 Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据,SnapshotFrame也是有待比较
                 Camera.Start();//打开摄像头
 
@@ -226,18 +224,29 @@ namespace RecordWin
             if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
                 var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
-                if (Camera != null && Camera.VideoResolution.FrameSize.Width / 4 > 150)//如果缩小后变的太小则不缩小了
+                int targerWidth = (int)(S.WorkingArea.Width * 0.2);//目标显示宽度：屏幕宽度的20%
+                int targetHeight = (int)(S.WorkingArea.Height * 0.2);//同上，高度也20%
+                if (Math.Abs(targerWidth - Camera.VideoResolution.FrameSize.Width) <= Math.Abs(targetHeight - Camera.VideoResolution.FrameSize.Height))
                 {
-                    Width = Camera.VideoResolution.FrameSize.Width / 4;
-                    Height = Camera.VideoResolution.FrameSize.Height / 4 + 30;
+                    imgCamera.Width = targerWidth;
+                    imgCamera.Height = Camera.VideoResolution.FrameSize.Height / Camera.VideoResolution.FrameSize.Width * imgCamera.Width;
                 }
-                else
+                else//找到摄像头配置中最接近目标宽高的是宽度还是高度，等比缩放
                 {
-                    Width = S.WorkingArea.Width / 5;
-                    Height = S.WorkingArea.Height / 5 + 30;
+                    imgCamera.Height = targetHeight;
+                    imgCamera.Width = Camera.VideoResolution.FrameSize.Width / Camera.VideoResolution.FrameSize.Height * imgCamera.Height;
                 }
+                Width = imgCamera.Width;
+                Height = imgCamera.Height + 30;
                 Left = S.WorkingArea.Width - Width - 10;
                 Top = S.WorkingArea.Height - Height - 10;
+            }
+            else
+            {
+                imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
+                imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
+                Width = imgCamera.Width;
+                Height = imgCamera.Height + 30;
             }
         }
 

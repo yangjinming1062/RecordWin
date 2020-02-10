@@ -55,7 +55,7 @@
                 </local:ActivableButton>
             </Grid>
         </Border>
-        <Image x:Name="imgCamera" Grid.Row="1"/>
+        <Image x:Name="imgCamera" Grid.Row="1" Margin="0"/>
         <Rectangle
                    VerticalAlignment="Top"
                    Height="5"
