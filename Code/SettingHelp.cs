@@ -159,7 +159,7 @@ namespace RecordWin
         #endregion
 
         #region 录制
-        int _视频帧率 = 10;
+        int _视频帧率 = 5;
         public int 视频帧率
         {
             get => _视频帧率;
