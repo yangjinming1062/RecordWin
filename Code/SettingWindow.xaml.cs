@@ -75,7 +75,20 @@ namespace RecordWin
 
         private void SlZhenLv_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            slZhenLv.Value = ((int)(slZhenLv.Value / 10)) * 10;//只允许整10的
+            if (slZhenLv.Value >= 5)
+            {
+                if (10 - slZhenLv.Value > slZhenLv.Value - 5)
+                    slZhenLv.Value = 5;
+                else
+                    slZhenLv.Value = 10;
+            }
+            else
+            {
+                if (5 - slZhenLv.Value > slZhenLv.Value)
+                    slZhenLv.Value = 1;
+                else
+                    slZhenLv.Value = 5;
+            }
             SettingHelp.Settings.视频帧率 = (int)slZhenLv.Value;
         }
 
