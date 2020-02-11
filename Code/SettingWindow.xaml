@@ -68,7 +68,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <GridSplitter Grid.Column="1" Width="1" Grid.RowSpan="4"/>
+                        <GridSplitter Grid.Column="1" Width="2" Grid.RowSpan="4"/>
                         <StackPanel Grid.Row="0" Grid.Column="2">
                             <Label Content="视频质量："/>
                             <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="230"/>
