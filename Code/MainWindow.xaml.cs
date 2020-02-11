@@ -155,7 +155,6 @@ namespace RecordWin
         #region 录制
         private bool isRecording;
         private bool isParsing;
-        private TimeSpan videoSpan;//用来实时显示当前录制时长
         private VideoFileWriter videoWriter = new VideoFileWriter();//视频写入
         private ScreenCaptureStream videoStreamer;//视频捕获
         private WaveInEvent audioStreamer;//音频捕获
@@ -163,7 +162,9 @@ namespace RecordWin
         private string curVideoName;//当前录制的视频路径
         private string curAudioName;//当前录制的音频路径
         private int FrameCount;//统计帧数计算时长，每凑够一个帧率的数时长加1s并重置回0
-
+        private DateTime beginTime;
+        private TimeSpan parseSpan;
+        private DateTime parseTime;
         #region 鼠标捕获
         [DllImport("user32.dll")]
         static extern bool GetCursorInfo(out CURSORINFO pci);
@@ -203,20 +204,19 @@ namespace RecordWin
                     }
                     catch { }//打开任务管理器时会导致异常
                 }
-                videoWriter.WriteVideoFrame(e.Frame);
-                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                videoWriter.WriteVideoFrame(e.Frame, DateTime.Now - beginTime - parseSpan);
+                FrameCount += 1;
+                if (FrameCount == SettingHelp.Settings.视频帧率)
                 {
-                    FrameCount += 1;
-                    if (FrameCount == SettingHelp.Settings.视频帧率)//凑够一个帧组加1s1,一切努力都是为了使实际视频时长和显示的时长高度匹配
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
                         FrameCount = 0;
-                        videoSpan = videoSpan.Add(new TimeSpan(0, 0, 0, 1));
                         Dispatcher.Invoke(new Action(() =>
                         {
-                            lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+                            lbTime.Content = (DateTime.Now - beginTime - parseSpan).ToString("hh\\:mm\\:ss");
                         }));
-                    }
-                });
+                    });
+                }
             }
         }
         /// <summary>
@@ -231,8 +231,8 @@ namespace RecordWin
             curVideoName = MakeFilePath(".avi", "Raw");
             curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
-            videoSpan = new TimeSpan();
-            lbTime.Content = videoSpan.ToString("hh\\:mm\\:ss");
+            parseSpan = new TimeSpan();
+            lbTime.Content = "00:00:00";
             FrameCount = 0;
             int RecordWidth = 0, RecordHeight = 0, RecordTop = 0, RecordLeft = 0;
             if (SettingHelp.Settings.跨屏录制)
@@ -262,6 +262,7 @@ namespace RecordWin
                     SettingHelp.Settings.跨屏录制 ? RecordTop : curScreen.Bounds.Y, RecordWidth, RecordHeight);
                 videoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
                 videoStreamer.NewFrame += VideoNewFrame;
+                beginTime = DateTime.Now;
                 videoStreamer.Start();
             }
             if (SettingHelp.Settings.摄像头)
@@ -282,7 +283,6 @@ namespace RecordWin
             isParsing = false;
             if (SettingHelp.Settings.录制隐藏) HiddenTools(true);
             btSet.Visibility = Visibility.Collapsed;
-            //waitBar.Visibility = Visibility.Collapsed;
             lbTime.Visibility = Visibility.Visible;
             ChangePlace();
             //TitleDragMove(false);
@@ -368,6 +368,7 @@ namespace RecordWin
                 if (isRecording)
                 {
                     videoStreamer.Start();
+                    parseSpan = parseSpan.Add(DateTime.Now - parseTime);
                     isParsing = false;
                 }
                 else
@@ -388,6 +389,7 @@ namespace RecordWin
             btBegin.Visibility = Visibility.Visible;
             btParse.Visibility = Visibility.Collapsed;
             isParsing = true;
+            parseTime = DateTime.Now;
             videoStreamer.SignalToStop();
         }
         private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord();

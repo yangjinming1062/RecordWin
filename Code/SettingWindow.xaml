@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecordWin"
         mc:Ignorable="d"
-        Height="430" Width="550" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Height="340" Width="580" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
             <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
@@ -56,44 +56,56 @@
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
             <WrapPanel Orientation="Vertical">
                 <GroupBox Header="录制设置">
-                    <StackPanel Orientation="Vertical" Margin="0">
-                        <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <GridSplitter Grid.Column="1" Width="1" Grid.RowSpan="4"/>
+                        <StackPanel Grid.Row="0" Grid.Column="2">
                             <Label Content="视频质量："/>
-                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="300"/>
+                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="230"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="0">
                             <Label Content="视频帧率：" ToolTip="更高的帧率会因为写入速度不够快会使视频轻度失速，推荐中档"/>
                             <local:ActivableButton x:Name="btZLL" Click="btZL_Click" Content="低" Height="Auto" Foreground="White" Width="32"/>
                             <local:ActivableButton x:Name="btZLM" Click="btZL_Click" Content="中" Height="Auto" Foreground="White" Width="32"/>
                             <local:ActivableButton x:Name="btZLH" Click="btZL_Click" Content="高" Height="Auto" Foreground="White" Width="32"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="0">
                             <Label Content="跨屏录制："/>
                             <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="勾选时录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="0">
                             <Label Content="录制隐藏："/>
                             <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="开始录制时命令栏将临时取消钉住" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="3" Grid.Column="0">
                             <Label Content="录制鼠标："/>
                             <CheckBox x:Name="cbMouse" Click="cbMouse_Click" ToolTip="录制的视频中是否包含鼠标" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2">
                             <Label Content="录制摄像头配置："/>
                             <ComboBox x:Name="cbSXT" DisplayMemberPath="Name" MinWidth="60" DropDownClosed="cbSXT_DropDownClosed" ToolTip="摄像头列表"/>
                             <ComboBox x:Name="cbSXTcs" DisplayMemberPath="{Binding FrameSize, XPath=Width}" Margin="8,0,0,0" MinWidth="60" DropDownClosed="cbSXTcs_DropDownClosed" ToolTip="当前摄像头所支持的参数列表"/>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="2">
                             <Label Content="文件保存的位置："/>
-                            <TextBox x:Name="txtSavePath" Width="255" Focusable="True" ToolTip="可手动输入或者点击右侧浏览选择电脑中文件夹"/>
+                            <TextBox x:Name="txtSavePath" Width="170" Focusable="True" ToolTip="可手动输入或者点击右侧浏览选择电脑中文件夹"/>
                             <Button Width="20" Content="..." Click="SavePath_Click" ToolTip="浏览"/>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </GroupBox>
                 <WrapPanel>
-                    <GroupBox Header="热键设置" Width="290">
+                    <GroupBox Header="热键设置" Width="300">
                         <StackPanel Orientation="Vertical" Margin="0">
                             <StackPanel>
                                 <Label Content="播放/暂停："/>
@@ -133,7 +145,7 @@
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="高级设置（慎重修改）" Width="242">
+                    <GroupBox Header="高级设置（慎重修改）" Width="262">
                         <StackPanel Orientation="Vertical" Margin="0">
                             <StackPanel>
                                 <Label Content="视频类型："/>

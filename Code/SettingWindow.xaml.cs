@@ -47,7 +47,7 @@ namespace RecordWin
             txtNameRule.TextChanged += txtNameRule_TextChanged;
             switch(SettingHelp.Settings.视频帧率)
             {
-                case 3: btZLL.IsActived = true;break;
+                case 3: btZLL.IsActived = true; break;
                 case 5: btZLM.IsActived = true; break;
                 case 10: btZLH.IsActived = true; break;
             }
