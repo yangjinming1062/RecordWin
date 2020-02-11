@@ -75,10 +75,10 @@
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="0">
-                            <Label Content="视频帧率：" ToolTip="更高的帧率会因为写入速度不够快会使视频轻度失速，推荐中档"/>
-                            <local:ActivableButton x:Name="btZLL" Click="btZL_Click" Content="低" Height="Auto" Foreground="White" Width="32"/>
-                            <local:ActivableButton x:Name="btZLM" Click="btZL_Click" Content="中" Height="Auto" Foreground="White" Width="32"/>
-                            <local:ActivableButton x:Name="btZLH" Click="btZL_Click" Content="高" Height="Auto" Foreground="White" Width="32"/>
+                            <Label Content="视频帧率："/>
+                            <local:ActivableButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧" Height="Auto" Foreground="White" Width="32"/>
+                            <local:ActivableButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧" Height="Auto" Foreground="White" Width="32"/>
+                            <local:ActivableButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧" Height="Auto" Foreground="White" Width="32"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0">
                             <Label Content="跨屏录制："/>

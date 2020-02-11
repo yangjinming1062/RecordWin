@@ -47,9 +47,9 @@ namespace RecordWin
             txtNameRule.TextChanged += txtNameRule_TextChanged;
             switch(SettingHelp.Settings.视频帧率)
             {
-                case 3: btZLL.IsActived = true; break;
-                case 5: btZLM.IsActived = true; break;
-                case 10: btZLH.IsActived = true; break;
+                case 5: btZLL.IsActived = true; break;
+                case 10: btZLM.IsActived = true; break;
+                case 20: btZLH.IsActived = true; break;
             }
         }
 
@@ -81,9 +81,9 @@ namespace RecordWin
         {
             switch((sender as ActivableButton).Name)
             {
-                case "btZLL": SettingHelp.Settings.视频帧率 = 3; btZLL.IsActived = true; btZLM.IsActived = false; btZLH.IsActived = false; break;
-                case "btZLM": SettingHelp.Settings.视频帧率 = 5; btZLL.IsActived = false; btZLM.IsActived = true; btZLH.IsActived = false; break;
-                case "btZLH": SettingHelp.Settings.视频帧率 = 10; btZLL.IsActived = false; btZLM.IsActived = false; btZLH.IsActived = true; break;
+                case "btZLL": SettingHelp.Settings.视频帧率 = 5; btZLL.IsActived = true; btZLM.IsActived = false; btZLH.IsActived = false; break;
+                case "btZLM": SettingHelp.Settings.视频帧率 = 10; btZLL.IsActived = false; btZLM.IsActived = true; btZLH.IsActived = false; break;
+                case "btZLH": SettingHelp.Settings.视频帧率 = 20; btZLL.IsActived = false; btZLM.IsActived = false; btZLH.IsActived = true; break;
             }
         }
 
