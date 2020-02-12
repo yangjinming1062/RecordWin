@@ -65,7 +65,7 @@
                 <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 <Grid x:Name="barGrid">
                     <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
-                    <Label Content="视频压缩中，请稍等.." VerticalContentAlignment="Center"/>
+                    <Label Content="视频压缩中..." VerticalContentAlignment="Center"/>
                 </Grid>
                 <local:ActivableButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
                     <Path Data="{DynamicResource IconPlay}"/>

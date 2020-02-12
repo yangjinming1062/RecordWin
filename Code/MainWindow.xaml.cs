@@ -291,6 +291,7 @@ namespace RecordWin
         {
             try
             {
+                isRecording = false;
                 if (CloseCamera && SettingHelp.Settings.摄像头)//摄像头关闭时调用该方法不需要再去关闭摄像头
                 {
                     foreach (Window shower in Application.Current.Windows)
@@ -313,7 +314,6 @@ namespace RecordWin
                     audioStreamer.Dispose();
                     audioWriter.Close();
                 }
-                isRecording = false;
                 HiddenTools(SettingHelp.Settings.自动隐藏);
                 btParse.Visibility = Visibility.Collapsed;
                 btStop.Visibility = Visibility.Collapsed;
