@@ -30,6 +30,35 @@ namespace RecordWin
             InitializeComponent();
             FileName = fileName;
             BeginRecord();
+            if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
+            {
+                var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
+                double targerWidth = S.WorkingArea.Width * 0.2;//目标显示宽度：屏幕宽度的20%
+                double targetHeight = S.WorkingArea.Height * 0.2;//同上，高度也20%
+                if (Math.Abs(targerWidth - Camera.VideoResolution.FrameSize.Width) <= Math.Abs(targetHeight - Camera.VideoResolution.FrameSize.Height))
+                {
+                    double h = Camera.VideoResolution.FrameSize.Height;
+                    targetHeight = h * targerWidth / Camera.VideoResolution.FrameSize.Width;
+                }
+                else//找到摄像头配置中最接近目标宽高的是宽度还是高度，等比缩放
+                {
+                    double w = Camera.VideoResolution.FrameSize.Width;
+                    targerWidth = w * targetHeight / Camera.VideoResolution.FrameSize.Height;
+                }
+                imgCamera.Width = targerWidth;
+                imgCamera.Height = targetHeight;
+                Width = targerWidth;
+                Height = targetHeight + 30;
+                Left = S.WorkingArea.Width - Width - 10;
+                Top = S.WorkingArea.Height - Height - 10;
+            }
+            else
+            {
+                imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
+                imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
+                Width = imgCamera.Width;
+                Height = imgCamera.Height + 30;
+            }
         }
 
         #region 窗体大小拖拽
@@ -217,37 +246,6 @@ namespace RecordWin
                 }
             }
             catch { }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
-            {
-                var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
-                int targerWidth = (int)(S.WorkingArea.Width * 0.2);//目标显示宽度：屏幕宽度的20%
-                int targetHeight = (int)(S.WorkingArea.Height * 0.2);//同上，高度也20%
-                if (Math.Abs(targerWidth - Camera.VideoResolution.FrameSize.Width) <= Math.Abs(targetHeight - Camera.VideoResolution.FrameSize.Height))
-                {
-                    imgCamera.Width = targerWidth;
-                    imgCamera.Height = Camera.VideoResolution.FrameSize.Height / Camera.VideoResolution.FrameSize.Width * imgCamera.Width;
-                }
-                else//找到摄像头配置中最接近目标宽高的是宽度还是高度，等比缩放
-                {
-                    imgCamera.Height = targetHeight;
-                    imgCamera.Width = Camera.VideoResolution.FrameSize.Width / Camera.VideoResolution.FrameSize.Height * imgCamera.Height;
-                }
-                Width = imgCamera.Width;
-                Height = imgCamera.Height + 30;
-                Left = S.WorkingArea.Width - Width - 10;
-                Top = S.WorkingArea.Height - Height - 10;
-            }
-            else
-            {
-                imgCamera.Width = Camera.VideoResolution.FrameSize.Width;
-                imgCamera.Height = Camera.VideoResolution.FrameSize.Height;
-                Width = imgCamera.Width;
-                Height = imgCamera.Height + 30;
-            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
