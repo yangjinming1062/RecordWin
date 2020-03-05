@@ -40,19 +40,25 @@ namespace RecordWin
             cbZM.IsChecked = SettingHelp.Settings.桌面;
             cbSXT.IsChecked = SettingHelp.Settings.摄像头;
             cbSY.IsChecked = SettingHelp.Settings.声音;
-            if (true)//不允许多开，如果已经有一个录屏进程存在则干死它……
+            //if (true)//不允许多开，杀死已有的开启新的
+            //{
+            //    Process current = Process.GetCurrentProcess();
+            //    //防止程序被改名，按文件的名称去查找
+            //    Process[] pro = Process.GetProcessesByName(current.ProcessName);
+            //    try
+            //    {
+            //        foreach (Process temp in pro)
+            //        {
+            //            if (temp.Id != current.Id) temp.Kill();
+            //        }
+            //    }
+            //    catch { }
+            //}
+            var tmp = new System.Threading.Mutex(true, "RecordWin", out bool canRun);//已有则不允许新开
+            if (!canRun)
             {
-                Process current = Process.GetCurrentProcess();
-                //防止程序被改名，按文件的名称去查找
-                Process[] pro = Process.GetProcessesByName(current.ProcessName);
-                try
-                {
-                    foreach (Process temp in pro)
-                    {
-                        if (temp.Id != current.Id) temp.Kill();
-                    }
-                }
-                catch { }
+                Application.Current.Shutdown();
+                return;
             }
         }
 
