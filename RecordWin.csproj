@@ -176,27 +176,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="avcodec-53.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="avdevice-53.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="avfilter-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="avformat-53.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="avutil-51.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="NeededDlls\avcodec-53.dll" />
+    <Content Include="NeededDlls\avdevice-53.dll" />
+    <Content Include="NeededDlls\avfilter-2.dll" />
+    <Content Include="NeededDlls\avformat-53.dll" />
+    <Content Include="NeededDlls\avutil-51.dll" />
     <Resource Include="Resources\RecordWin.ico" />
     <None Include="Resources\激光.cur" />
-    <Content Include="swscale-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="NeededDlls\swscale-2.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /e /r /s /y "$(ProjectDir)NeededDlls" "$(ProjectDir)bin\Debug\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
