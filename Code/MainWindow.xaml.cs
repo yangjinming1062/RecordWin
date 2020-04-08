@@ -21,6 +21,7 @@ namespace RecordWin
     {
         public IntPtr winHandle;// 当前窗体指针
         private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
+        private System.Windows.Forms.Screen screen;
         public MainWindow()
         {
             InitializeComponent();
@@ -68,9 +69,9 @@ namespace RecordWin
         /// </summary>
         private void ChangePlace()
         {
-            var S = System.Windows.Forms.Screen.FromHandle(winHandle);
-            Left = S.Bounds.Left + (S.Bounds.Width - TitlePanel.ActualWidth) / 2;
-            Top = S.Bounds.Top - 1;//使感应更好，不然放到边框的1像素上没反应很尴尬啊
+            screen = System.Windows.Forms.Screen.FromHandle(winHandle);
+            Left = screen.Bounds.Left + (screen.Bounds.Width - TitlePanel.ActualWidth) / 2;
+            Top = screen.Bounds.Top - 1;//使感应更好，不然放到边框的1像素上没反应很尴尬啊
         }
         /// <summary>
         /// 根据时间生成保存文件名称，文件位于Temp文件夹中
@@ -206,7 +207,8 @@ namespace RecordWin
                     try
                     {
                         System.Windows.Forms.Cursor cur = new System.Windows.Forms.Cursor(pci.hCursor);
-                        cur.Draw(g, new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10, System.Windows.Forms.Cursor.Position.Y - 10, cur.Size.Width, cur.Size.Height));
+                        cur.Draw(g, new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10 - screen.Bounds.X,
+                            System.Windows.Forms.Cursor.Position.Y - 10 - screen.Bounds.Y, cur.Size.Width, cur.Size.Height));
                     }
                     catch { }//打开任务管理器时会导致异常
                 }
