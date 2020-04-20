@@ -42,67 +42,6 @@
                 <Grid.Effect>
                     <DropShadowEffect BlurRadius="5" ShadowDepth="2" Opacity="0.3"/>
                 </Grid.Effect>
-                <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="Background" Value="{StaticResource QuartertransparentGray}"/>
-                            <Style.Triggers>
-                                <Trigger Property ="IsMouseOver" Value="True">
-                                    <Trigger.EnterActions>
-                                        <BeginStoryboard>
-                                            <Storyboard TargetProperty="(Background).(SolidColorBrush.Color)">
-                                                <ColorAnimation To ="#9F727272" Duration="{StaticResource Duration2}"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </Trigger.EnterActions>
-                                    <Trigger.ExitActions>
-                                        <BeginStoryboard>
-                                            <Storyboard TargetProperty="(Background).(SolidColorBrush.Color)">
-                                                <ColorAnimation To ="#3F727272" Duration="{StaticResource Duration2}"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </Trigger.ExitActions>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Resources>
-                    <Border x:Name="LeftDockingButton" Width="20" Height="70" HorizontalAlignment="Right" Margin="0,0,30,0" Visibility="Collapsed">
-                        <Border.CornerRadius>
-                            <CornerRadius TopRight="7" BottomRight="7"></CornerRadius>
-                        </Border.CornerRadius>
-                        <Path Fill="White" Stretch="Uniform" Width="9" Data="{StaticResource IconArrow}" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <RotateTransform Angle="-90"/>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                        </Path>
-                    </Border>
-                    <Border x:Name="TopDuckingButton" Width="70" Height="20" HorizontalAlignment="Center" Margin="0,0,25,30"  Visibility="Collapsed" VerticalAlignment="Bottom">
-                        <Border.CornerRadius>
-                            <CornerRadius BottomLeft="7" BottomRight="7"></CornerRadius>
-                        </Border.CornerRadius>
-                        <Path Fill="White" Stretch="Uniform" Width="9" Data="{StaticResource IconArrow}" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <RotateTransform Angle="0"/>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                        </Path>
-                    </Border>
-                    <Border x:Name="RightDockingButton" Width="20" Height="70" HorizontalAlignment="Left"  Visibility="Collapsed" Margin="30,0,0,0">
-                        <Border.CornerRadius>
-                            <CornerRadius TopLeft="7" BottomLeft="7"></CornerRadius>
-                        </Border.CornerRadius>
-                        <Path Fill="White" Stretch="Uniform" Width="9" Data="{StaticResource IconArrow}" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <RotateTransform Angle="90"/>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                        </Path>
-                    </Border>
-                </Grid>
                 <Grid x:Name="PaletteFlowPanel" Margin="50" Width="{StaticResource HorizontalModeFlowPanel}" >
                     <WrapPanel x:Name="PaletteFlowInsiderPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Grid x:Name="BasicButtonPanel" Width="{StaticResource HorizontalModeColorPickersPanel}" Margin="0">
