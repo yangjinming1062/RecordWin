@@ -192,7 +192,11 @@ namespace RecordWin
                 }));//同步显示
                 if (!SettingHelp.Settings.桌面)
                 {
-                    VideoOutPut.WriteVideoFrame(eventArgs.Frame, DateTime.Now - beginTime - parseSpan);
+                    try
+                    {
+                        VideoOutPut.WriteVideoFrame(eventArgs.Frame, DateTime.Now - beginTime - parseSpan);
+                    }
+                    catch { }
                 }
             }
         }
