@@ -1,0 +1,1 @@
+ffmpeg -i 1.mp4 -vf "delogo=x=1675:y=50:w=170:h=71:show=0" -c:a copy 2.mp4
