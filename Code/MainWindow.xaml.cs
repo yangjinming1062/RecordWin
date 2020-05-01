@@ -54,7 +54,7 @@ namespace RecordWin
             //    }
             //    catch { }
             //}
-            var tmp = new System.Threading.Mutex(true, "RecordWin", out bool canRun);//已有则不允许新开
+            _ = new System.Threading.Mutex(true, "RecordWin", out bool canRun);//已有则不允许新开
             if (!canRun)
             {
                 Application.Current.Shutdown();
@@ -171,6 +171,7 @@ namespace RecordWin
         private DateTime beginTime;
         private TimeSpan parseSpan;
         private DateTime parseTime;
+        private int bitRate = 5211314;
         #region 鼠标捕获
         [DllImport("user32.dll")]
         static extern bool GetCursorInfo(out CURSORINFO pci);
@@ -237,6 +238,7 @@ namespace RecordWin
             curVideoName = MakeFilePath(".avi", "Raw");
             curAudioName = curVideoName.Replace(".avi", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
+            bitRate = curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量;
             parseSpan = new TimeSpan();
             lbTime.Content = "00:00:00";
             FrameCount = 0;
@@ -261,8 +263,7 @@ namespace RecordWin
             {
                 lock (this)
                 {
-                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3,
-                        curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
+                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3, bitRate);
                 }
                 System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? RecordLeft : curScreen.Bounds.X,
                     SettingHelp.Settings.跨屏录制 ? RecordTop : curScreen.Bounds.Y, RecordWidth, RecordHeight);
@@ -338,7 +339,9 @@ namespace RecordWin
                         var ffMpeg = new FFMpegConverter();
                         ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
                         FFMpegInput[] input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
-                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
+                        var setting = new OutputSettings();
+                        setting.AudioSampleRate = bitRate;
+                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, setting);
                         try
                         {
                             if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
