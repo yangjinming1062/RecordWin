@@ -263,7 +263,7 @@ namespace RecordWin
             {
                 lock (this)
                 {
-                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3,
+                    videoWriter.Open(curVideoName, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3, 
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
                 System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? RecordLeft : curScreen.Bounds.X,
@@ -340,7 +340,9 @@ namespace RecordWin
                         var ffMpeg = new FFMpegConverter();
                         ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
                         FFMpegInput[] input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
-                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, new OutputSettings());
+                        var setting = new OutputSettings();
+                        setting.CustomOutputArgs = "-crf 12";
+                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, setting);
                         try
                         {
                             if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
