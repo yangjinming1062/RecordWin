@@ -9,16 +9,10 @@ namespace RecordWin
         static string filePath = "Setting.dat";
         public static Setting Settings = new Setting();
         /// <summary>
-        /// 配置存取类，使用之前需要先调用SetPath方法修改配置文件路径（不调用使用默认位置）
+        /// 配置存取类
         /// </summary>
         static SettingHelp()
         {
-            CheckSetting();
-        }
-
-        public static void SetPath(string settingPath)
-        {
-            filePath = settingPath;
             CheckSetting();
         }
 

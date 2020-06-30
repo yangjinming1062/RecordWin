@@ -106,22 +106,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Code\CameraShow.xaml.cs">
+    <Compile Include="Windows\CameraShow.xaml.cs">
       <DependentUpon>CameraShow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Code\Functions.cs" />
-    <Compile Include="Code\SettingWindow.xaml.cs">
+    <Compile Include="FunctionClasses\Functions.cs" />
+    <Compile Include="Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Code\CameraShow.xaml">
+    <Page Include="Windows\CameraShow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Code\DrawerWindow.xaml">
+    <Page Include="Windows\DrawerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Code\MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,22 +137,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Code\SettingWindow.xaml">
+    <Page Include="Windows\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\DrawerWindow.xaml.cs">
+    <Compile Include="Windows\DrawerWindow.xaml.cs">
       <DependentUpon>DrawerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Code\DrawModel.cs" />
-    <Compile Include="Code\ExtendControls.cs" />
-    <Compile Include="Code\MainWindow.xaml.cs">
+    <Compile Include="DrawModel.cs" />
+    <Compile Include="ExtendControls.cs" />
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Code\SettingHelp.cs" />
-    <Compile Include="Code\HotKey.cs" />
+    <Compile Include="FunctionClasses\SettingHelp.cs" />
+    <Compile Include="FunctionClasses\HotKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
