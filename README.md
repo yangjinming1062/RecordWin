@@ -8,4 +8,4 @@
 - 集成了 https://github.com/peilinok/live-draw 的屏幕画笔，并进行了调整.
 - 视频录制使用了开源的AForge库.
 - 音频录制使用了NAudio库.
-- 音视频合成使用了NReco.VideoConverter库.
+- 音视频合成使用ffmpeg.
