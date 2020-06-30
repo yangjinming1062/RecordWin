@@ -2,11 +2,10 @@
 using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
 using NAudio.Wave;
-using NReco.VideoConverter;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -334,29 +333,43 @@ namespace RecordWin
                 //Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
                 if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//没有视频则不转换
                 {
+                    Thread thread = new Thread(() =>
+                     {
+                         for (int i = 0; i < 10; i++)
+                         {
+                             Dispatcher.Invoke(() => { waitBar.Value = i; });
+                             Thread.Sleep(1000);
+                         }
+                     });//起一个线程让进度条动起来
+                    thread.Start();
                     System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
-                        string tempVideo = curVideoName, tempAudio = curAudioName;//运行未完成转换再次开始录制，所以这里需要把当前转换中的文件名记录下来
-                        var ffMpeg = new FFMpegConverter();
-                        ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
-                        FFMpegInput[] input = SettingHelp.Settings.声音 ? new FFMpegInput[] { new FFMpegInput(tempVideo), new FFMpegInput(tempAudio) } : new FFMpegInput[] { new FFMpegInput(tempVideo) };
-                        var setting = new OutputSettings();
-                        setting.CustomOutputArgs = "-crf 12";
-                        ffMpeg.ConvertMedia(input, MakeFilePath(SettingHelp.Settings.编码类型), SettingHelp.Settings.编码类型, setting);
-                        try
+                        string tempVideo = curVideoName;
+                        string tempAudio = curAudioName;
+                        string outfile = MakeFilePath(SettingHelp.Settings.编码类型);
+                        tempAudio = SettingHelp.Settings.声音 ? $"-i \"{tempAudio}\"" : "";
+                        string ffmpeg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg.exe");
+                        string cmd = $"ffmpeg -i {tempVideo} {tempAudio} -acodec copy {outfile} -crf 12";
+                        Functions.CMD(cmd);
+                        while (true)
                         {
-                            if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
-                        }
-                        catch { }//防止文件被占用删除失败
-                        try
-                        {
-                            if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
-                        }
-                        catch { }
-                        Dispatcher.Invoke(() =>
+                            try//防止文件被占用删除失败
                             {
-                                barGrid.Visibility = Visibility.Collapsed;
-                            });
+                                if (File.Exists(tempVideo) && !SettingHelp.Settings.保留视频) File.Delete(tempVideo);
+                                if (File.Exists(tempAudio) && !SettingHelp.Settings.保留音频) File.Delete(tempAudio);//合成后移除音频文件
+                                break;
+                            }
+                            catch
+                            {
+                                Thread.Sleep(1000);
+                            }
+                        }
+                        Dispatcher.Invoke(() =>
+                        {
+                            barGrid.Visibility = Visibility.Collapsed;
+                            btBegin.Visibility = Visibility.Visible;
+                            thread?.Abort();
+                        });
                     });
                 }
             }
@@ -365,7 +378,6 @@ namespace RecordWin
                 if (ShowErr) Message(ex.Message);
             }
         }
-        private void FfMpeg_ConvertProgress(object sender, ConvertProgressEventArgs e) => Dispatcher.Invoke(() => { waitBar.Value = (waitBar.Value + 1) % 10; });
         private void btBegin_Click(object sender, RoutedEventArgs e)
         {
             if (!SettingHelp.Settings.桌面 && !SettingHelp.Settings.摄像头 && !SettingHelp.Settings.声音)
