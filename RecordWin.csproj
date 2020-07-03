@@ -112,7 +112,7 @@
     <Compile Include="Windows\CameraShowWindow.xaml.cs">
       <DependentUpon>CameraShowWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FunctionClasses\Functions.cs" />
+    <Compile Include="Functions.cs" />
     <Compile Include="Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
@@ -158,8 +158,8 @@
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FunctionClasses\SettingHelp.cs" />
-    <Compile Include="FunctionClasses\HotKey.cs" />
+    <Compile Include="SettingHelp.cs" />
+    <Compile Include="HotKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
