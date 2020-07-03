@@ -3,27 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RecordWin"
-        mc:Ignorable="d"
-        Height="340" Width="580" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        mc:Ignorable="d" Height="340" Width="580" ShowInTaskbar="False" WindowStyle="None"
+        WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
-            <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="Width" Value="24"/>
-                <Setter Property="Height" Value="24"/>
-                <Setter Property="Margin" Value="4"/>
-                <Setter Property="Cursor" Value="Arrow"/>
-                <Setter Property="Focusable" Value="False"/>
-            </Style>
-            <Style TargetType="Path">
-                <Setter Property="Fill" Value="White"/>
-                <Setter Property="Stretch" Value="Uniform"/>
-                <Setter Property="Width" Value="12"/>
-                <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property ="HorizontalAlignment" Value="Center"/>
-            </Style>
             <Style TargetType="GroupBox">
                 <Setter Property="Margin" Value="4"/>
                 <Setter Property="Foreground" Value="#FFD34B4B"/>
@@ -36,22 +19,24 @@
                 <Setter Property="Orientation" Value="Horizontal"/>
                 <Setter Property="Margin" Value="4"/>
             </Style>
+            <Style TargetType="RadioButton">
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Width" Value="32"/>
+            </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1,1,1,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <!--<TextBlock Text="高级设置" Grid.Column="0"/>-->
-                <ToggleButton Grid.Column="1" x:Name="btClose" Click="btClose_Click" ToolTip="关闭" HorizontalAlignment="Right" Margin="4,0">
-                    <Path Data="{DynamicResource IconCross}" />
-                </ToggleButton>
-            </Grid>
+            <ToggleButton  Grid.Column="1" x:Name="btClose" Click="btClose_Click" ToolTip="关闭" HorizontalAlignment="Right" Margin="4,0" Style="{StaticResource FunctionalButton}" Width="24" Height="24" Cursor="Arrow">
+                <Path Data="{DynamicResource IconCross}" Fill="White" Width="12" Stretch="Uniform"/>
+            </ToggleButton>
         </Border>
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
             <WrapPanel Orientation="Vertical">
@@ -71,26 +56,26 @@
                         <GridSplitter Grid.Column="1" Width="2" Grid.RowSpan="4"/>
                         <StackPanel Grid.Row="0" Grid.Column="2">
                             <Label Content="视频质量："/>
-                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="1" Maximum="10" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="230"/>
+                            <Slider Foreground="White" x:Name="slZHiLiang" Minimum="5" Maximum="20" TickFrequency="1" ToolTip="数值越大视频越清晰，但体积更大" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Width="230"/>
                             <Label Content="{Binding ElementName=slZHiLiang, Path=Value}" ToolTip="质量当前值"/>
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="0">
                             <Label Content="视频帧率："/>
-                            <ToggleButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧" Height="Auto" Foreground="White" Width="32"/>
-                            <ToggleButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧" Height="Auto" Foreground="White" Width="32"/>
-                            <ToggleButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧" Height="Auto" Foreground="White" Width="32"/>
+                            <RadioButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧"/>
+                            <RadioButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧"/>
+                            <RadioButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0">
                             <Label Content="跨屏录制："/>
-                            <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="勾选时录制全部屏幕否则只录制命令栏所在屏幕" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="cbMultiScreen" Click="cbMultiScreen_Click" ToolTip="勾选时录制全部屏幕否则只录制命令栏所在屏幕"/>
                         </StackPanel>
                         <StackPanel Grid.Row="2" Grid.Column="0">
                             <Label Content="录制隐藏："/>
-                            <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="开始录制时命令栏将临时取消钉住" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="cbPlayHidden" Click="cbPlayHidden_Click" ToolTip="开始录制时命令栏将临时取消钉住"/>
                         </StackPanel>
                         <StackPanel Grid.Row="3" Grid.Column="0">
                             <Label Content="录制鼠标："/>
-                            <CheckBox x:Name="cbMouse" Click="cbMouse_Click" ToolTip="录制的视频中是否包含鼠标" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="cbMouse" Click="cbMouse_Click" ToolTip="录制的视频中是否包含鼠标"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="2">
                             <Label Content="录制摄像头配置："/>
@@ -161,8 +146,8 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="原始文件："/>
-                                <CheckBox x:Name="cbRawVideo" Click="cbRawVideo_Click" ToolTip="保留原始视频文件（文件名Raw开头）" VerticalAlignment="Center"/>
-                                <CheckBox x:Name="cbRawAudio" Click="cbRawAudio_Click" ToolTip="保留原始音频文件（文件名Raw开头）" Margin="8 0 0 0" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="cbRawVideo" Click="cbRawVideo_Click" ToolTip="保留原始视频文件（文件名Raw开头）"/>
+                                <CheckBox x:Name="cbRawAudio" Click="cbRawAudio_Click" ToolTip="保留原始音频文件（文件名Raw开头）" Margin="8 0 0 0"/>
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>

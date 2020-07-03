@@ -1,5 +1,6 @@
 ﻿using AForge.Video.DirectShow;
 using System;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,21 +47,22 @@ namespace RecordWin
             txtSavePath.TextChanged += txtSavePath_TextChanged;
             txtNameRule.Text = SettingHelp.Settings.命名规则;
             txtNameRule.TextChanged += txtNameRule_TextChanged;
-            switch(SettingHelp.Settings.视频帧率)
+            switch (SettingHelp.Settings.视频帧率)
             {
-                case 5: btZLL.IsChecked = true; break;
-                case 10: btZLM.IsChecked = true; break;
-                case 20: btZLH.IsChecked = true; break;
+                case 10: btZLL.IsChecked = true; break;
+                case 20: btZLM.IsChecked = true; break;
+                case 30: btZLH.IsChecked = true; break;
             }
         }
-
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            SettingHelp.SaveSetting();
+        }
         /// <summary>
         /// 统一消息提醒(方便后期调整消息框样式)
         /// </summary>
-        private void Message(string msg)
-        {
-            System.Windows.MessageBox.Show(msg);
-        }
+        private void Message(string msg) => MessageBox.Show(msg);
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -74,17 +76,17 @@ namespace RecordWin
 
         private void SlZL_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            slZHiLiang.Value = (int)slZHiLiang.Value;
+            slZHiLiang.Value = (int)slZHiLiang.Value;//将小数值变成整数
             SettingHelp.Settings.视频质量 = (int)slZHiLiang.Value;
         }
 
         private void btZL_Click(object sender, RoutedEventArgs e)
         {
-            switch((sender as ToggleButton).Name)
+            switch ((sender as ToggleButton).Name)
             {
-                case "btZLL": SettingHelp.Settings.视频帧率 = 5; btZLL.IsChecked = true; btZLM.IsChecked = false; btZLH.IsChecked = false; break;
-                case "btZLM": SettingHelp.Settings.视频帧率 = 10; btZLL.IsChecked = false; btZLM.IsChecked = true; btZLH.IsChecked = false; break;
-                case "btZLH": SettingHelp.Settings.视频帧率 = 20; btZLL.IsChecked = false; btZLM.IsChecked = false; btZLH.IsChecked = true; break;
+                case "btZLL": SettingHelp.Settings.视频帧率 = 10; break;
+                case "btZLM": SettingHelp.Settings.视频帧率 = 20; break;
+                case "btZLH": SettingHelp.Settings.视频帧率 = 30; break;
             }
         }
 
@@ -102,17 +104,17 @@ namespace RecordWin
 
         private void cbSXT_DropDownClosed(object sender, EventArgs e)
         {
-            if (cbSXT.SelectedItem != null)
+            if (cbSXT.SelectedItem is FilterInfo info)
             {
-                var info = cbSXT.SelectedItem as FilterInfo;
                 var Camera = new VideoCaptureDevice(info.MonikerString);//实例化设备控制类(我选了第1个)
                 SettingHelp.Settings.摄像头Key = info.MonikerString;
                 cbSXTcs.Items.Clear();
-                foreach(var cap in Camera.VideoCapabilities)
+                foreach (var cap in Camera.VideoCapabilities)
                 {
-                    TextBlock b = new TextBlock();
-                    b.Text = $"{cap.FrameSize.Width}X{cap.FrameSize.Height}";
-                    cbSXTcs.Items.Add(b);
+                    cbSXTcs.Items.Add(new TextBlock
+                    {
+                        Text = $"{cap.FrameSize.Width}X{cap.FrameSize.Height}"
+                    });
                 }
                 cbSXTcs.SelectedIndex = 0;
                 SettingHelp.Settings.摄像头参数 = 0;
@@ -121,32 +123,30 @@ namespace RecordWin
 
         private void cbSXTcs_DropDownClosed(object sender, EventArgs e)
         {
-            if (cbSXTcs.SelectedItem != null)
-            {
-                SettingHelp.Settings.摄像头参数 = cbSXTcs.SelectedIndex;
-            }
+            if (cbSXTcs.SelectedItem != null) SettingHelp.Settings.摄像头参数 = cbSXTcs.SelectedIndex;
         }
         #endregion
 
         #region 快捷键
+        /// <summary>
+        /// 通过字符串生成指定的热键设置
+        /// </summary>
         private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b, string curSet)
         {
-            HotKey.KeyModifiers A = HotKey.KeyModifiers.None;
+            Enum.TryParse(a, out HotKey.KeyModifiers A);
             int B = 0;
             try
             {
-                A = (HotKey.KeyModifiers)Enum.Parse(typeof(HotKey.KeyModifiers), a);
                 B = (int)Enum.Parse(typeof(System.Windows.Forms.Keys), b);
             }
             catch { }
             var result = new Tuple<HotKey.KeyModifiers, int>(A, B);
-            PropertyInfo[] propertys = SettingHelp.Settings.GetType().GetProperties();
-            foreach (PropertyInfo p in propertys)//找到热键类属性，查找是否有冲突的热键设置
+            foreach (PropertyInfo p in SettingHelp.Settings.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
             {
                 if (p.PropertyType.Equals(typeof(Tuple<HotKey.KeyModifiers, int>)))//先判断是热键类设置
                 {
-                    var v = (Tuple<HotKey.KeyModifiers, int>)p.GetValue(SettingHelp.Settings);//取出设置的值
-                    if (Equals(result, v) && p.Name != curSet)//防止没有变化的修改提示冲突
+                    //先取出设置的值比较，并且不是当前设置，防止没有变化的修改提示冲突
+                    if (Equals(result, (Tuple<HotKey.KeyModifiers, int>)p.GetValue(SettingHelp.Settings)) && p.Name != curSet)
                     {
                         Message("当前热键设置冲突，可能导致部分热键失效，请重新设置");
                         break;
@@ -155,7 +155,9 @@ namespace RecordWin
             }
             return result;
         }
-
+        /// <summary>
+        /// 设置快捷键的文本显示
+        /// </summary>
         private bool SetTextFormHandle(object sender, KeyEventArgs e)
         {
             int v;
@@ -192,7 +194,7 @@ namespace RecordWin
         #endregion
 
         #region 高级设置
-        private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = string.IsNullOrEmpty(txtNameRule.Text) ? "yyMMdd_HHmmss" : txtNameRule.Text;//为空时使用默认
+        private void txtNameRule_TextChanged(object sender, TextChangedEventArgs e) => SettingHelp.Settings.命名规则 = txtNameRule.Text;
 
         private void cbVideoCode_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.编码类型 = cbVideoCode.Text;
 

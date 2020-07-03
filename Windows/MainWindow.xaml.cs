@@ -79,7 +79,8 @@ namespace RecordWin
             {
                 Type = "." + Type;
             }
-            string path = Path.Combine(SettingHelp.Settings.保存路径, $"{Begin}{DateTime.Now.ToString(SettingHelp.Settings.命名规则)}{Type}");
+            string name = string.IsNullOrEmpty(SettingHelp.Settings.命名规则) ? DateTime.Now.ToString("yyMMdd_HHmmss") : SettingHelp.Settings.命名规则;
+            string path = Path.Combine(SettingHelp.Settings.保存路径, $"{Begin}{name}{Type}");
             if (!Directory.Exists(path))//如果指定文件夹不存在则新建文件夹
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
