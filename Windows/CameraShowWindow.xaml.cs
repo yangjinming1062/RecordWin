@@ -16,41 +16,49 @@ namespace RecordWin
     /// <summary>
     /// CameraShow.xaml 的交互逻辑
     /// </summary>
-    public partial class CameraShow : Window
+    public partial class CameraShowWindow : Window
     {
+        #region 变量
         private VideoCaptureDevice Camera;//用来操作摄像头
         private VideoFileWriter VideoOutPut;//用来把每一帧图像编码到视频文件
+        /// <summary>
+        /// 录制摄像头时输出的视频文件路径
+        /// </summary>
         private string FileName;
         private bool isParsing;
         private DateTime beginTime;
         private TimeSpan parseSpan;
-        private DateTime parseTime;
-        public CameraShow(string fileName)
+        private DateTime parseTime; 
+        #endregion
+
+        /// <summary>
+        /// 构造函数，完成构造后自己调用Show显示
+        /// </summary>
+        /// <param name="fileName">输出文件路径</param>
+        /// <param name="Screen">所属屏幕</param>
+        public CameraShowWindow(string fileName, System.Windows.Forms.Screen Screen)
         {
             InitializeComponent();
             FileName = fileName;
             BeginRecord();
             if (SettingHelp.Settings.桌面)//同时录制桌面时摄像头作为一部分显示在桌面上
             {
-                var S = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle);
-                double targerWidth = S.WorkingArea.Width * 0.2;//目标显示宽度：屏幕宽度的20%
-                double targetHeight = S.WorkingArea.Height * 0.2;//同上，高度也20%
+                double targerWidth = Screen.WorkingArea.Width * 0.2;//目标显示宽度：屏幕宽度的20%
+                double targetHeight = Screen.WorkingArea.Height * 0.2;//同上，高度也20%
                 if (Math.Abs(targerWidth - Camera.VideoResolution.FrameSize.Width) <= Math.Abs(targetHeight - Camera.VideoResolution.FrameSize.Height))
                 {
-                    double h = Camera.VideoResolution.FrameSize.Height;
-                    targetHeight = h * targerWidth / Camera.VideoResolution.FrameSize.Width;
+                    targetHeight = Camera.VideoResolution.FrameSize.Height * targerWidth / Camera.VideoResolution.FrameSize.Width;
                 }
                 else//找到摄像头配置中最接近目标宽高的是宽度还是高度，等比缩放
                 {
-                    double w = Camera.VideoResolution.FrameSize.Width;
-                    targerWidth = w * targetHeight / Camera.VideoResolution.FrameSize.Height;
+                    targerWidth = Camera.VideoResolution.FrameSize.Width * targetHeight / Camera.VideoResolution.FrameSize.Height;
                 }
                 imgCamera.Width = targerWidth;
                 imgCamera.Height = targetHeight;
                 Width = targerWidth;
-                Height = targetHeight + 30;
-                Left = S.WorkingArea.Width - Width - 10;
-                Top = S.WorkingArea.Height - Height - 10;
+                Height = targetHeight + 30;//因为头部的存在，所以需要多30
+                Left = Screen.WorkingArea.Width - Width - 10;
+                Top = Screen.WorkingArea.Height - Height - 10;
             }
             else
             {
@@ -60,6 +68,71 @@ namespace RecordWin
                 Height = imgCamera.Height + 30;
             }
         }
+
+        #region 私有方法
+        /// <summary>
+        /// 录制函数：当只录摄像头时会将输出记入文件，由该函数启动窗口的Show方法
+        /// </summary>
+        private void BeginRecord()
+        {
+            if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
+            {
+                Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
+                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
+                Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
+                Camera.NewFrame += NewFrameHandle;//设置回调处理函数,aforge会不断从这个回调推出图像数据,SnapshotFrame也是有待比较
+                Camera.Start();//打开摄像头
+                parseSpan = new TimeSpan();
+                if (!SettingHelp.Settings.桌面)//开启摄像头又不录制桌面说明是要录制摄像头的视频
+                {
+                    lock (this) //打开录像文件(如果没有则创建,如果有也会清空),这里还有关于
+                    {
+                        VideoOutPut = new VideoFileWriter();
+                        beginTime = new DateTime();
+                        VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
+                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MSMPEG4v3,
+                           Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
+                    }
+                }
+                Show();
+            }
+            else//未找到摄像头设置则关闭窗口
+            {
+                Close();
+            }
+        }
+        /// <summary>
+        /// 摄像头输出处理函数
+        /// </summary>
+        private void NewFrameHandle(object sender, NewFrameEventArgs eventArgs)
+        {
+            if (!isParsing)
+            {
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        eventArgs.Frame.Save(ms, ImageFormat.Bmp);
+                        BitmapImage image = new BitmapImage();
+                        image.BeginInit();
+                        image.StreamSource = new MemoryStream(ms.GetBuffer());
+                        image.EndInit();
+                        imgCamera.Source = image;
+                    }
+                }));//同步显示
+                if (!SettingHelp.Settings.桌面)
+                {
+                    try
+                    {
+                        VideoOutPut.WriteVideoFrame(eventArgs.Frame, DateTime.Now - beginTime - parseSpan);
+                    }
+                    catch { }
+                }
+            }
+        }
+        #endregion
+
+        #region UI事件
 
         #region 窗体大小拖拽
         private void ResizeRectangle_MouseEnter(object sender, MouseEventArgs e)
@@ -143,66 +216,13 @@ namespace RecordWin
         }
         #endregion
 
-        private void BeginRecord()
-        {
-            if (!string.IsNullOrEmpty(SettingHelp.Settings.摄像头Key) && SettingHelp.Settings.摄像头参数 > -1)//实例化设备控制类
-            {
-                Camera = new VideoCaptureDevice(SettingHelp.Settings.摄像头Key);
-                //配置录像参数(宽,高,帧率,比特率等参数)VideoCapabilities这个属性会返回摄像头支持哪些配置
-                Camera.VideoResolution = Camera.VideoCapabilities[SettingHelp.Settings.摄像头参数];
-                Camera.NewFrame += Camera_NewFrame;//设置回调,aforge会不断从这个回调推出图像数据,SnapshotFrame也是有待比较
-                Camera.Start();//打开摄像头
-                parseSpan = new TimeSpan();
-                if (!SettingHelp.Settings.桌面)
-                {
-                    lock (this) //打开录像文件(如果没有则创建,如果有也会清空),这里还有关于
-                    {
-                        VideoOutPut = new VideoFileWriter();
-                        beginTime = new DateTime();
-                        VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MSMPEG4v3,
-                           Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
-                    }
-                }
-                Show();
-            }
-            else
-            {
-                Close();
-            }
-        }
-
         /// <summary>
-        /// 摄像头输出回调
+        /// 关闭按钮点击事件
         /// </summary>
-        private void Camera_NewFrame(object sender, NewFrameEventArgs eventArgs)
-        {
-            if (!isParsing)
-            {
-                Dispatcher.Invoke(new Action(() =>
-                {
-                    MemoryStream ms = new MemoryStream();
-                    eventArgs.Frame.Save(ms, ImageFormat.Bmp);
-                    BitmapImage image = new BitmapImage();
-                    image.BeginInit();
-                    image.StreamSource = new MemoryStream(ms.GetBuffer());
-                    ms.Close();
-                    image.EndInit();
-                    imgCamera.Source = image;
-                }));//同步显示
-                if (!SettingHelp.Settings.桌面)
-                {
-                    try
-                    {
-                        VideoOutPut.WriteVideoFrame(eventArgs.Frame, DateTime.Now - beginTime - parseSpan);
-                    }
-                    catch { }
-                }
-            }
-        }
-
         private void btClose_Click(object sender, RoutedEventArgs e) => Close();
-
+        /// <summary>
+        /// 恢复录制点击事件
+        /// </summary>
         private void btBegin_Click(object sender, RoutedEventArgs e)
         {
             btBegin.Visibility = Visibility.Collapsed;
@@ -210,7 +230,9 @@ namespace RecordWin
             parseSpan = parseSpan.Add(DateTime.Now - parseTime);
             isParsing = false;
         }
-
+        /// <summary>
+        /// 暂停按钮点击事件
+        /// </summary>
         private void btParse_Click(object sender, RoutedEventArgs e)
         {
             btBegin.Visibility = Visibility.Visible;
@@ -218,7 +240,9 @@ namespace RecordWin
             parseTime = DateTime.Now;
             isParsing = true;
         }
-
+        /// <summary>
+        /// 重载Closing事件
+        /// </summary>
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             base.OnClosing(e);
@@ -233,14 +257,13 @@ namespace RecordWin
                         Camera = null;
                     });
                     //停摄像头
-                    if (!SettingHelp.Settings.桌面)
+                    if (!SettingHelp.Settings.桌面)//这里只负责关闭文件即可，转码统一由MainWindow的StopRecord处理
                     {
                         VideoOutPut.Close();//关闭录像文件,如果忘了不关闭,将会得到一个损坏的文件,无法播放
                         VideoOutPut.Dispose();
                     }
-                    if (Owner is MainWindow)
+                    if (Owner is MainWindow main)
                     {
-                        var main = Owner as MainWindow;
                         if (main.Visibility != Visibility.Visible)//只录摄像头时，关闭摄像头录制回调主窗体的停录函数，进行音视频合成
                         {
                             main.Visibility = Visibility.Visible;
@@ -251,21 +274,27 @@ namespace RecordWin
             }
             catch { }
         }
-
+        /// <summary>
+        /// 窗口大小变化事件
+        /// </summary>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             imgCamera.Width = ActualWidth;
             imgCamera.Height = ActualHeight - 30;
         }
-
+        /// <summary>
+        /// 拖动移动
+        /// </summary>
         private void Title_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left) return;
-
-            if (e.ClickCount > 1)
-                WindowState = WindowState == WindowState.Maximized ? WindowState = WindowState.Normal : WindowState = WindowState.Maximized;
-            else if (e.LeftButton == MouseButtonState.Pressed && WindowState == WindowState.Normal)
-                DragMove();
-        }
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if (e.ClickCount > 1)//双击切换最大化状态
+                    WindowState = WindowState == WindowState.Maximized ? WindowState = WindowState.Normal : WindowState = WindowState.Maximized;
+                else if (e.LeftButton == MouseButtonState.Pressed && WindowState == WindowState.Normal)//非最大化时拖拽移动
+                    DragMove();
+            }
+        } 
+        #endregion
     }
 }

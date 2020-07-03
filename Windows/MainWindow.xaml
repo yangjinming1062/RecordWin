@@ -31,7 +31,6 @@
                 <WrapPanel.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF97B0DA" Offset="1"/>
-                        <!--<GradientStop Color="FFA1ECF3"/>-->
                         <GradientStop Color="Transparent"/>
                     </LinearGradientBrush>
                 </WrapPanel.Background>
@@ -62,8 +61,8 @@
                         </Path.RenderTransform>
                     </Path>
                 </local:ActivableButton>
-                <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                <Grid x:Name="barGrid">
+                <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+                <Grid x:Name="barGrid" Visibility="Collapsed">
                     <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
                     <Label Content="视频压缩中..." VerticalContentAlignment="Center"/>
                 </Grid>

@@ -106,14 +106,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Windows\CameraShow.xaml.cs">
-      <DependentUpon>CameraShow.xaml</DependentUpon>
+    <Compile Include="Windows\CameraShowWindow.xaml.cs">
+      <DependentUpon>CameraShowWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="FunctionClasses\Functions.cs" />
     <Compile Include="Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Windows\CameraShow.xaml">
+    <Page Include="Windows\CameraShowWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
