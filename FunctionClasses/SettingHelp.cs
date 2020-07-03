@@ -6,15 +6,18 @@ namespace RecordWin
 {
     internal static class SettingHelp
     {
-        static readonly string filePath = "Setting.dat";
-        public static Setting Settings = new Setting();
         /// <summary>
-        /// 配置存取类
+        /// 配置文件存储路径（根目录下）
         /// </summary>
-        static SettingHelp()
-        {
-            CheckSetting();
-        }
+        private static readonly string filePath = "Setting.dat";
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        static SettingHelp() => GetSetting();
+        /// <summary>
+        /// 参数配置
+        /// </summary>
+        internal static Setting Settings { get; private set; } = new Setting();
         /// <summary>
         /// Setting中属性变更时调用
         /// </summary>
@@ -27,39 +30,37 @@ namespace RecordWin
             }
             using (FileStream stream = new FileStream(filePath, FileMode.Create))
             {
-                BinaryFormatter bFormat = new BinaryFormatter();
-                bFormat.Serialize(stream, Settings);
+                new BinaryFormatter().Serialize(stream, Settings);
             }
         }
-
-        #region 私有方法
         /// <summary>
-        /// 检查当前配置路径是否存在配置文件，如果不存在则创建默认配置文件，存在则加载已有配置
-        /// </summary>
-        private static void CheckSetting()
-        {
-            if (!File.Exists(filePath))
-                SaveSetting();
-            else
-                GetSetting();
-        }
-        /// <summary>
-        /// 根据当前filePath获取配置
+        /// 获取配置，当前配置路径如果不存在则创建默认配置文件，存在则加载已有配置
         /// </summary>
         private static void GetSetting()
         {
-            if (Path.GetDirectoryName(filePath).Length > 0)
+            if (File.Exists(filePath))//如果存在配置则加载配置文件
             {
-                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                if (Path.GetDirectoryName(filePath).Length > 0)
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                }
+                using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                {
+                    try
+                    {
+                        Settings = (Setting)new BinaryFormatter().Deserialize(stream);
+                    }
+                    catch//因为配置类变化等关系导致原有配置文件无法正常序列化则新生成配置文件
+                    {
+                        Settings = new Setting();
+                        SaveSetting();
+                    }
+                }
             }
-            using (FileStream stream = new FileStream(filePath, FileMode.Open))
-            {
-                BinaryFormatter bFormat = new BinaryFormatter();
-                Settings = (Setting)bFormat.Deserialize(stream);
-            }
+            else
+                SaveSetting();
         }
-        #endregion
 
         [Serializable]
         public class Setting
