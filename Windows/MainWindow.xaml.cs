@@ -88,10 +88,6 @@ namespace RecordWin
             return path;
         }
         /// <summary>
-        /// 统一消息提醒(方便后期调整消息框样式)
-        /// </summary>
-        private void Message(string msg) => MessageBox.Show(msg);
-        /// <summary>
         /// 工具栏显隐状态
         /// </summary>
         /// <param name="Hidden">工具栏显隐，默认null表示只调用不修改现有值</param>
@@ -427,7 +423,7 @@ namespace RecordWin
             }
             catch (Exception ex)
             {
-                if (ShowErr) Message(ex.Message);
+                if (ShowErr) Functions.Message(ex.Message);
             }
         }
         /// <summary>
@@ -459,7 +455,7 @@ namespace RecordWin
         {
             if (!SettingHelp.Settings.桌面 && !SettingHelp.Settings.摄像头 && !SettingHelp.Settings.声音)
             {
-                Message("未选择任何录制源，请先选择录制内容");
+                Functions.Message("未选择任何录制源，请先选择录制内容");
                 return;
             }
             try
@@ -480,7 +476,7 @@ namespace RecordWin
             catch (Exception ex)
             {
                 StopRecord(ShowErr: false);
-                Message(ex.Message);
+                Functions.Message(ex.Message);
             }
         }
         /// <summary>

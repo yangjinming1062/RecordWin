@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="RecordWin.UserControls.HotKeyUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="32" d:DesignWidth="300">
+    <StackPanel Orientation="Horizontal" Margin="4">
+        <Label Content="{Binding HotKeyName}"/>
+        <ComboBox x:Name="comboBox" MinWidth="60" DropDownClosed="Combox_DropDownClosed">
+            <TextBlock Text="None"/>
+            <TextBlock Text="Alt"/>
+            <TextBlock Text="Ctrl"/>
+            <TextBlock Text="Shift"/>
+            <TextBlock Text="WindowsKey"/>
+        </ComboBox>
+        <Label Content="+" Margin="5,0"/>
+        <TextBox x:Name="txt" PreviewKeyDown="Txt_KeyDown" ToolTip="按下键盘进行修改"/>
+    </StackPanel>
+</UserControl>

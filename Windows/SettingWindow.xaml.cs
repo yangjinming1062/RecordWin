@@ -1,7 +1,6 @@
 ﻿using AForge.Video.DirectShow;
 using System;
 using System.ComponentModel;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -34,13 +33,10 @@ namespace RecordWin
                 SettingHelp.Settings.跨屏录制 = false;
             }
             cbMultiScreen.IsChecked = SettingHelp.Settings.跨屏录制;
-            cbBF.Text = SettingHelp.Settings.播放暂停.Item1.ToString();
-            cbTZ.Text = SettingHelp.Settings.停止关闭.Item1.ToString();
-            cbHB.Text = SettingHelp.Settings.开关画笔.Item1.ToString();
+            hotkeyBF.SetValue("播放/暂停：", "播放暂停");
+            hotkeyTZ.SetValue("停止/关闭：", "停止关闭");
+            hotkeyHB.SetValue("开/关画笔：", "开关画笔");
             cbVideoCode.Text = SettingHelp.Settings.编码类型;
-            txtBF.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2);
-            txtTZ.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2);
-            txtHB.Text = Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2);
             slZHiLiang.Value = SettingHelp.Settings.视频质量;
             slZHiLiang.ValueChanged += SlZL_ValueChanged;//必须放在Text赋值后再加载事件
             txtSavePath.Text = SettingHelp.Settings.保存路径;
@@ -59,10 +55,6 @@ namespace RecordWin
             base.OnClosing(e);
             SettingHelp.SaveSetting();
         }
-        /// <summary>
-        /// 统一消息提醒(方便后期调整消息框样式)
-        /// </summary>
-        private void Message(string msg) => MessageBox.Show(msg);
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -124,72 +116,6 @@ namespace RecordWin
         private void cbSXTcs_DropDownClosed(object sender, EventArgs e)
         {
             if (cbSXTcs.SelectedItem != null) SettingHelp.Settings.摄像头参数 = cbSXTcs.SelectedIndex;
-        }
-        #endregion
-
-        #region 快捷键
-        /// <summary>
-        /// 通过字符串生成指定的热键设置
-        /// </summary>
-        private Tuple<HotKey.KeyModifiers, int> GetKeysFormString(string a, string b, string curSet)
-        {
-            Enum.TryParse(a, out HotKey.KeyModifiers A);
-            int B = 0;
-            try
-            {
-                B = (int)Enum.Parse(typeof(System.Windows.Forms.Keys), b);
-            }
-            catch { }
-            var result = new Tuple<HotKey.KeyModifiers, int>(A, B);
-            foreach (PropertyInfo p in SettingHelp.Settings.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
-            {
-                if (p.PropertyType.Equals(typeof(Tuple<HotKey.KeyModifiers, int>)))//先判断是热键类设置
-                {
-                    //先取出设置的值比较，并且不是当前设置，防止没有变化的修改提示冲突
-                    if (Equals(result, (Tuple<HotKey.KeyModifiers, int>)p.GetValue(SettingHelp.Settings)) && p.Name != curSet)
-                    {
-                        Message("当前热键设置冲突，可能导致部分热键失效，请重新设置");
-                        break;
-                    }
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// 设置快捷键的文本显示
-        /// </summary>
-        private bool SetTextFormHandle(object sender, KeyEventArgs e)
-        {
-            int v;
-            try
-            {
-                v = (int)Enum.Parse(typeof(System.Windows.Forms.Keys), e.Key.ToString());
-            }
-            catch { return false; }
-            (sender as TextBox).Text = Enum.GetName(typeof(System.Windows.Forms.Keys), v);
-            e.Handled = true;//到此为止，不加这个Text处会显示重复的字母等混乱情况
-            return true;
-        }
-
-        private void cbBF_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text, "播放暂停");
-
-        private void cbTZ_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text, "停止关闭");
-
-        private void cbHB_DropDownClosed(object sender, EventArgs e) => SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text, "开关画笔");
-
-        private void txtBF_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.播放暂停 = GetKeysFormString(cbBF.Text, txtBF.Text, "播放暂停");
-        }
-
-        private void txtTZ_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.停止关闭 = GetKeysFormString(cbTZ.Text, txtTZ.Text, "停止关闭");
-        }
-
-        private void txtHB_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (SetTextFormHandle(sender, e)) SettingHelp.Settings.开关画笔 = GetKeysFormString(cbHB.Text, txtHB.Text, "开关画笔");
         }
         #endregion
 

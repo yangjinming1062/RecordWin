@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UC="clr-namespace:RecordWin.UserControls"
         mc:Ignorable="d" Height="340" Width="580" ShowInTaskbar="False" WindowStyle="None"
         WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
@@ -61,9 +62,9 @@
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="0">
                             <Label Content="视频帧率："/>
-                            <RadioButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧"/>
-                            <RadioButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧"/>
-                            <RadioButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧"/>
+                            <RadioButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="10帧"/>
+                            <RadioButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="20帧"/>
+                            <RadioButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="30帧"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0">
                             <Label Content="跨屏录制："/>
@@ -92,42 +93,9 @@
                 <WrapPanel>
                     <GroupBox Header="热键设置" Width="300">
                         <StackPanel Orientation="Vertical" Margin="0">
-                            <StackPanel>
-                                <Label Content="播放/暂停："/>
-                                <ComboBox x:Name="cbBF" MinWidth="60" DropDownClosed="cbBF_DropDownClosed">
-                                    <TextBlock Text="None"/>
-                                    <TextBlock Text="Alt"/>
-                                    <TextBlock Text="Ctrl"/>
-                                    <TextBlock Text="Shift"/>
-                                    <TextBlock Text="WindowsKey"/>
-                                </ComboBox>
-                                <Label Content="+" Margin="5,0"/>
-                                <TextBox x:Name="txtBF" PreviewKeyDown="txtBF_KeyDown" ToolTip="按下键盘进行修改"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="停止/关闭："/>
-                                <ComboBox x:Name="cbTZ" MinWidth="60" DropDownClosed="cbTZ_DropDownClosed">
-                                    <TextBlock Text="None"/>
-                                    <TextBlock Text="Alt"/>
-                                    <TextBlock Text="Ctrl"/>
-                                    <TextBlock Text="Shift"/>
-                                    <TextBlock Text="WindowsKey"/>
-                                </ComboBox>
-                                <Label Content="+" Margin="5,0"/>
-                                <TextBox x:Name="txtTZ" PreviewKeyDown="txtTZ_KeyDown" ToolTip="按下键盘进行修改"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="开/关画笔："/>
-                                <ComboBox x:Name="cbHB" MinWidth="60" DropDownClosed="cbHB_DropDownClosed">
-                                    <TextBlock Text="None"/>
-                                    <TextBlock Text="Alt"/>
-                                    <TextBlock Text="Ctrl"/>
-                                    <TextBlock Text="Shift"/>
-                                    <TextBlock Text="WindowsKey"/>
-                                </ComboBox>
-                                <Label Content="+" Margin="5,0"/>
-                                <TextBox x:Name="txtHB" PreviewKeyDown="txtHB_KeyDown" ToolTip="按下键盘进行修改"/>
-                            </StackPanel>
+                            <UC:HotKeyUC x:Name="hotkeyBF"/>
+                            <UC:HotKeyUC x:Name="hotkeyTZ"/>
+                            <UC:HotKeyUC x:Name="hotkeyHB"/>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="高级设置（慎重修改）" Width="262">

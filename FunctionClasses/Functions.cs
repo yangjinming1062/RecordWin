@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Windows;
 
 namespace RecordWin
 {
@@ -32,6 +30,10 @@ namespace RecordWin
             cmd.WaitForExit();
             cmd.Close();
         }
+        /// <summary>
+        /// 统一消息提醒(方便后期调整消息框样式)
+        /// </summary>
+        public static void Message(string msg) => MessageBox.Show(msg);
 
         #region 下载依赖包
         private static FileStream writeStream = null;
@@ -143,6 +145,44 @@ namespace RecordWin
             }
             return flag;
         }
+        #endregion
+
+        #region 读写类中指定属性的值——泛型T
+        /// <summary>
+        /// 取出指定中指定属性的值
+        /// </summary>
+        /// <typeparam name="T">待取出的属性的类型</typeparam>
+        /// <param name="propertyName">属性名称</param>
+        /// <param name="obj">待取出值的类</param>
+        /// <returns>取出的值</returns>
+        public static T GetKeyPropertyValue<T>(string propertyName, object obj)
+        {
+            foreach (PropertyInfo p in SettingHelp.Settings.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
+            {
+                if (p.PropertyType.Equals(typeof(T)) && p.Name == propertyName)//先判断是指定类型
+                {
+                    return (T)p.GetValue(obj);
+                }
+            }
+            return default;
+        }
+        /// <summary>
+        /// 向目标类的指定属性赋值
+        /// </summary>
+        /// <typeparam name="T">属性的类型</typeparam>
+        /// <param name="propertyName">属性名称</param>
+        /// <param name="obj">待设置值的类</param>
+        /// <param name="value">属性值</param>
+        public static void SetKeyPropertyValue<T>(string propertyName, object obj, T value)
+        {
+            foreach (PropertyInfo p in SettingHelp.Settings.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
+            {
+                if (p.PropertyType.Equals(typeof(T)) && p.Name == propertyName)//先判断是指定类型
+                {
+                    p.SetValue(obj, value);
+                }
+            }
+        } 
         #endregion
     }
 }
