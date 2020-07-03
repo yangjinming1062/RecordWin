@@ -52,6 +52,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -194,7 +195,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /e /r /s /y "$(ProjectDir)NeededDlls" "$(ProjectDir)bin\Debug\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /e /r /s /y "$(ProjectDir)NeededFiles" "$(ProjectDir)bin\Debug\"
+xcopy /e /r /s /y "$(ProjectDir)NeededFiles" "$(ProjectDir)bin\Release\"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="packages\7z.NET.1.0.3\build\7z.NET.targets" Condition="Exists('packages\7z.NET.1.0.3\build\7z.NET.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
