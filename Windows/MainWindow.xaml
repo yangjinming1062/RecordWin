@@ -11,7 +11,7 @@
         <Border BorderThickness="1" BorderBrush="Black">
             <WrapPanel x:Name="TitlePanel" MouseDown="Title_MouseDown" Cursor="SizeAll">
                 <WrapPanel.Resources>
-                    <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
+                    <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Width" Value="32"/>
                         <Setter Property="Height" Value="32"/>
@@ -54,36 +54,36 @@
                         </EventTrigger.Actions>
                     </EventTrigger>
                 </WrapPanel.Triggers>
-                <local:ActivableButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
+                <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
                     <Path Data="{DynamicResource IconDing}">
                         <Path.RenderTransform>
                             <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="0"/>
                         </Path.RenderTransform>
                     </Path>
-                </local:ActivableButton>
+                </ToggleButton>
                 <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
                 <Grid x:Name="barGrid" Visibility="Collapsed">
                     <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
                     <Label Content="视频压缩中..." VerticalContentAlignment="Center"/>
                 </Grid>
-                <local:ActivableButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
+                <ToggleButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
                     <Path Data="{DynamicResource IconPlay}"/>
-                </local:ActivableButton>
-                <local:ActivableButton x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
+                </ToggleButton>
+                <ToggleButton x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconParse}"/>
-                </local:ActivableButton>
-                <local:ActivableButton x:Name="btPen" Click="btPen_Click" ToolTip="屏幕画笔">
+                </ToggleButton>
+                <ToggleButton x:Name="btPen" Click="btPen_Click" ToolTip="屏幕画笔">
                     <Path Data="{DynamicResource IconPen}" />
-                </local:ActivableButton>
-                <local:ActivableButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
+                </ToggleButton>
+                <ToggleButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
                     <Path Data="{DynamicResource IconSet}" />
-                </local:ActivableButton>
-                <local:ActivableButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
+                </ToggleButton>
+                <ToggleButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
                     <Path Data="{DynamicResource IconCross}" />
-                </local:ActivableButton>
-                <local:ActivableButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
+                </ToggleButton>
+                <ToggleButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconStop}" />
-                </local:ActivableButton>
+                </ToggleButton>
                 <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
                     <Border BorderThickness="1" BorderBrush="Black" Background="{StaticResource LinearBackground}">
                         <WrapPanel Orientation="Vertical">
@@ -96,9 +96,9 @@
                             </GroupBox>
                             <GroupBox Header="软件设置">
                                 <StackPanel Orientation="Horizontal">
-                                    <local:ActivableButton x:Name="btMoreSet" Click="btMoreSet_Click" ToolTip="更多高级设置" Width="60" Height="20">
+                                    <ToggleButton x:Name="btMoreSet" Click="btMoreSet_Click" ToolTip="更多高级设置" Width="60" Height="20">
                                         <Path Data="{DynamicResource IconSet}" />
-                                    </local:ActivableButton>
+                                    </ToggleButton>
                                 </StackPanel>
                             </GroupBox>
                         </WrapPanel>

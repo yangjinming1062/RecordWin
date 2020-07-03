@@ -8,7 +8,7 @@
         WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" Height="Auto" Width="Auto" Topmost="True" SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.Resources>
-            <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="Width" Value="24"/>
                 <Setter Property="Height" Value="24"/>
@@ -44,15 +44,15 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <local:ActivableButton Grid.Column="1" x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制" Visibility="Collapsed">
+                <ToggleButton Grid.Column="1" x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制" Visibility="Collapsed">
                     <Path Data="{DynamicResource IconPlay}"/>
-                </local:ActivableButton>
-                <local:ActivableButton Grid.Column="1" x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制">
+                </ToggleButton>
+                <ToggleButton Grid.Column="1" x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制">
                     <Path Data="{DynamicResource IconParse}"/>
-                </local:ActivableButton>
-                <local:ActivableButton Grid.Column="2" x:Name="btClose" Click="btClose_Click" ToolTip="关闭（停止录制）" HorizontalAlignment="Right" Margin="4,0">
+                </ToggleButton>
+                <ToggleButton Grid.Column="2" x:Name="btClose" Click="btClose_Click" ToolTip="关闭（停止录制）" HorizontalAlignment="Right" Margin="4,0">
                     <Path Data="{DynamicResource IconCross}" />
-                </local:ActivableButton>
+                </ToggleButton>
             </Grid>
         </Border>
         <Image x:Name="imgCamera" Grid.Row="1" Margin="0"/>

@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace RecordWin
@@ -47,9 +48,9 @@ namespace RecordWin
             txtNameRule.TextChanged += txtNameRule_TextChanged;
             switch(SettingHelp.Settings.视频帧率)
             {
-                case 5: btZLL.IsActived = true; break;
-                case 10: btZLM.IsActived = true; break;
-                case 20: btZLH.IsActived = true; break;
+                case 5: btZLL.IsChecked = true; break;
+                case 10: btZLM.IsChecked = true; break;
+                case 20: btZLH.IsChecked = true; break;
             }
         }
 
@@ -79,11 +80,11 @@ namespace RecordWin
 
         private void btZL_Click(object sender, RoutedEventArgs e)
         {
-            switch((sender as ActivableButton).Name)
+            switch((sender as ToggleButton).Name)
             {
-                case "btZLL": SettingHelp.Settings.视频帧率 = 5; btZLL.IsActived = true; btZLM.IsActived = false; btZLH.IsActived = false; break;
-                case "btZLM": SettingHelp.Settings.视频帧率 = 10; btZLL.IsActived = false; btZLM.IsActived = true; btZLH.IsActived = false; break;
-                case "btZLH": SettingHelp.Settings.视频帧率 = 20; btZLL.IsActived = false; btZLM.IsActived = false; btZLH.IsActived = true; break;
+                case "btZLL": SettingHelp.Settings.视频帧率 = 5; btZLL.IsChecked = true; btZLM.IsChecked = false; btZLH.IsChecked = false; break;
+                case "btZLM": SettingHelp.Settings.视频帧率 = 10; btZLL.IsChecked = false; btZLM.IsChecked = true; btZLH.IsChecked = false; break;
+                case "btZLH": SettingHelp.Settings.视频帧率 = 20; btZLL.IsChecked = false; btZLM.IsChecked = false; btZLH.IsChecked = true; break;
             }
         }
 

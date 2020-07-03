@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
 
 namespace RecordWin
 {
-    public class ActivableButton : Button
-    {
-        public static readonly DependencyProperty IsActivedProperty = DependencyProperty.Register("IsActived", typeof(bool), typeof(ActivableButton), new PropertyMetadata(default(bool)));
-        public bool IsActived
-        {
-            get => (bool)GetValue(IsActivedProperty);
-            set => SetValue(IsActivedProperty, value);
-        }
-    }
-
-    public class ColorPicker : ActivableButton
+    public class ColorPicker : ToggleButton
     {
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(ColorPickerButtonSize), typeof(ColorPicker),
             new PropertyMetadata(default(ColorPickerButtonSize), OnColorPickerSizeChanged));

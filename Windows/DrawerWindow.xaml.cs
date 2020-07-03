@@ -81,7 +81,7 @@ namespace RecordWin
         {
             if (Owner is MainWindow)
             {
-                (Owner as MainWindow).btPen.IsActived = false;
+                (Owner as MainWindow).btPen.IsChecked = false;
             }
             Close();
         }
@@ -163,7 +163,7 @@ namespace RecordWin
         private void SetInkVisibility(bool v)
         {
             MainInkCanvas.BeginAnimation(OpacityProperty, v ? new DoubleAnimation(0, 1, Duration3) : new DoubleAnimation(1, 0, Duration3));
-            HideButton.IsActived = !v;
+            HideButton.IsChecked = !v;
 
             if (v == false)
                 _tempEnable = _enable;
@@ -237,18 +237,18 @@ namespace RecordWin
             MainInkCanvas.UseCustomCursor = bUseCustomCursor;
             MainInkCanvas.EditingMode = editingMode;
 
-            EnableButton.IsActived = !enable;
+            EnableButton.IsChecked = !enable;
             Background = Application.Current.Resources[enable ? "FakeTransparent" : "TrueTransparent"] as Brush;
 
-            SelectButton.IsActived = _enable && _mode == DrawMode.Select;
-            PenButton.IsActived = _enable && _mode == DrawMode.Pen;
-            TextButton.IsActived = _enable && _mode == DrawMode.Text;
-            LineButton.IsActived = _enable && _mode == DrawMode.Line;
-            ArrowButton.IsActived = _enable && _mode == DrawMode.Arrow;
-            RectangleButton.IsActived = _enable && _mode == DrawMode.Rectangle;
-            CircleButton.IsActived = _enable && _mode == DrawMode.Circle;
-            RayButton.IsActived = _enable && _mode == DrawMode.Ray;
-            EraserButton.IsActived = _enable && _mode == DrawMode.Erase;
+            SelectButton.IsChecked = _enable && _mode == DrawMode.Select;
+            PenButton.IsChecked = _enable && _mode == DrawMode.Pen;
+            TextButton.IsChecked = _enable && _mode == DrawMode.Text;
+            LineButton.IsChecked = _enable && _mode == DrawMode.Line;
+            ArrowButton.IsChecked = _enable && _mode == DrawMode.Arrow;
+            RectangleButton.IsChecked = _enable && _mode == DrawMode.Rectangle;
+            CircleButton.IsChecked = _enable && _mode == DrawMode.Circle;
+            RayButton.IsChecked = _enable && _mode == DrawMode.Ray;
+            EraserButton.IsChecked = _enable && _mode == DrawMode.Erase;
         }
         private void SetColor(ColorPicker b)
         {
@@ -258,8 +258,8 @@ namespace RecordWin
 
             MainInkCanvas.DefaultDrawingAttributes.Color = solidColorBrush.Color;
             brushPreview.Background.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(solidColorBrush.Color, Duration3));
-            b.IsActived = true;
-            if (_selectedColor != null) _selectedColor.IsActived = false;
+            b.IsChecked = true;
+            if (_selectedColor != null) _selectedColor.IsChecked = false;
             _selectedColor = b;
             _drawerTextBox.Foreground = solidColorBrush;
         }
@@ -282,7 +282,7 @@ namespace RecordWin
         }
         private void SetTopMost(bool v)
         {
-            PinButton.IsActived = v;
+            PinButton.IsChecked = v;
             Topmost = v;
         }
         #endregion

@@ -96,16 +96,16 @@ namespace RecordWin
         /// <param name="Hidden">工具栏显隐，默认null表示只调用不修改现有值</param>
         private void HiddenTools(bool? Hidden = null)
         {
-            if (Hidden.HasValue) btDing.IsActived = !Hidden.Value;//参数赋值了则设置
-            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, new DoubleAnimation(btDing.IsActived ? -45 : 0, Duration1));//钉住按钮执行动画
-            TitlePanel.Height = !btDing.IsActived && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现显隐
+            if (Hidden.HasValue) btDing.IsChecked = !Hidden.Value;//参数赋值了则设置
+            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, new DoubleAnimation((bool)btDing.IsChecked ? -45 : 0, Duration1));//钉住按钮执行动画
+            TitlePanel.Height = !(bool)btDing.IsChecked && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现显隐
         }
         /// <summary>
         /// 工具栏是否可拖动
         /// </summary>
         private void TitleDragMove(bool canMove)
         {
-            if (canMove && !SettingPop.IsOpen && !btPen.IsActived)
+            if (canMove && !SettingPop.IsOpen && !(bool)btPen.IsChecked)
             {
                 TitlePanel.MouseDown += Title_MouseDown;
                 TitlePanel.Cursor = Cursors.SizeAll;
@@ -144,7 +144,7 @@ namespace RecordWin
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
-                if (!btDing.IsActived) GoToScreenTopMiddle();//未开自动隐藏则拖到哪算哪
+                if (!(bool)btDing.IsChecked) GoToScreenTopMiddle();//未开自动隐藏则拖到哪算哪
             }
         }
         /// <summary>
@@ -152,8 +152,7 @@ namespace RecordWin
         /// </summary>
         private void btDing_Click(object sender, RoutedEventArgs e)
         {
-            btDing.IsActived = !btDing.IsActived;//点击后切换状态
-            SettingHelp.Settings.自动隐藏 = !btDing.IsActived;//钉住不隐藏，所以取反
+            SettingHelp.Settings.自动隐藏 = !(bool)btDing.IsChecked;//钉住不隐藏，所以取反
             if (SettingHelp.Settings.自动隐藏) GoToScreenTopMiddle();
             HiddenTools();
         }
@@ -509,8 +508,7 @@ namespace RecordWin
         private void btSet_Click(object sender, RoutedEventArgs e)
         {
             TitlePanel.Height = SettingPop.IsOpen && SettingHelp.Settings.自动隐藏 ? 3 : 40;
-            SettingPop.IsOpen = !SettingPop.IsOpen;
-            btSet.IsActived = SettingPop.IsOpen;
+            SettingPop.IsOpen = (bool)btSet.IsChecked;
             btBegin.Visibility = SettingPop.IsOpen ? Visibility.Hidden : Visibility.Visible;//设置时不允许录制，防止录制启动参数和设置的有出入
             TitleDragMove(!SettingPop.IsOpen);//根据设置Popup决定是否可以拖住，当正在设置时不允许拖拽（会和设置小窗窗窗分离）
         }
@@ -541,12 +539,12 @@ namespace RecordWin
         private DrawerWindow DrawerWin;
         private void btPen_Click(object sender, RoutedEventArgs e)
         {
-            if (btPen.IsActived)
+            if (btPen.IsChecked == true)
             {
                 DrawerWin?.Close();
                 DrawerWin = null;
-                btPen.IsActived = false;
-                Dispatcher.Invoke(() => {
+                Dispatcher.Invoke(() =>
+                {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                     GC.Collect();
@@ -555,7 +553,6 @@ namespace RecordWin
             else
             {
                 DrawerWin = new DrawerWindow();
-                btPen.IsActived = true;
                 DrawerWin.Owner = this;
                 DrawerWin.Show();
             }

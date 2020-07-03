@@ -8,7 +8,7 @@
         Height="340" Width="580" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" Topmost="True" AllowsTransparency="True" MouseDown="Window_MouseDown">
     <Grid Background="{StaticResource LinearBackground}">
         <Grid.Resources>
-            <Style TargetType="local:ActivableButton" BasedOn="{StaticResource FunctionalButton}">
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="Width" Value="24"/>
                 <Setter Property="Height" Value="24"/>
@@ -48,9 +48,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!--<TextBlock Text="高级设置" Grid.Column="0"/>-->
-                <local:ActivableButton Grid.Column="1" x:Name="btClose" Click="btClose_Click" ToolTip="关闭" HorizontalAlignment="Right" Margin="4,0">
+                <ToggleButton Grid.Column="1" x:Name="btClose" Click="btClose_Click" ToolTip="关闭" HorizontalAlignment="Right" Margin="4,0">
                     <Path Data="{DynamicResource IconCross}" />
-                </local:ActivableButton>
+                </ToggleButton>
             </Grid>
         </Border>
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
@@ -76,9 +76,9 @@
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="0">
                             <Label Content="视频帧率："/>
-                            <local:ActivableButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧" Height="Auto" Foreground="White" Width="32"/>
-                            <local:ActivableButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧" Height="Auto" Foreground="White" Width="32"/>
-                            <local:ActivableButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧" Height="Auto" Foreground="White" Width="32"/>
+                            <ToggleButton x:Name="btZLL" Click="btZL_Click" Content="低" ToolTip="5帧" Height="Auto" Foreground="White" Width="32"/>
+                            <ToggleButton x:Name="btZLM" Click="btZL_Click" Content="中" ToolTip="10帧" Height="Auto" Foreground="White" Width="32"/>
+                            <ToggleButton x:Name="btZLH" Click="btZL_Click" Content="高" ToolTip="20帧" Height="Auto" Foreground="White" Width="32"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0">
                             <Label Content="跨屏录制："/>
