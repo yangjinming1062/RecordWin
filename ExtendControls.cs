@@ -21,7 +21,7 @@ namespace RecordWin
             var v = (ColorPickerButtonSize)eventArgs.NewValue;
             ColorPicker obj = dependencyObject as ColorPicker;
             if (obj == null) return;
-            var w = 0.0;
+            double w;
             switch (v)
             {
                 case ColorPickerButtonSize.Small:

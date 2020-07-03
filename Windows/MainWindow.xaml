@@ -57,7 +57,7 @@
                 <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
                     <Path Data="{DynamicResource IconDing}">
                         <Path.RenderTransform>
-                            <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="0"/>
+                            <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="45"/>
                         </Path.RenderTransform>
                     </Path>
                 </ToggleButton>

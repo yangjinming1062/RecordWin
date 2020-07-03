@@ -94,7 +94,7 @@ namespace RecordWin
         private void HiddenTools(bool? Hidden = null)
         {
             if (Hidden.HasValue) btDing.IsChecked = !Hidden.Value;//参数赋值了则设置
-            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, new DoubleAnimation((bool)btDing.IsChecked ? -45 : 0, Duration1));//钉住按钮执行动画
+            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, new DoubleAnimation((bool)btDing.IsChecked ? 0 : 45, Duration1));//钉住按钮执行动画
             TitlePanel.Height = !(bool)btDing.IsChecked && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现显隐
         }
         /// <summary>
@@ -534,9 +534,17 @@ namespace RecordWin
 
         #region 画笔
         private DrawerWindow DrawerWin;
-        private void btPen_Click(object sender, RoutedEventArgs e)
+        private void btPen_Click(object sender, RoutedEventArgs e) => OpenDraweWin();
+        private void OpenDraweWin()
         {
-            if (btPen.IsChecked == true)
+            if ((bool)btPen.IsChecked && DrawerWin == null)
+            {
+                DrawerWin = new DrawerWindow();
+                DrawerWin.Owner = this;
+                DrawerWin.Show();
+                btPen.IsChecked = true;
+            }
+            else
             {
                 DrawerWin?.Close();
                 DrawerWin = null;
@@ -546,12 +554,7 @@ namespace RecordWin
                     GC.WaitForPendingFinalizers();
                     GC.Collect();
                 });
-            }
-            else
-            {
-                DrawerWin = new DrawerWindow();
-                DrawerWin.Owner = this;
-                DrawerWin.Show();
+                btPen.IsChecked = false;
             }
         }
         #endregion
@@ -622,7 +625,8 @@ namespace RecordWin
                             }
                             if (sid == HotKeyHB)
                             {
-                                btPen_Click(null, null);
+                                btPen.IsChecked = !btPen.IsChecked;
+                                OpenDraweWin();
                             }
                         }
                         handled = true;

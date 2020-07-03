@@ -167,7 +167,7 @@
                                     <ToggleButton.RenderTransform >
                                         <RotateTransform CenterX="16" CenterY="16" Angle="{Binding MinWidth, ElementName=Palette}"/>
                                     </ToggleButton.RenderTransform>
-                                    <Path Data="{DynamicResource IconPin}" Width="13"/>
+                                        <Path Data="{DynamicResource IconDing}" Width="13"/>
                                 </ToggleButton>
                                 <ToggleButton x:Name="ExportButton" ToolTip="导出画板为PNG / 右键点击导出画板和屏幕为PNG" Click="ExportButton_Click" PreviewMouseRightButtonDown="ExportButton_RightClick">
                                     <ToggleButton.RenderTransform >
