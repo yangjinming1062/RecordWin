@@ -578,9 +578,9 @@ namespace RecordWin
             if (Add)
             {
                 hWndSource.AddHook(MainWindowProc);
-                HotKeyBF = HotKey.GlobalAddAtom($"{SettingHelp.Settings.播放暂停.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2)}");
-                HotKeyTZ = HotKey.GlobalAddAtom($"{SettingHelp.Settings.停止关闭.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2)}");
-                HotKeyHB = HotKey.GlobalAddAtom($"{SettingHelp.Settings.开关画笔.Item1.ToString()}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2)}");
+                HotKeyBF = HotKey.GlobalAddAtom($"{SettingHelp.Settings.播放暂停.Item1}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.播放暂停.Item2)}");
+                HotKeyTZ = HotKey.GlobalAddAtom($"{SettingHelp.Settings.停止关闭.Item1}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.停止关闭.Item2)}");
+                HotKeyHB = HotKey.GlobalAddAtom($"{SettingHelp.Settings.开关画笔.Item1}-{Enum.GetName(typeof(System.Windows.Forms.Keys), SettingHelp.Settings.开关画笔.Item2)}");
 
                 HotKey.RegisterHotKey(winHandle, HotKeyBF, SettingHelp.Settings.播放暂停.Item1, SettingHelp.Settings.播放暂停.Item2);
                 HotKey.RegisterHotKey(winHandle, HotKeyTZ, SettingHelp.Settings.停止关闭.Item1, SettingHelp.Settings.停止关闭.Item2);
