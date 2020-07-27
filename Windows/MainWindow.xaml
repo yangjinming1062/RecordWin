@@ -9,102 +9,128 @@
         MaxWidth="400" Height="42" Topmost="True">
     <Canvas>
         <Border BorderThickness="1" BorderBrush="Black">
-            <WrapPanel x:Name="TitlePanel" MouseDown="Title_MouseDown" Cursor="SizeAll">
-                <WrapPanel.Resources>
-                    <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Width" Value="32"/>
-                        <Setter Property="Height" Value="32"/>
-                        <Setter Property="Margin" Value="4"/>
-                        <Setter Property="Cursor" Value="Arrow"/>
-                        <Setter Property="Focusable" Value="False"/>
-                    </Style>
-                    <Style TargetType="Path">
-                        <Setter Property="Fill" Value="White"/>
-                        <Setter Property="Stretch" Value="Uniform"/>
-                        <Setter Property="Width" Value="15"/>
-                        <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                    </Style>
-                </WrapPanel.Resources>
-                <WrapPanel.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF97B0DA" Offset="1"/>
-                        <GradientStop Color="Transparent"/>
-                    </LinearGradientBrush>
-                </WrapPanel.Background>
-                <WrapPanel.Triggers>
-                    <EventTrigger RoutedEvent="MouseEnter">
-                        <EventTrigger.Actions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="{StaticResource Duration2}"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger.Actions>
-                    </EventTrigger>
-                    <EventTrigger RoutedEvent="MouseLeave">
-                        <EventTrigger.Actions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="{StaticResource Duration2}"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger.Actions>
-                    </EventTrigger>
-                </WrapPanel.Triggers>
-                <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
-                    <Path Data="{DynamicResource IconDing}">
-                        <Path.RenderTransform>
-                            <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="45"/>
-                        </Path.RenderTransform>
-                    </Path>
-                </ToggleButton>
-                <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
-                <Grid x:Name="barGrid" Visibility="Collapsed">
-                    <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
-                    <Label Content="视频压缩中..." VerticalContentAlignment="Center"/>
-                </Grid>
-                <ToggleButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
-                    <Path Data="{DynamicResource IconPlay}"/>
-                </ToggleButton>
-                <ToggleButton x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
-                    <Path Data="{DynamicResource IconParse}"/>
-                </ToggleButton>
-                <ToggleButton x:Name="btPen" Click="btPen_Click" ToolTip="屏幕画笔">
-                    <Path Data="{DynamicResource IconPen}" />
-                </ToggleButton>
-                <ToggleButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
-                    <Path Data="{DynamicResource IconSet}" />
-                </ToggleButton>
-                <ToggleButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
-                    <Path Data="{DynamicResource IconCross}" />
-                </ToggleButton>
-                <ToggleButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
-                    <Path Data="{DynamicResource IconStop}" />
-                </ToggleButton>
-                <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
-                    <Border BorderThickness="1" BorderBrush="Black" Background="{StaticResource LinearBackground}">
-                        <WrapPanel Orientation="Vertical">
-                            <GroupBox Header="录制内容">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Margin="4" Click="cbZM_Click" x:Name="cbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
-                                    <CheckBox Margin="4" Click="cbSXT_Click" x:Name="cbSXT" Content="摄像头" VerticalAlignment="Center"/>
-                                    <CheckBox Margin="4" Click="cbSY_Click" x:Name="cbSY" Content="声音" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </GroupBox>
-                            <GroupBox Header="软件设置">
-                                <StackPanel Orientation="Horizontal">
-                                    <ToggleButton x:Name="btMoreSet" Click="btMoreSet_Click" ToolTip="更多高级设置" Width="60" Height="20">
-                                        <Path Data="{DynamicResource IconSet}" />
-                                    </ToggleButton>
-                                </StackPanel>
-                            </GroupBox>
-                        </WrapPanel>
-                    </Border>
-                </Popup>
-            </WrapPanel>
+            <StackPanel>
+                <WrapPanel x:Name="TitlePanel" MouseDown="Title_MouseDown" Cursor="SizeAll">
+                    <WrapPanel.Resources>
+                        <Style TargetType="ToggleButton" BasedOn="{StaticResource FunctionalButton}">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Width" Value="32"/>
+                            <Setter Property="Height" Value="32"/>
+                            <Setter Property="Margin" Value="4"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
+                            <Setter Property="Focusable" Value="False"/>
+                        </Style>
+                        <Style TargetType="Path">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stretch" Value="Uniform"/>
+                            <Setter Property="Width" Value="15"/>
+                            <Setter Property="RenderTransformOrigin" Value ="0.5,0.5"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                    </WrapPanel.Resources>
+                    <WrapPanel.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF97B0DA" Offset="1"/>
+                            <GradientStop Color="Transparent"/>
+                        </LinearGradientBrush>
+                    </WrapPanel.Background>
+                    <WrapPanel.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation  Storyboard.TargetProperty="Height" To="40" Duration="{StaticResource Duration2}"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation  Storyboard.TargetProperty="Height" Duration="{StaticResource Duration2}"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </WrapPanel.Triggers>
+                    <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
+                        <Path Data="{DynamicResource IconDing}">
+                            <Path.RenderTransform>
+                                <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="45"/>
+                            </Path.RenderTransform>
+                        </Path>
+                    </ToggleButton>
+                    <Label x:Name="lbTime" Content="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+                    <Grid x:Name="barGrid" Visibility="Collapsed">
+                        <ProgressBar x:Name="waitBar" Height="20" Background="Transparent" Maximum="10"/>
+                        <Label Content="视频压缩中..." VerticalContentAlignment="Center"/>
+                    </Grid>
+                    <ToggleButton x:Name="btBegin" Click="btBegin_Click" ToolTip="开始录制">
+                        <Path Data="{DynamicResource IconPlay}"/>
+                    </ToggleButton>
+                    <ToggleButton x:Name="btParse" Click="btParse_Click" ToolTip="暂停录制" Visibility="Collapsed">
+                        <Path Data="{DynamicResource IconParse}"/>
+                    </ToggleButton>
+                    <ToggleButton x:Name="btPen" Click="btPen_Click" ToolTip="屏幕画笔">
+                        <Path Data="{DynamicResource IconPen}" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
+                        <Path Data="{DynamicResource IconSet}" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
+                        <Path Data="{DynamicResource IconCross}" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">
+                        <Path Data="{DynamicResource IconStop}" />
+                    </ToggleButton>
+                    <Popup x:Name="SettingPop" PopupAnimation="Fade" StaysOpen="True" PlacementTarget="{Binding ElementName=btSet}" VerticalOffset="5">
+                        <Border BorderThickness="1" BorderBrush="Black" Background="{StaticResource LinearBackground}">
+                            <WrapPanel Orientation="Vertical">
+                                <GroupBox Header="录制内容">
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Margin="4" Click="cbZM_Click" x:Name="cbZM" Content="桌面" VerticalAlignment="Center" IsChecked="True"/>
+                                        <CheckBox Margin="4" Click="cbSXT_Click" x:Name="cbSXT" Content="摄像头" VerticalAlignment="Center"/>
+                                        <CheckBox Margin="4" Click="cbSY_Click" x:Name="cbSY" Content="声音" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="软件设置">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ToggleButton x:Name="btMoreSet" Click="btMoreSet_Click" ToolTip="更多高级设置" Width="60" Height="20">
+                                            <Path Data="{DynamicResource IconSet}" />
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </GroupBox>
+                            </WrapPanel>
+                        </Border>
+                    </Popup>
+                </WrapPanel>
+                <ProgressBar x:Name="RecordingBar" Visibility="{Binding Path=Visibility, ElementName=btParse}" Height="0" Maximum="1" Foreground="Red" Value="1">
+                    <ProgressBar.Style>
+                        <Style TargetType="ProgressBar">
+                            <Style.Triggers>
+                                <Trigger Property="Visibility" Value="Visible">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard TargetProperty="Height">
+                                                <DoubleAnimation Duration="{StaticResource Duration2}" To="1" AutoReverse="True" RepeatBehavior="Forever"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard TargetProperty="Height">
+                                                <DoubleAnimation Duration="{StaticResource Duration1}" To="0"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+            </StackPanel>
         </Border>
     </Canvas>
 </Window>
