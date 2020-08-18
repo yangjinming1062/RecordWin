@@ -21,6 +21,7 @@ namespace RecordWin
             cmd.StartInfo.RedirectStandardOutput = true;//由调用程序获取输出信息
             cmd.StartInfo.RedirectStandardError = true;//重定向标准错误输出
             cmd.StartInfo.CreateNoWindow = true;//不显示程序窗口
+            cmd.StartInfo.Verb = "runas";//设置启动动作,以管理员身份运行
             cmd.Start();//启动程序
             cmd.StandardInput.WriteLine(args + "&exit");
             cmd.StandardInput.AutoFlush = true;
