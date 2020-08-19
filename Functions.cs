@@ -176,11 +176,12 @@ namespace RecordWin
         /// <param name="value">属性值</param>
         public static void SetKeyPropertyValue<T>(string propertyName, object obj, T value)
         {
-            foreach (PropertyInfo p in obj.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
+            foreach (PropertyInfo p in obj.GetType().GetProperties())
             {
                 if (p.PropertyType.Equals(typeof(T)) && p.Name == propertyName)//先判断是指定类型
                 {
                     p.SetValue(obj, value);
+                    break;
                 }
             }
         } 
