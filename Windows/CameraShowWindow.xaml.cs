@@ -90,7 +90,7 @@ namespace RecordWin
                         VideoOutPut = new VideoFileWriter();
                         beginTime = new DateTime();
                         VideoOutPut.Open(FileName, Camera.VideoResolution.FrameSize.Width, Camera.VideoResolution.FrameSize.Height,
-                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MSMPEG4v3,
+                           Camera.VideoResolution.AverageFrameRate, VideoCodec.MPEG4,
                            Camera.VideoResolution.FrameSize.Width * Camera.VideoResolution.FrameSize.Height * SettingHelp.Settings.视频质量);
                     }
                 }
@@ -110,15 +110,13 @@ namespace RecordWin
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        eventArgs.Frame.Save(ms, ImageFormat.Bmp);
-                        BitmapImage image = new BitmapImage();
-                        image.BeginInit();
-                        image.StreamSource = new MemoryStream(ms.GetBuffer());
-                        image.EndInit();
-                        imgCamera.Source = image;
-                    }
+                    using MemoryStream ms = new MemoryStream();
+                    eventArgs.Frame.Save(ms, ImageFormat.Bmp);
+                    BitmapImage image = new BitmapImage();
+                    image.BeginInit();
+                    image.StreamSource = new MemoryStream(ms.GetBuffer());
+                    image.EndInit();
+                    imgCamera.Source = image;
                 }));//同步显示
                 if (!SettingHelp.Settings.桌面)
                 {

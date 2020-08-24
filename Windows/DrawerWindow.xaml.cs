@@ -79,9 +79,9 @@ namespace RecordWin
 
         private void Exit(object sender, EventArgs e)
         {
-            if (Owner is MainWindow)
+            if (Owner is MainWindow record)
             {
-                (Owner as MainWindow).btPen.IsChecked = false;
+                record.btPen.IsChecked = false;
             }
             Close();
         }
@@ -168,7 +168,7 @@ namespace RecordWin
             if (v == false)
                 _tempEnable = _enable;
 
-            SetEnable(v == false ? false : _tempEnable, _mode);
+            SetEnable(v != false && _tempEnable, _mode);
             _inkVisibility = v;
         }
         private void SetEnable(bool enable, DrawMode mode)
@@ -215,7 +215,7 @@ namespace RecordWin
                     break;
             }
 
-            MainInkCanvas.Cursor = _mode == DrawMode.Ray ? new Cursor(new MemoryStream(RecordWin.Properties.Resources.raycursor)) : Cursors.Cross;
+            MainInkCanvas.Cursor = _mode == DrawMode.Ray ? new Cursor(new MemoryStream(Properties.Resources.raycursor)) : Cursors.Cross;
 
             if (_mode == DrawMode.Text)
             {

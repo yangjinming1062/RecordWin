@@ -258,6 +258,7 @@ namespace RecordWin
         {
             if (IsRecording && !IsParsing)
             {
+                TimeSpan time = DateTime.Now - beginTime - parseSpan;
                 if (SettingHelp.Settings.捕获鼠标)
                 {
                     CURSORINFO pci;
@@ -271,14 +272,14 @@ namespace RecordWin
                     }
                     catch { }//打开任务管理器时会导致异常
                 }
-                VideoWriter.WriteVideoFrame(e.Frame, DateTime.Now - beginTime - parseSpan);//处理视频时长和实际物理时长不符，用帧间隔时长的办法指定每一帧的间隔
+                VideoWriter.WriteVideoFrame(e.Frame, time);//处理视频时长和实际物理时长不符，用帧间隔时长的办法指定每一帧的间隔
                 FrameCount += 1;
                 if (FrameCount == SettingHelp.Settings.视频帧率)
                 {
                     FrameCount = 0;
                     Dispatcher.Invoke(new Action(() =>
                     {
-                        lbTime.Content = (DateTime.Now - beginTime - parseSpan).ToString("hh\\:mm\\:ss");
+                        lbTime.Content = time.ToString("hh\\:mm\\:ss");
                     }));
                 }
             }
