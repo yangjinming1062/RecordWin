@@ -435,6 +435,11 @@ namespace RecordWin
                             });
                         });
                     }
+                    else
+                    {
+                        btClose.Visibility = Visibility.Visible;//转码完恢复关闭按钮显示
+                        barGrid.Visibility = Visibility.Collapsed;//隐藏转码进度条
+                    }
                 }
                 else//不保留输出则简单的将录制的原始音视频文件删除即算完成
                 {
