@@ -55,7 +55,7 @@
                             </EventTrigger.Actions>
                         </EventTrigger>
                     </WrapPanel.Triggers>
-                    <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="btDing_Click">
+                    <ToggleButton x:Name="btDing" ToolTip="固定命令栏" Click="BtDing_Click">
                         <Path Data="{DynamicResource IconDing}">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="DingRotate" CenterX="2" CenterY="2" Angle="45"/>
@@ -79,7 +79,7 @@
                     <ToggleButton x:Name="btSet" Click="btSet_Click" ToolTip="设置">
                         <Path Data="{DynamicResource IconSet}" />
                     </ToggleButton>
-                    <ToggleButton x:Name="btClose" Click="btClose_Click" ToolTip="关闭工具">
+                    <ToggleButton x:Name="btClose" Click="BtClose_Click" ToolTip="关闭工具">
                         <Path Data="{DynamicResource IconCross}" />
                     </ToggleButton>
                     <ToggleButton x:Name="btStop" Click="btStop_Click" ToolTip="停止录制" Visibility="Collapsed">

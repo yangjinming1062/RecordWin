@@ -3,6 +3,7 @@ using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
 using NAudio.Wave;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -28,9 +29,9 @@ namespace RecordWin
         /// </summary>
         private static readonly Duration Duration1 = (Duration)Application.Current.Resources["Duration1"];
         /// <summary>
-        /// 当前所属窗体
+        /// 当前窗体所在屏幕
         /// </summary>
-        private System.Windows.Forms.Screen CurrentScreen; 
+        private System.Windows.Forms.Screen CurrentScreen;
         #endregion
 
         public MainWindow()
@@ -94,7 +95,8 @@ namespace RecordWin
         private void HiddenTools(bool? Hidden = null)
         {
             if (Hidden.HasValue) btDing.IsChecked = !Hidden.Value;//参数赋值了则设置
-            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, new DoubleAnimation((bool)btDing.IsChecked ? 0 : 45, Duration1));//钉住按钮执行动画
+            DingRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, 
+                new DoubleAnimation((bool)btDing.IsChecked ? 0 : 45, Duration1));//钉住按钮执行动画
             TitlePanel.Height = !(bool)btDing.IsChecked && !SettingPop.IsOpen ? 3 : 40;//通过修改高度使动画效果出现与否来实现显隐
         }
         /// <summary>
@@ -116,11 +118,18 @@ namespace RecordWin
         #endregion
 
         #region UI事件
+        /// <summary>
+        /// 窗体关闭事件
+        /// </summary>
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            if (IsRecording) StopRecord(SaveFile: false);
+            if (IsRecording) //如果正在录制中关闭则不保存文件退出
+                StopRecord(SaveFile: false);
             base.OnClosing(e);
         }
+        /// <summary>
+        /// 窗体加载完成事件
+        /// </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             winHandle = new WindowInteropHelper(this).Handle;
@@ -131,8 +140,17 @@ namespace RecordWin
         /// <summary>
         /// 防止UC跑丢，我就死活一个状态（针对Win10拖到屏幕边缘可被最大化问题）
         /// </summary>
-        private void Window_StateChanged(object sender, EventArgs e) => WindowState = WindowState.Normal;
-        private void btClose_Click(object sender, RoutedEventArgs e) => Close();
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            WindowState = WindowState.Normal;
+        }
+        /// <summary>
+        /// 关闭按钮点击事件
+        /// </summary>
+        private void BtClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
         /// <summary>
         /// 拖动移动
         /// </summary>
@@ -141,13 +159,14 @@ namespace RecordWin
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
-                if (!(bool)btDing.IsChecked) GoToScreenTopMiddle();//未开自动隐藏则拖到哪算哪
+                if (btDing.IsChecked == false)
+                    GoToScreenTopMiddle();//未开自动隐藏则拖到哪算哪
             }
         }
         /// <summary>
         /// 固定命令栏按钮点击事件
         /// </summary>
-        private void btDing_Click(object sender, RoutedEventArgs e)
+        private void BtDing_Click(object sender, RoutedEventArgs e)
         {
             SettingHelp.Settings.自动隐藏 = !(bool)btDing.IsChecked;//钉住不隐藏，所以取反
             if (SettingHelp.Settings.自动隐藏) GoToScreenTopMiddle();
@@ -216,13 +235,13 @@ namespace RecordWin
         private static extern bool GetCursorInfo(out CURSORINFO pci);
 
         [StructLayout(LayoutKind.Sequential)]
-        struct POINT
+        private struct POINT
         {
             public int x;
             public int y;
         }
         [StructLayout(LayoutKind.Sequential)]
-        struct CURSORINFO
+        private struct CURSORINFO
         {
             public int cbSize;
             public int flags;
@@ -247,7 +266,7 @@ namespace RecordWin
                     try
                     {
                         System.Windows.Forms.Cursor cur = new System.Windows.Forms.Cursor(pci.hCursor);//在每一帧上手动绘制鼠标
-                        cur.Draw(System.Drawing.Graphics.FromImage(e.Frame), new System.Drawing.Rectangle(System.Windows.Forms.Cursor.Position.X - 10 - CurrentScreen.Bounds.X,
+                        cur.Draw(Graphics.FromImage(e.Frame), new Rectangle(System.Windows.Forms.Cursor.Position.X - 10 - CurrentScreen.Bounds.X,
                             System.Windows.Forms.Cursor.Position.Y - 10 - CurrentScreen.Bounds.Y, cur.Size.Width, cur.Size.Height));
                     }
                     catch { }//打开任务管理器时会导致异常
@@ -273,7 +292,7 @@ namespace RecordWin
             {
                 AudioWriter.Write(e.Buffer, 0, e.BytesRecorded);
             }
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -281,8 +300,9 @@ namespace RecordWin
         /// </summary>
         private void BeginRecord()
         {
-            CurrentVideoPath = MakeFilePath(".avi", "Raw");
-            CurrentAudioPath = CurrentVideoPath.Replace(".avi", ".wav");//使音频文件和视频文件同名
+            //重编码体积更小，但清晰度受影响，不录制声音时直接输出MP4不再ffmpeg处理
+            CurrentVideoPath = MakeFilePath(".mp4", SettingHelp.Settings.声音 ? "Raw" : "");
+            CurrentAudioPath = CurrentVideoPath.Replace(".mp4", ".wav");//使音频文件和视频文件同名
             var curScreen = System.Windows.Forms.Screen.FromHandle(winHandle);
             parseSpan = new TimeSpan();
             lbTime.Content = "00:00:00";
@@ -308,11 +328,11 @@ namespace RecordWin
             {
                 lock (this)
                 {
-                    VideoWriter.Open(CurrentVideoPath, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MSMPEG4v3, 
+                    VideoWriter.Open(CurrentVideoPath, RecordWidth, RecordHeight, SettingHelp.Settings.视频帧率, VideoCodec.MPEG4,
                         curScreen.Bounds.Width * curScreen.Bounds.Height * SettingHelp.Settings.视频质量);
                 }
-                System.Drawing.Rectangle rec = new System.Drawing.Rectangle(SettingHelp.Settings.跨屏录制 ? RecordLeft : curScreen.Bounds.X,
-                    SettingHelp.Settings.跨屏录制 ? RecordTop : curScreen.Bounds.Y, RecordWidth, RecordHeight);
+                Rectangle rec = SettingHelp.Settings.跨屏录制 ? new Rectangle(RecordLeft, RecordTop, RecordWidth, RecordHeight) :
+                    new Rectangle(curScreen.Bounds.X, curScreen.Bounds.Y, RecordWidth, RecordHeight);
                 VideoStreamer = new ScreenCaptureStream(rec, 1000 / SettingHelp.Settings.视频帧率);//帧间隔需要和帧率关联，不然录的10秒视频文件不是10s
                 VideoStreamer.NewFrame += VideoNewFrameHandle;
                 beginTime = DateTime.Now;
@@ -381,10 +401,10 @@ namespace RecordWin
                 {
                     waitBar.Value = 0;
                     barGrid.Visibility = Visibility.Visible;
-                    //Convert后的MP4体积更小但清晰度没什么影响，所以无论有无声音都进行一次转换处理
-                    if (SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头)//没有视频则不转换
+                    //有视频有声音的时候再进行ffmpeg合成
+                    if ((SettingHelp.Settings.桌面 || SettingHelp.Settings.摄像头) && SettingHelp.Settings.声音)
                     {
-                        Thread thread = new Thread(() =>
+                        System.Threading.Tasks.Task.Factory.StartNew(() =>
                         {
                             for (int i = 0; i < 10; i++)
                             {
@@ -399,10 +419,10 @@ namespace RecordWin
                                 Thread.Sleep(1000);
                             }
                         });//起一个线程让进度条动起来
-                        thread.Start();
                         System.Threading.Tasks.Task.Factory.StartNew(() =>
                         {
-                            string tempVideo = CurrentVideoPath;//CurrentVideoPath为全局的，防止在转码的过程中又开始了新的录制使CurrentVideoPath导致转码完删错文件
+                            //CurrentVideoPath为全局的，防止在转码的过程中又开始了新的录制使CurrentVideoPath导致转码完删错文件
+                            string tempVideo = CurrentVideoPath;
                             string tempAudio = SettingHelp.Settings.声音 ? $"-i \"{CurrentAudioPath}\"" : "";
                             string outfile = MakeFilePath(SettingHelp.Settings.编码类型);
                             Functions.CMD($"ffmpeg -i {tempVideo} {tempAudio} -acodec copy {outfile} -crf 12");
@@ -411,7 +431,6 @@ namespace RecordWin
                             {
                                 btClose.Visibility = Visibility.Visible;//转码完恢复关闭按钮显示
                                 barGrid.Visibility = Visibility.Collapsed;//隐藏转码进度条
-                                thread?.Abort();
                             });
                         });
                     }
@@ -493,7 +512,10 @@ namespace RecordWin
         /// <summary>
         /// 停止录制按钮点击事件：保存输出文件
         /// </summary>
-        private void btStop_Click(object sender, RoutedEventArgs e) => StopRecord(); 
+        private void btStop_Click(object sender, RoutedEventArgs e)
+        {
+            StopRecord();
+        }
         #endregion
 
         #endregion
@@ -512,15 +534,27 @@ namespace RecordWin
         /// <summary>
         /// 是否录制声音CheckBox
         /// </summary>
-        private void cbSY_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.声音 = cbSY.IsChecked.Value;
+        private void cbSY_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelp.Settings.声音 = cbSY.IsChecked.Value;
+        }
+
         /// <summary>
         /// 是否录制摄像头CheckBox
         /// </summary>
-        private void cbSXT_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.摄像头 = cbSXT.IsChecked.Value;
+        private void cbSXT_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelp.Settings.摄像头 = cbSXT.IsChecked.Value;
+        }
+
         /// <summary>
         /// 是否录制桌面CheckBox
         /// </summary>
-        private void cbZM_Click(object sender, RoutedEventArgs e) => SettingHelp.Settings.桌面 = cbZM.IsChecked.Value;
+        private void cbZM_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelp.Settings.桌面 = cbZM.IsChecked.Value;
+        }
+
         /// <summary>
         /// 更多设置点击事件
         /// </summary>
@@ -534,13 +568,19 @@ namespace RecordWin
 
         #region 画笔
         private DrawerWindow DrawerWin;
-        private void btPen_Click(object sender, RoutedEventArgs e) => OpenDraweWin();
+        private void btPen_Click(object sender, RoutedEventArgs e)
+        {
+            OpenDraweWin();
+        }
+
         private void OpenDraweWin()
         {
             if ((bool)btPen.IsChecked && DrawerWin == null)
             {
-                DrawerWin = new DrawerWindow();
-                DrawerWin.Owner = this;
+                DrawerWin = new DrawerWindow
+                {
+                    Owner = this
+                };
                 DrawerWin.Show();
                 btPen.IsChecked = true;
             }
@@ -620,7 +660,7 @@ namespace RecordWin
                                     if (btStop.Visibility == Visibility.Visible)
                                         btStop_Click(null, null);
                                     else
-                                        btClose_Click(null, null);
+                                        BtClose_Click(null, null);
                                 }
                             }
                             if (sid == HotKeyHB)
