@@ -163,7 +163,7 @@ namespace RecordWin
         /// <returns>取出的值</returns>
         public static T GetKeyPropertyValue<T>(string propertyName, object obj)
         {
-            foreach (PropertyInfo p in SettingHelp.Settings.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
+            foreach (PropertyInfo p in obj.GetType().GetProperties())//找到热键类属性，查找是否有冲突的热键设置
             {
                 if (p.PropertyType.Equals(typeof(T)) && p.Name == propertyName)//先判断是指定类型
                 {
