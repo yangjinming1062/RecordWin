@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
+using System.Xml.Serialization;
 
 namespace RecordWin
 {
@@ -34,7 +36,10 @@ namespace RecordWin
         /// <summary>
         /// 统一消息提醒(方便后期调整消息框样式)
         /// </summary>
-        public static void Message(string msg) => MessageBox.Show(msg);
+        public static void Message(string msg)
+        {
+            MessageBox.Show(msg);
+        }
 
         #region 下载依赖包
         private static FileStream writeStream = null;
@@ -51,7 +56,7 @@ namespace RecordWin
             {
                 flag = DownloadUrl(recordLibURL, recordZipPath) && UnZipFile(recordZipPath);//成功下载并解压返回true
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 flag = false;
             }
@@ -116,7 +121,7 @@ namespace RecordWin
                     rsp.Close();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 writeStream?.Close();
                 if (File.Exists(localfile))
@@ -140,7 +145,7 @@ namespace RecordWin
                     File.Delete(filePath);//解压完成移除压缩包
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -184,7 +189,166 @@ namespace RecordWin
                     break;
                 }
             }
-        } 
+        }
+        #endregion
+
+        #region 文件保存/加载
+        #region 二进制bat
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="oData">待保存数据</param>
+        /// <param name="path">保存位置</param>
+        public static bool SaveData<T>(T oData, string path)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            if (oData == null)
+                return false;
+            try
+            {
+                using FileStream stream = new FileStream(path, FileMode.Create)
+                {
+                    Position = 0
+                };
+                new BinaryFormatter().Serialize(stream, oData);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 以指定类型加载出指定路径的配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="path">文件路径</param>
+        /// <returns>无法反序列化成指定类型或文件不存在等返回类型的默认值</returns>
+        public static T GetData<T>(string path)
+        {
+            T t = default;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    using FileStream stream = new FileStream(path, FileMode.Open)
+                    {
+                        Position = 0
+                    };
+                    t = (T)new BinaryFormatter().Deserialize(stream);
+                }
+                catch//异常说明之前保存的数据结构和现在的有了差异，删除旧文件
+                {
+                    File.Delete(path);
+                }
+            }
+            return t;
+        }
+        #endregion
+
+        #region XML
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="oData">待保存数据</param>
+        /// <param name="path">保存位置</param>
+        public static bool SaveDataXML<T>(T oData, string path)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            if (oData == null)
+                return false;
+            try
+            {
+                using FileStream stream = new FileStream(path, FileMode.Create);
+                XmlSerializer xmlserilize = new XmlSerializer(typeof(T));
+                xmlserilize.Serialize(stream, oData);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 以指定类型加载出指定路径的配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="path">文件路径</param>
+        /// <returns>无法反序列化成指定类型或文件不存在等返回类型的默认值</returns>
+        public static T GetDataXML<T>(string path)
+        {
+            T t = default;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    using FileStream stream = new FileStream(path, FileMode.Open);
+                    XmlSerializer xmlserilize = new XmlSerializer(typeof(T));
+                    t = (T)xmlserilize.Deserialize(stream);
+                }
+                catch (Exception)//异常说明之前保存的数据结构和现在的有了差异，删除旧文件
+                {
+                    File.Delete(path);
+                }
+            }
+            return t;
+        }
+        #endregion
+
+        #region Json -- 需要安装Json包
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="oData">待保存数据</param>
+        /// <param name="path">保存位置</param>
+        public static bool SaveDataJson<T>(T oData, string path)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            if (oData == null)
+                return false;
+            try
+            {
+                //string json = JsonConvert.SerializeObject(oData);
+                using StreamWriter streamWriter = new StreamWriter(path, false, System.Text.Encoding.UTF8);
+                //streamWriter.Write(json);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 以指定类型加载出指定路径的配置
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="path">文件路径</param>
+        /// <returns>无法反序列化成指定类型或文件不存在等返回类型的默认值</returns>
+        public static T GetDataJson<T>(string path)
+        {
+            T t = default;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    using StreamReader streamReader = new StreamReader(path, System.Text.Encoding.UTF8);
+                    string json = streamReader.ReadToEnd();
+                    //t = JsonConvert.DeserializeObject<T>(json);
+                }
+                catch (Exception)//异常说明之前保存的数据结构和现在的有了差异，删除旧文件
+                {
+                    File.Delete(path);
+                }
+            }
+            return t;
+        }
+        #endregion
         #endregion
     }
 }

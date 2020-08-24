@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RecordWin
 {
@@ -23,43 +21,19 @@ namespace RecordWin
         /// </summary>
         internal static void SaveSetting()
         {
-            if (Path.GetDirectoryName(filePath).Length > 0)
-            {
-                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            }
-            using (FileStream stream = new FileStream(filePath, FileMode.Create))
-            {
-                new BinaryFormatter().Serialize(stream, Settings);
-            }
+            Functions.SaveData(Settings, filePath);
         }
         /// <summary>
         /// 获取配置，当前配置路径如果不存在则创建默认配置文件，存在则加载已有配置
         /// </summary>
         private static void GetSetting()
         {
-            if (File.Exists(filePath))//如果存在配置则加载配置文件
+            Settings = Functions.GetData<Setting>(filePath);
+            if(Settings == null)
             {
-                if (Path.GetDirectoryName(filePath).Length > 0)
-                {
-                    if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                }
-                using (FileStream stream = new FileStream(filePath, FileMode.Open))
-                {
-                    try
-                    {
-                        Settings = (Setting)new BinaryFormatter().Deserialize(stream);
-                    }
-                    catch//因为配置类变化等关系导致原有配置文件无法正常序列化则新生成配置文件
-                    {
-                        Settings = new Setting();
-                        SaveSetting();
-                    }
-                }
+                Settings = new Setting();
+                Functions.SaveData(Settings, filePath);
             }
-            else
-                SaveSetting();
         }
 
         [Serializable]
