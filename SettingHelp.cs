@@ -7,7 +7,7 @@ namespace RecordWin
         /// <summary>
         /// 配置文件存储路径（根目录下）
         /// </summary>
-        private static readonly string filePath = "Setting.dat";
+        private static readonly string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Setting.dat");
         /// <summary>
         /// 构造函数
         /// </summary>
