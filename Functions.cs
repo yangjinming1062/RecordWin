@@ -51,7 +51,7 @@ namespace RecordWin
         {
             bool flag;
             string recordZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RecordLid.7z");
-            string recordLibURL = @"https://upgrade.1shitou.cn/pdt/app/pc/setup/Plus/RecordLid.zip";
+            string recordLibURL = @"https://upgrade.1shitou.cn/pdt/tools/CZDCameraResource.zip";
             try
             {
                 flag = DownloadUrl(recordLibURL, recordZipPath) && UnZipFile(recordZipPath);//成功下载并解压返回true
