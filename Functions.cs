@@ -50,7 +50,7 @@ namespace RecordWin
         public static bool DownRecordLid()
         {
             bool flag;
-            string recordZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RecordLid.7z");
+            string recordZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CZDCameraResource.zip");
             string recordLibURL = @"https://upgrade.1shitou.cn/pdt/tools/CZDCameraResource.zip";
             try
             {
